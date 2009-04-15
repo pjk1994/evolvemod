@@ -11,7 +11,7 @@ function Evolve:Initialize( )
 end
 Evolve:Initialize()
 
-function ChatCommand( ply, msg )
+function Evolve:ChatCommand( ply, msg )
 	if string.Left( msg, 1 ) == "!" then
 		// Get the command and arguments
 		local com = Evolve:GetCommand( msg )
@@ -23,9 +23,9 @@ function ChatCommand( ply, msg )
 				local s, r = v:Call( ply, args )
 				
 				if s then
-					Evolve:ChatPrintAll( "[Evolve] " .. r )
+					Evolve:ChatPrintAll( "[E] " .. r )
 				else
-					ply:ChatPrint( "[Evolve] " .. r )
+					ply:ChatPrint( "[E] " .. r )
 				end
 				
 				// Remove command from chat
@@ -33,10 +33,10 @@ function ChatCommand( ply, msg )
 			end
 		end
 		
-		ply:ChatPrint( "[Evolve] Unknown command '" .. com .. "'" )
+		ply:ChatPrint( "[E] Unknown command '" .. com .. "'" )
 	end
 end
-hook.Add( "PlayerSay", "CheckCommands", ChatCommand )
+hook.Add( "PlayerSay", "CheckCommands", function( ply, msg ) return Evolve:ChatCommand( ply, msg ) end )
 
 function MountPlugin( ply, com, args )
 	// From the console?
