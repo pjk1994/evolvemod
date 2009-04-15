@@ -45,11 +45,10 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN.ReGod( ply )
+function PLUGIN:PlayerSpawn( ply )
 	if ply:GetNWBool("Godded", false) then
 		ply:GodEnable()
 	end
 end
-if SERVER then Evolve:PluginHook( PLUGIN, "PlayerSpawn", "ReGod", PLUGIN.ReGod ) end
 
 Evolve:RegisterPlugin( PLUGIN )

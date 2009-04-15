@@ -8,27 +8,24 @@ PLUGIN.Title = "Player Pickup"
 PLUGIN.Description = "Players can pick up other players with a lower rank"
 PLUGIN.Author = "Overv"
 
-function PLUGIN.PlayerPickup( ply, ent )
+function PLUGIN:PhysgunPickup( ply, ent )
 	if ent:IsPlayer() and ply:IsAdmin() and !Evolve:SameOrBetter( ply, ent ) then
 		ent:SetNWBool( "Physgunned", true )
 		return true
 	end
 end
-if SERVER then Evolve:PluginHook( PLUGIN, "PhysgunPickup", "PlayerPickup", PLUGIN.PlayerPickup ) end
 
-function PLUGIN.PlayerDrop( ply, ent )
+function PLUGIN:PhysgunDrop( ply, ent )
 	if ent:IsPlayer() and ply:IsAdmin() and !Evolve:SameOrBetter( ply, ent ) then
 		timer.Simple( 0.5, function() ent:SetNWBool( "Physgunned", false ) end )
 		return true
 	end
 end
-if SERVER then Evolve:PluginHook( PLUGIN, "PhysgunDrop", "PlayerDrop", PLUGIN.PlayerDrop ) end
 
-function PLUGIN.PlayerDmg( ent, inflictor, attacker, amount, dmginfo ) 
+function PLUGIN:EntityTakeDamage( ent, inflictor, attacker, amount, dmginfo ) 
 	if ent:IsPlayer() and ent:GetNWBool( "Physgunned", false ) and dmginfo:IsFallDamage() then
 		dmginfo:ScaleDamage( 0 )
 	end
 end
-if SERVER then Evolve:PluginHook( PLUGIN, "EntityTakeDamage", "PlayerDmg", PLUGIN.PlayerDmg ) end
 
 Evolve:RegisterPlugin( PLUGIN )

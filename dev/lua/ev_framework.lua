@@ -4,7 +4,7 @@
 Evolve.Plugins = {}
 
 function Evolve:Message( Message )
-	Msg( "[Evolve] " .. Message .. "\n" )
+	Msg( "[E] " .. Message .. "\n" )
 end
 
 function Evolve:LoadPlugins( Folder )
@@ -16,10 +16,11 @@ function Evolve:LoadPlugins( Folder )
 end
 
 function Evolve:FindPlayer( Nick )
-	local nick = Nick
+	if !Nick then return nil end
+	
 	for _, pl in pairs(player.GetAll()) do
 		local n = string.lower( pl:Nick() )
-		if n == nick or string.find( n, nick ) then return pl end
+		if n == Nick or string.find( n, Nick ) then return pl end
 	end
 end
 
@@ -86,13 +87,9 @@ end
 Evolve.HookCall = hook.Call
 hook.Call = function( name, gm, ... )
 	for _, p in pairs( Evolve.Plugins ) do
-		if p.Hooks and p.Mounted then
-			for _, h in pairs( p.Hooks ) do
-				if h.Event == name and h.Func != nil then
-					res, ret = pcall( h.Func, ... )
-					if ret then return ret end
-				end
-			end
+		if p.Mounted and p[name] then
+			res, ret = pcall( p[name], p, ... )
+			if ret then return ret end
 		end
 	end
 	
