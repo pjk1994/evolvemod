@@ -8,6 +8,7 @@ PLUGIN.Title = "Slay"
 PLUGIN.Description = "Slay players"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "slay"
+PLUGIN.Usage = "<player>"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
@@ -23,7 +24,7 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			pl:Kill()
-			return true, ply:Nick() .. " has slayed " .. pl:Nick()
+			return true, ply:Nick() .. " slayed " .. pl:Nick()
 		else
 			return false, "Player not found!"
 		end

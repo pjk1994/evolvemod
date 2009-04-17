@@ -8,6 +8,7 @@ PLUGIN.Title = "Armor"
 PLUGIN.Description = "Set the armor of players"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "armor"
+PLUGIN.Usage = "<player> [armor]"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin

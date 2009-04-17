@@ -20,12 +20,16 @@ function Evolve:ChatCommand( ply, msg )
 		// Look for the command
 		for _, v in pairs( Evolve.Plugins ) do
 			if v.Chat == string.lower(com) and v.Mounted then
-				local s, r = v:Call( ply, args )
-				
-				if s then
-					Evolve:ChatPrintAll( "[E] " .. r )
+				if #args > 0 or !v.Usage then
+					local s, r = v:Call( ply, args )
+					
+					if s then
+						Evolve:ChatPrintAll( "[E] " .. r )
+					else
+						ply:ChatPrint( "[E] " .. r )
+					end
 				else
-					ply:ChatPrint( "[E] " .. r )
+					ply:ChatPrint( "[E] Usage: !" .. v.Chat .. " " .. v.Usage )
 				end
 				
 				// Remove command from chat

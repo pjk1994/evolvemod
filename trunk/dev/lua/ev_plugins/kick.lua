@@ -4,9 +4,10 @@
 
 local PLUGIN = {}
 PLUGIN.Title = "Kick"
-PLUGIN.Description = "King players with an optional reason"
+PLUGIN.Description = "Kink players with an optional reason"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "kick"
+PLUGIN.Usage = "<player> [reason]"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin

@@ -1,18 +1,21 @@
 /*-------------------------------------------------------------------------------------------------------------------------
-	Reload the map
+	Remove only the decals
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = {}
-PLUGIN.Title = "Reload Map"
-PLUGIN.Description = "Reload the current map"
+PLUGIN.Title = "Decal Cleanup"
+PLUGIN.Description = "Clean up the decals"
 PLUGIN.Author = "Overv"
-PLUGIN.Chat = "reload"
+PLUGIN.Chat = "decals"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
 	if ply:IsAdmin() then
-		RunConsoleCommand( "changelevel", game.GetMap() )
-		return true, ply:Nick() .. " has reloaded the map"
+		for _, v in pairs(player.GetAll()) do
+			v:ConCommand( "r_cleardecals\n" )
+		end
+		
+		return true, ply:Nick() .. " has cleaned up the decals"
 	else
 		return false, "You are not an administrator!"
 	end

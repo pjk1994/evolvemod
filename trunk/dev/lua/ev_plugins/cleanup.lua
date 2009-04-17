@@ -1,18 +1,18 @@
 /*-------------------------------------------------------------------------------------------------------------------------
-	Reload the map
+	Clean up the map
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = {}
-PLUGIN.Title = "Reload Map"
-PLUGIN.Description = "Reload the current map"
+PLUGIN.Title = "Cleanup Map"
+PLUGIN.Description = "Clean up the current map"
 PLUGIN.Author = "Overv"
-PLUGIN.Chat = "reload"
+PLUGIN.Chat = "cleanup"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
 	if ply:IsAdmin() then
-		RunConsoleCommand( "changelevel", game.GetMap() )
-		return true, ply:Nick() .. " has reloaded the map"
+		game.CleanUpMap()
+		return true, ply:Nick() .. " has cleaned up the map"
 	else
 		return false, "You are not an administrator!"
 	end
