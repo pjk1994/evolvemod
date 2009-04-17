@@ -8,6 +8,7 @@ PLUGIN.Title = "Health"
 PLUGIN.Description = "Set the health of players"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "hp"
+PLUGIN.Usage = "<player> [health]"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin

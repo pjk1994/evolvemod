@@ -8,6 +8,7 @@ PLUGIN.Title = "Frags"
 PLUGIN.Description = "Set the amount of frags of players"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "frags"
+PLUGIN.Usage = "<player> [frags]"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin

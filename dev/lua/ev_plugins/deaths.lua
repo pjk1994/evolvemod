@@ -8,6 +8,7 @@ PLUGIN.Title = "Deaths"
 PLUGIN.Description = "Set the amount of deaths of players"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "deaths"
+PLUGIN.Usage = "<player> [deaths]"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
