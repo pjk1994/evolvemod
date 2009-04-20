@@ -35,7 +35,7 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetNWBool( "EV_Ammo", enabled )
 			if enabled then
-				return true, ply:Nick() .. " has given " .. pl:Nick() .. "'s unlimited ammo"
+				return true, ply:Nick() .. " has given " .. pl:Nick() .. " unlimited ammo"
 			else
 				return true, ply:Nick() .. " has taken away " .. pl:Nick() .. "'s unlimited ammo"
 			end

@@ -31,7 +31,7 @@ function PLUGIN:Call( ply, args )
 				return false, "The health must be numeric!"
 			end
 			
-			ply:SetHealth( HP )
+			pl:SetHealth( HP )
 			
 			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s health to " .. HP
 		else

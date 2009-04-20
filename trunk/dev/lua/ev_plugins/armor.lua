@@ -31,7 +31,7 @@ function PLUGIN:Call( ply, args )
 				return false, "The armor must be numeric!"
 			end
 			
-			ply:SetArmor( HP )
+			pl:SetArmor( HP )
 			
 			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s armor to " .. HP
 		else
