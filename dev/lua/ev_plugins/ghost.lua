@@ -8,6 +8,7 @@ PLUGIN.Title = "Ghosting"
 PLUGIN.Description = "Enable and disable ghosting for players"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "ghost"
+PLUGIN.Usage = "<player> [1/0]"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
@@ -34,13 +35,29 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetNWBool( "EV_Ghosted", enabled )
 			if enabled then
+				// Make player invisible
 				pl:SetRenderMode( RENDERMODE_NONE )
 				pl:SetColor( 255, 255, 255, 0 )
+				pl:SetCollisionGroup( COLLISION_GROUP_WEAPON )
+				
+				// And their weapons
+				for _, w in pairs(pl:GetWeapons()) do
+					w:SetRenderMode( RENDERMODE_NONE )
+					w:SetColor( 255, 255, 255, 0 )
+				end
 				
 				return true, ply:Nick() .. " has ghosted " .. pl:Nick()
 			else
+				// Make the player visible
 				pl:SetRenderMode( RENDERMODE_NORMAL )
 				pl:SetColor( 255, 255, 255, 255 )
+				pl:SetCollisionGroup( COLLISION_GROUP_PLAYER )
+				
+				// And their weapons
+				for _, w in pairs(pl:GetWeapons()) do
+					w:SetRenderMode( RENDERMODE_NORMAL )
+					w:SetColor( 255, 255, 255, 255 )
+				end
 				
 				return true, ply:Nick() .. " has unghosted " .. pl:Nick()
 			end
@@ -53,15 +70,11 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:Think()
-	for _, v in pairs(player.GetAll()) do
-		if v:GetNWBool("EV_Ghosted", false) then
-			v:GetActiveWeapon():SetRenderMode( RENDERMODE_NONE )
-			v:GetActiveWeapon():SetColor( 255, 255, 255, 0 )
-		else
-			v:GetActiveWeapon():SetRenderMode( RENDERMODE_NORMAL )
-			v:GetActiveWeapon():SetColor( 255, 255, 255, 255 )
-		end
+// Make guns that are picked up invisible too
+function PLUGIN:PlayerCanPickupWeapon( ply, wep )
+	if ply:GetNWBool( "EV_Ghosted", false ) then
+		wep:SetRenderMode( RENDERMODE_NONE )
+		wep:SetColor( 255, 255, 255, 0 )
 	end
 end
 

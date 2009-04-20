@@ -31,7 +31,7 @@ function PLUGIN:Call( ply, args )
 				return false, "The amount of frags must be numeric!"
 			end
 			
-			ply:SetFrags( frags )
+			pl:SetFrags( frags )
 			
 			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s amount of frags to " .. frags
 		else

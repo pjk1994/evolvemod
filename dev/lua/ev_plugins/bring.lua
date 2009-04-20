@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------------------------------------------------------
-	Set deaths
+	Bring
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = {}
 PLUGIN.Hooks = {}
-PLUGIN.Title = "Deaths"
-PLUGIN.Description = "Set the amount of deaths of players"
+PLUGIN.Title = "Bring"
+PLUGIN.Description = "Bring a player to you"
 PLUGIN.Author = "Overv"
-PLUGIN.Chat = "deaths"
-PLUGIN.Usage = "<player> [deaths]"
+PLUGIN.Chat = "bring"
+PLUGIN.Usage = "<player>"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
@@ -20,20 +20,11 @@ function PLUGIN:Call( ply, args )
 		if pl then
 			// Is the caller allowed to slay this player?
 			if Evolve:SameOrBetter(ply, pl) then
-				return false, "You can't set the amount of deaths of a player with an equal or higher rank!"
+				return false, "You can't bring a player with an equal or higher rank!"
 			end
 			
-			// Is the health a number or nothing?
-			local deaths = 0
-			if args[2] and tonumber(args[2]) then
-				deaths = tonumber( args[2] )
-			elseif args[2] then
-				return false, "The amount of deaths must be numeric!"
-			end
-			
-			pl:SetDeaths( deaths )
-			
-			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s amount of deaths to " .. deaths
+			pl:SetPos( ply:GetPos() + Vector( 0, 0, 128 ) )
+			return true, ply:Nick() .. " has brought " .. pl:Nick()
 		else
 			return false, "Player not found!"
 		end
