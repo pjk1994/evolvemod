@@ -17,10 +17,23 @@ end
 
 function Evolve:FindPlayer( Nick )
 	if !Nick then return nil end
+	Nick = string.lower( Nick )
+	
+	local Exact = false
+	if string.Left( Nick, 1 ) == "\"" and string.Right( Nick, 1 ) == "\"" then
+		Exact = true
+		Nick = string.sub( Nick, 2, string.len(Nick) - 1 )
+	end
+	Msg( "Matching '" .. Nick .. "'\n" )
 	
 	for _, pl in pairs(player.GetAll()) do
 		local n = string.lower( pl:Nick() )
-		if n == Nick or string.find( n, Nick ) then return pl end
+		
+		if n == Nick then
+			return pl
+		elseif string.find( n, Nick ) and !Exact then
+			return pl
+		end
 	end
 end
 
@@ -35,6 +48,21 @@ function Evolve:SameOrBetter( ply, ply2 )
 			return false
 		else
 			return true
+		end
+	end
+end
+
+function Evolve:Better( ply, ply2 )
+	if ply == ply2 then
+		return false
+	else
+		if ply:IsUserGroup("superadmin") then r1 = 2 elseif ply:IsUserGroup("admin") then r1 = 1 else r1 = 0 end
+		if ply2:IsUserGroup("superadmin") then r2 = 2 elseif ply2:IsUserGroup("admin") then r2 = 1 else r2 = 0 end
+		
+		if r1 < r2 then
+			return true
+		else
+			return false
 		end
 	end
 end

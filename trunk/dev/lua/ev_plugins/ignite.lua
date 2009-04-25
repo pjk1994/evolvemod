@@ -28,7 +28,7 @@ function PLUGIN:Call( ply, args )
 			if !tonumber(args[2]) and args[2] then
 				return false, "Parameter #2 must be a number!"
 			elseif !args[2] then
-				enabled = !pl:GetNWBool( "EV_Ignited", false )
+				enabled = pl:GetNWInt( "EV_IgnitionEnd", 0 ) < CurTime()
 			else
 				enabled = tonumber(args[2]) > 0
 			end
@@ -40,9 +40,10 @@ function PLUGIN:Call( ply, args )
 				duration = tonumber(args[3])
 			end
 			
-			pl:SetNWBool( "EV_Ignited", enabled )
 			if enabled then
 				pl:Ignite( duration, 0 )
+				pl:SetNWInt( "EV_IgnitionEnd", CurTime() + duration )
+				
 				return true, ply:Nick() .. " has ignited " .. pl:Nick()
 			else
 				pl:Extinguish()
@@ -58,8 +59,8 @@ function PLUGIN:Call( ply, args )
 end
 
 function PLUGIN:PlayerSpawn( ply )
-	if ply:GetNWBool("EV_Ignited", false) then
-		ply:Ignite()
+	if ply:GetNWInt( "EV_IgnitionEnd", 0 ) > CurTime() then
+		ply:Ignite( ply:GetNWInt( "EV_IgnitionEnd" ) - CurTime(), 0 )
 	end
 end
 
