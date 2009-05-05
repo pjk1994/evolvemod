@@ -24,7 +24,7 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			pl:StripWeapons()
-			return true, ply:Nick() .. " stripped " .. pl:Nick() .. "'s weapons"
+			return true, ply:Nick() .. " stripped " .. pl:Nick() .. "'s weapons."
 		else
 			return false, "Player not found!"
 		end

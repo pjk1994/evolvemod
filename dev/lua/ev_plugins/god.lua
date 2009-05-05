@@ -36,10 +36,10 @@ function PLUGIN:Call( ply, args )
 			pl:SetNWBool( "EV_Godded", enabled )
 			if enabled then
 				pl:GodEnable()
-				return true, ply:Nick() .. " has godded " .. pl:Nick()
+				return true, ply:Nick() .. " has godded " .. pl:Nick() .. "."
 			else
 				pl:GodDisable()
-				return true, ply:Nick() .. " has ungodded " .. pl:Nick()
+				return true, ply:Nick() .. " has ungodded " .. pl:Nick() .. "."
 			end
 		else
 			return false, "Player not found!"

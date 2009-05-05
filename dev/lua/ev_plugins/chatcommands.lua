@@ -21,12 +21,12 @@ function PLUGIN:PlayerSay( ply, msg )
 					local s, r = v:Call( ply, args )
 					
 					if s and r then
-						Evolve:ChatPrintAll( "[E] " .. r )
+						Evolve:Notify( r )
 					elseif r then
-						ply:ChatPrint( "[E] " .. r )
+						ply:Notify( r )
 					end
 				else
-					ply:ChatPrint( "[E] Usage: !" .. v.Chat .. " " .. v.Usage )
+					ply:Notify( "Usage: !" .. v.Chat .. " " .. v.Usage )
 				end
 				
 				// Remove command from chat
@@ -34,7 +34,7 @@ function PLUGIN:PlayerSay( ply, msg )
 			end
 		end
 		
-		ply:ChatPrint( "[E] Unknown command '" .. com .. "'" )
+		ply:Notify( "Unknown command '" .. com .. "'" )
 	end
 end
 

@@ -24,7 +24,7 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			ply:SetPos( pl:GetPos() + Vector( 0, 0, 128 ) )
-			return true, ply:Nick() .. " has gone to " .. pl:Nick()
+			return true, ply:Nick() .. " has gone to " .. pl:Nick() .. "."
 		else
 			return false, "Player not found!"
 		end

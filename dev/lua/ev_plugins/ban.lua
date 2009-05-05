@@ -44,12 +44,12 @@ function PLUGIN:Call( ply, args )
 				pl:Kick( "You have been permabanned (" .. Reason .. ")" )
 				self:AddBan( pl:UniqueID(), pl:IPAddress(), 0, Reason, ply:UniqueID() )
 				
-				return true, ply:Nick() .. " has permabanned " .. pl:Nick() .. " (" .. Reason .. ")"
+				return true, ply:Nick() .. " has permabanned " .. pl:Nick() .. ". (" .. Reason .. ")"
 			else
-				pl:Kick( "You have been banned for " .. Time .. " minutes (" .. Reason .. ")" )
+				pl:Kick( "You have been banned for " .. Time .. " minutes. (" .. Reason .. ")" )
 				self:AddBan( pl:UniqueID(), pl:IPAddress(), Time * 60, Reason, ply:UniqueID() )
 				
-				return true, ply:Nick() .. " has banned " .. pl:Nick() .. " for " .. Time .. " minutes (" .. Reason .. ")"
+				return true, ply:Nick() .. " has banned " .. pl:Nick() .. " for " .. Time .. " minutes. (" .. Reason .. ")"
 			end
 		else
 			return false, "Player not found!"

@@ -15,7 +15,7 @@ function PLUGIN:Call( ply, args )
 			v:ConCommand( "r_cleardecals\n" )
 		end
 		
-		return true, ply:Nick() .. " has cleaned up the decals"
+		return true, ply:Nick() .. " has cleaned up the decals."
 	else
 		return false, "You are not an administrator!"
 	end

@@ -33,7 +33,7 @@ function PLUGIN:Call( ply, args )
 			
 			// Check if the specified weapon is valid
 			if pl:GetWeapon(args[2]) != NULL then
-				return true, ply:Nick() .. " has given " .. pl:Nick() .. " a " .. args[2]
+				return true, ply:Nick() .. " has given " .. pl:Nick() .. " a " .. args[2] .. "."
 			else
 				return false, "Unknown weapon specified!"
 			end

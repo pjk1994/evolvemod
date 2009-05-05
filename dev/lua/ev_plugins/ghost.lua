@@ -46,7 +46,7 @@ function PLUGIN:Call( ply, args )
 					w:SetColor( 255, 255, 255, 0 )
 				end
 				
-				return true, ply:Nick() .. " has ghosted " .. pl:Nick()
+				return true, ply:Nick() .. " has ghosted " .. pl:Nick() .. "."
 			else
 				// Make the player visible
 				pl:SetRenderMode( RENDERMODE_NORMAL )
@@ -59,7 +59,7 @@ function PLUGIN:Call( ply, args )
 					w:SetColor( 255, 255, 255, 255 )
 				end
 				
-				return true, ply:Nick() .. " has unghosted " .. pl:Nick()
+				return true, ply:Nick() .. " has unghosted " .. pl:Nick() .. "."
 			end
 		else
 			return false, "Player not found!"
