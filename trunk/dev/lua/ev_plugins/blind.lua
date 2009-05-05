@@ -35,9 +35,9 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetNWBool( "EV_Blinded", enabled )
 			if enabled then				
-				return true, ply:Nick() .. " has blinded " .. pl:Nick()
+				return true, ply:Nick() .. " has blinded " .. pl:Nick() .. "."
 			else
-				return true, ply:Nick() .. " has unblinded " .. pl:Nick()
+				return true, ply:Nick() .. " has unblinded " .. pl:Nick() .. "."
 			end
 		else
 			return false, "Player not found!"

@@ -44,10 +44,10 @@ function PLUGIN:Call( ply, args )
 				pl:Ignite( duration, 0 )
 				pl:SetNWInt( "EV_IgnitionEnd", CurTime() + duration )
 				
-				return true, ply:Nick() .. " has ignited " .. pl:Nick()
+				return true, ply:Nick() .. " has ignited " .. pl:Nick() .. "."
 			else
 				pl:Extinguish()
-				return true, ply:Nick() .. " has extinguished " .. pl:Nick()
+				return true, ply:Nick() .. " has extinguished " .. pl:Nick() .. "."
 			end
 		else
 			return false, "Player not found!"

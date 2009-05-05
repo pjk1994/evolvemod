@@ -33,7 +33,7 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetArmor( HP )
 			
-			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s armor to " .. HP
+			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s armor to " .. HP .. "."
 		else
 			return false, "Player not found!"
 		end

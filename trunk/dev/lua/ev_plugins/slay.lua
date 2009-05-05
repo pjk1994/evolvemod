@@ -24,7 +24,7 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			pl:Kill()
-			return true, ply:Nick() .. " slayed " .. pl:Nick()
+			return true, ply:Nick() .. " slayed " .. pl:Nick() .. "."
 		else
 			return false, "Player not found!"
 		end

@@ -7,6 +7,27 @@ function Evolve:Message( Message )
 	Msg( "[E] " .. Message .. "\n" )
 end
 
+function Evolve:Notify( Message )
+	local rf = RecipientFilter()
+	rf:AddAllPlayers()
+	
+	umsg.Start( "EV_Notification", rf )
+		umsg.String( Message )
+	umsg.End( )
+end
+
+local meta = FindMetaTable( "Player" )
+function meta:Notify( Message )
+	umsg.Start( "EV_Notification", self )
+		umsg.String( Message )
+	umsg.End( )
+end
+
+function Evolve:ShowNotify( um )
+	chat.AddText( Color( 255, 255, 100 ), "[EV] ", color_white, um:ReadString() )
+end
+usermessage.Hook( "EV_Notification", function( um ) Evolve:ShowNotify( um ) end )
+
 function Evolve:LoadPlugins( Folder )
 	local Files = file.FindInLua( Folder .. "/*.lua" )
 	for _, f in pairs( Files ) do
@@ -24,7 +45,6 @@ function Evolve:FindPlayer( Nick )
 		Exact = true
 		Nick = string.sub( Nick, 2, string.len(Nick) - 1 )
 	end
-	Msg( "Matching '" .. Nick .. "'\n" )
 	
 	for _, pl in pairs(player.GetAll()) do
 		local n = string.lower( pl:Nick() )

@@ -33,7 +33,7 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetFrags( frags )
 			
-			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s amount of frags to " .. frags
+			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s amount of frags to " .. frags .. "."
 		else
 			return false, "Player not found!"
 		end

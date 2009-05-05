@@ -4,7 +4,7 @@
 
 local PLUGIN = {}
 PLUGIN.Title = "Kick"
-PLUGIN.Description = "Kink players with an optional reason"
+PLUGIN.Description = "Kick players with an optional reason"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "kick"
 PLUGIN.Usage = "<player> [reason]"
@@ -29,7 +29,7 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			pl:Kick( Reason )
-			return true, ply:Nick() .. " has kicked " .. pl:Nick() .. " (" .. Reason .. ")"
+			return true, ply:Nick() .. " has kicked " .. pl:Nick() .. ". (" .. Reason .. ")"
 		else
 			return false, "Player not found!"
 		end

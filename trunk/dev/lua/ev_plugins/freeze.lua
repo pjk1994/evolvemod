@@ -36,10 +36,10 @@ function PLUGIN:Call( ply, args )
 			pl:SetNWBool( "EV_Frozen", enabled )
 			if enabled then
 				pl:Freeze( true )
-				return true, ply:Nick() .. " has frozen " .. pl:Nick()
+				return true, ply:Nick() .. " has frozen " .. pl:Nick() .. "."
 			else
 				pl:Freeze( false )
-				return true, ply:Nick() .. " has unfrozen " .. pl:Nick()
+				return true, ply:Nick() .. " has unfrozen " .. pl:Nick() .. "."
 			end
 		else
 			return false, "Player not found!"

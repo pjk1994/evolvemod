@@ -33,7 +33,7 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetHealth( HP )
 			
-			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s health to " .. HP
+			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s health to " .. HP .. "."
 		else
 			return false, "Player not found!"
 		end

@@ -33,7 +33,7 @@ function PLUGIN:Call( ply, args )
 			
 			pl:SetDeaths( deaths )
 			
-			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s amount of deaths to " .. deaths
+			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s amount of deaths to " .. deaths .. "."
 		else
 			return false, "Player not found!"
 		end
