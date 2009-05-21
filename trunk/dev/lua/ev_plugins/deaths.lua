@@ -19,8 +19,8 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to slay this player?
-			if Evolve:SameOrBetter(ply, pl) then
-				return false, "You can't set the amount of deaths of a player with an equal or higher rank!"
+			if !ply:SameOrBetterThan( pl ) then
+				return false, "You can't set the amount of deaths of a player with a higher rank!"
 			end
 			
 			// Is the health a number or nothing?

@@ -18,7 +18,7 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to god this player?
-			if Evolve:SameOrBetter(ply, pl) then
+			if !ply:BetterThan( pl ) then
 				return false, "You can't kick a player with an equal or higher rank!"
 			end
 			

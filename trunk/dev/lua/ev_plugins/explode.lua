@@ -1,14 +1,14 @@
 /*-------------------------------------------------------------------------------------------------------------------------
-	Set health
+	Slaying
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = {}
 PLUGIN.Hooks = {}
-PLUGIN.Title = "Health"
-PLUGIN.Description = "Set the health of players"
+PLUGIN.Title = "Explode"
+PLUGIN.Description = "Explode players"
 PLUGIN.Author = "Overv"
-PLUGIN.Chat = "hp"
-PLUGIN.Usage = "<player> [health]"
+PLUGIN.Chat = "explode"
+PLUGIN.Usage = "<player>"
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
@@ -20,24 +20,21 @@ function PLUGIN:Call( ply, args )
 		if pl then
 			// Is the caller allowed to slay this player?
 			if !ply:SameOrBetterThan( pl ) then
-				return false, "You can't set the health of a player with a higher rank!"
+				return false, "You can't explode a player with a higher rank!"
 			end
 			
-			// Is the health a number or nothing?
-			local HP = 100
-			if args[2] and tonumber(args[2]) then
-				HP = tonumber( args[2] )
-			elseif args[2] then
-				return false, "The health must be numeric!"
-			end
+			local explosive = ents.Create( "env_explosion" )
+			explosive:SetPos( pl:GetPos() )
+			explosive:SetOwner( pl )
+			explosive:Spawn()
+			explosive:SetKeyValue( "iMagnitude", "1" )
+			explosive:Fire( "Explode", 0, 0 )
+			explosive:EmitSound( "ambient/explosions/explode_4.wav", 500, 500 )
 			
-			if HP > 10000 then
-				return false, "The health can't be over 10000!"
-			end
+			pl:Kill()
+			pl:AddFrags( 1 )
 			
-			pl:SetHealth( HP )
-			
-			return true, ply:Nick() .. " has set " .. pl:Nick() .. "'s health to " .. HP .. "."
+			return true, ply:Nick() .. " exploded " .. pl:Nick() .. "."
 		else
 			return false, "Player not found!"
 		end

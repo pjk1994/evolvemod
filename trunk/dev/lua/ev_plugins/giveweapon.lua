@@ -19,8 +19,8 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to slay this player?
-			if Evolve:SameOrBetter(ply, pl) then
-				return false, "You can't give a player with an equal or higher rank a weapon!"
+			if !ply:SameOrBetterThan( pl ) then
+				return false, "You can't give a player with a higher rank a weapon!"
 			end
 			
 			// Weapon specified?
@@ -29,6 +29,7 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			// Try to give the weapon
+			pl:SetNWString( "EV_AllowedWeapon", args[2] )
 			pl:Give( args[2] )
 			
 			// Check if the specified weapon is valid

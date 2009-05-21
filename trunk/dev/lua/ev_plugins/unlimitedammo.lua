@@ -19,8 +19,8 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to set unlimited ammo for this player?
-			if Evolve:SameOrBetter(ply, pl) then
-				return false, "You can't give a player with an equal or higher rank unlimited ammo!"
+			if !ply:BetterThan( pl ) then
+				return false, "You can't give a player with a higher rank unlimited ammo!"
 			end
 			
 			// Is the 'enabled' value a number? Otherwise toggle!

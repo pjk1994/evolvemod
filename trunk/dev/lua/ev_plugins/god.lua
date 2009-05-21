@@ -19,8 +19,8 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to god this player?
-			if Evolve:SameOrBetter(ply, pl) then
-				return false, "You can't god a player with an equal or higher rank!"
+			if !ply:SameOrBetterThan( pl ) then
+				return false, "You can't god a player with a higher rank!"
 			end
 			
 			// Is the 'enabled' value a number? Otherwise toggle!
@@ -28,12 +28,12 @@ function PLUGIN:Call( ply, args )
 			if !tonumber(args[2]) and args[2] then
 				return false, "Parameter #2 must be a number!"
 			elseif !args[2] then
-				enabled = !pl:GetNWBool( "EV_Godded", false )
+				enabled = !pl.EV_Godded
 			else
 				enabled = tonumber(args[2]) > 0
 			end
 			
-			pl:SetNWBool( "EV_Godded", enabled )
+			pl.EV_Godded = enabled
 			if enabled then
 				pl:GodEnable()
 				return true, ply:Nick() .. " has godded " .. pl:Nick() .. "."
@@ -51,7 +51,7 @@ function PLUGIN:Call( ply, args )
 end
 
 function PLUGIN:PlayerSpawn( ply )
-	if ply:GetNWBool("EV_Godded", false) then
+	if ply.EV_Godded then
 		ply:GodEnable()
 	end
 end
