@@ -5,7 +5,6 @@
 local PLUGIN = {}
 PLUGIN.Title = "Ban"
 PLUGIN.Description = "Ban players with an optional reason and time"
-require( "glon" )
 
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "ban"
@@ -21,7 +20,7 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to god this player?
-			if Evolve:SameOrBetter(ply, pl) then
+			if !ply:BetterThan( pl ) then
 				return false, "You can't ban a player with an equal or higher rank!"
 			end
 			

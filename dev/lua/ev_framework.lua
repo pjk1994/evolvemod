@@ -3,6 +3,10 @@
 -------------------------------------------------------------------------------------------------------------------------*/
 Evolve.Plugins = {}
 
+/*-------------------------------------------------------------------------------------------------------------------------
+	Messaging functions
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function Evolve:Message( Message )
 	Msg( "[E] " .. Message .. "\n" )
 end
@@ -36,6 +40,10 @@ function Evolve:LoadPlugins( Folder )
 	end
 end
 
+/*-------------------------------------------------------------------------------------------------------------------------
+	Find a player using a (part of a) nickname
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function Evolve:FindPlayer( Nick )
 	if !Nick then return nil end
 	Nick = string.lower( Nick )
@@ -57,35 +65,51 @@ function Evolve:FindPlayer( Nick )
 	end
 end
 
-function Evolve:SameOrBetter( ply, ply2 )
-	if ply == ply2 then
-		return false
+/*-------------------------------------------------------------------------------------------------------------------------
+	Functions to check immunity
+-------------------------------------------------------------------------------------------------------------------------*/
+
+function meta:GetGroupRating( )
+	if self:IsUserGroup( "owner" ) then
+		return 4
+	elseif self:IsUserGroup( "superadmin" ) then
+		return 3
+	elseif self:IsUserGroup( "admin" ) then
+		return 2
+	elseif self:IsUserGroup( "respected" ) then
+		return 1
 	else
-		if ply:IsUserGroup("superadmin") then r1 = 2 elseif ply:IsUserGroup("admin") then r1 = 1 else r1 = 0 end
-		if ply2:IsUserGroup("superadmin") then r2 = 2 elseif ply2:IsUserGroup("admin") then r2 = 1 else r2 = 0 end
-		
-		if r1 > r2 then
-			return false
-		else
+		return 0
+	end
+end
+
+function meta:SameOrBetterThan( ply )
+	if self == ply then
+		return true
+	else
+		if self:GetGroupRating( ) >= ply:GetGroupRating( ) then
 			return true
+		else
+			return false
 		end
 	end
 end
 
-function Evolve:Better( ply, ply2 )
-	if ply == ply2 then
-		return false
+function meta:BetterThan( ply )
+	if self == ply then
+		return true
 	else
-		if ply:IsUserGroup("superadmin") then r1 = 2 elseif ply:IsUserGroup("admin") then r1 = 1 else r1 = 0 end
-		if ply2:IsUserGroup("superadmin") then r2 = 2 elseif ply2:IsUserGroup("admin") then r2 = 1 else r2 = 0 end
-		
-		if r1 < r2 then
+		if self:GetGroupRating( ) > ply:GetGroupRating( ) then
 			return true
 		else
 			return false
 		end
 	end
 end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Functions used by the chat commands plugin
+-------------------------------------------------------------------------------------------------------------------------*/
 
 function Evolve:GetCommand( msg )
 	local pos = string.find( msg, " " )
@@ -96,7 +120,7 @@ function Evolve:GetCommand( msg )
 	end
 end
 
-function Evolve:GetArguments( msg )
+function Evolve:GetArguments2( msg )
 	local args = {}
 	local pos = string.find( msg, " " )
 	
@@ -113,24 +137,30 @@ function Evolve:GetArguments( msg )
 	return args
 end
 
-function Evolve:ChatPrintAll( msg )
-	for _, v in pairs(player.GetAll()) do
-		v:ChatPrint( msg )
+function Evolve:GetArguments( msg )
+	local args = {}
+	local i = 1
+	
+	for v in string.gmatch( msg, "%a+" ) do
+		if i > 1 then table.insert( args, v ) end
+		i = i + 1
 	end
+	
+	return args
 end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Plugin register function
+-------------------------------------------------------------------------------------------------------------------------*/
 
 function Evolve:RegisterPlugin( PluginTable )
 	PluginTable.Mounted = true
 	table.insert( self.Plugins, PluginTable )
 end
 
-function Evolve:PluginHook( PLUGIN, Event, Name, Func )
-	// First just register the hook like you normally would
-	hook.Add( Event, Name, Func )
-	
-	// Add it to the plugin hook list
-	table.insert( PLUGIN.Hooks, {Event = Event, Name = Name, Func = Func} )
-end
+/*-------------------------------------------------------------------------------------------------------------------------
+	Custom hook system
+-------------------------------------------------------------------------------------------------------------------------*/
 
 Evolve.HookCall = hook.Call
 hook.Call = function( name, gm, ... )
@@ -143,6 +173,10 @@ hook.Call = function( name, gm, ... )
 	
 	return Evolve.HookCall( name, gm, ... )
 end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Mounting and unmounting
+-------------------------------------------------------------------------------------------------------------------------*/
 
 function Evolve:MountPlugin( PLUGIN )
 	for _, v in pairs(PLUGIN.Hooks) do

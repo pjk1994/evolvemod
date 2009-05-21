@@ -18,8 +18,8 @@ function PLUGIN:Call( ply, args )
 		
 		if pl then
 			// Is the caller allowed to god this player?
-			if Evolve:SameOrBetter(ply, pl) then
-				return false, "You can't imitate a player with an equal or higher rank!"
+			if !ply:SameOrBetterThan( pl ) then
+				return false, "You can't imitate a player with a higher rank!"
 			end
 			
 			// Get the optional reason or choose the default N/A
