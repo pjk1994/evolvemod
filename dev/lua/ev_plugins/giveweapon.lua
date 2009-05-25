@@ -36,7 +36,7 @@ function PLUGIN:Call( ply, args )
 			if pl:GetWeapon(args[2]) != NULL then
 				return true, ply:Nick() .. " has given " .. pl:Nick() .. " a " .. args[2] .. "."
 			else
-				return false, "Unknown weapon specified!"
+				return false, "Unknown weapon specified! (" .. args[2] .. ")"
 			end
 		else
 			return false, "Player not found!"

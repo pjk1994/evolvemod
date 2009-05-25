@@ -120,28 +120,11 @@ function Evolve:GetCommand( msg )
 	end
 end
 
-function Evolve:GetArguments2( msg )
-	local args = {}
-	local pos = string.find( msg, " " )
-	
-	while pos != nil do
-		if string.find( msg, " ", pos + 1 ) then
-			table.insert( args, string.sub( msg, pos + 1, string.find( msg, " ", pos + 1 ) - 1 ) )
-		else
-			table.insert( args, string.sub( msg, pos + 1, string.find( msg, " ", pos + 1 ) ) )
-		end
-		
-		pos = string.find( msg, " ", pos + 2 )
-	end
-	
-	return args
-end
-
 function Evolve:GetArguments( msg )
 	local args = {}
 	local i = 1
 	
-	for v in string.gmatch( msg, "%w+" ) do
+	for v in string.gmatch( msg, "[%w^_]+" ) do
 		if i > 1 then table.insert( args, v ) end
 		i = i + 1
 	end
@@ -167,7 +150,13 @@ hook.Call = function( name, gm, ... )
 	for _, p in pairs( Evolve.Plugins ) do
 		if p.Mounted and p[name] then
 			res, ret = pcall( p[name], p, ... )
-			if ret then return ret end
+			
+			if res then
+				if ret then return ret end
+			else
+				Evolve:Notify( "Something went wrong D:" )
+				Evolve:Notify( ret )
+			end
 		end
 	end
 	
