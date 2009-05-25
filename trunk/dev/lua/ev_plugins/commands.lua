@@ -12,6 +12,7 @@ PLUGIN.Chat = "commands"
 function PLUGIN:Call( ply, args )
 	ply:PrintMessage( HUD_PRINTCONSOLE, "\n================================================================\n" )
 		ply:PrintMessage( HUD_PRINTCONSOLE, "Evolve Command List\n" )
+		ply:PrintMessage( HUD_PRINTCONSOLE, "-> " .. #Evolve.Plugins .. " plugins installed.\n" )
 	ply:PrintMessage( HUD_PRINTCONSOLE, "================================================================\n\n" )
 	
 	local plugs = Evolve.Plugins
