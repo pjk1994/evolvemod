@@ -141,7 +141,7 @@ function Evolve:GetArguments( msg )
 	local args = {}
 	local i = 1
 	
-	for v in string.gmatch( msg, "%a+" ) do
+	for v in string.gmatch( msg, "%w+" ) do
 		if i > 1 then table.insert( args, v ) end
 		i = i + 1
 	end

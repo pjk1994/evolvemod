@@ -31,8 +31,8 @@ function PLUGIN:Call( ply, args )
 				return false, "The health must be numeric!"
 			end
 			
-			if HP > 10000 then
-				return false, "The health can't be over 10000!"
+			if HP > 99999 then
+				return false, "The health can't be over 99999!"
 			end
 			
 			pl:SetHealth( HP )

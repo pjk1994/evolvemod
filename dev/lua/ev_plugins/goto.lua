@@ -18,7 +18,7 @@ function PLUGIN:Call( ply, args )
 		local pl = Evolve:FindPlayer( args[1] )
 		
 		if pl then
-			// Is the caller allowed to slay this player?
+			// Is the caller allowed to go to this player?
 			if !ply:SameOrBetterThan( pl ) then
 				return false, "You can't go to a player with a higher rank!"
 			end
