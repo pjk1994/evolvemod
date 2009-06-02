@@ -1,7 +1,8 @@
 /*-------------------------------------------------------------------------------------------------------------------------
 	Useful functions used both serverside and clientside
 -------------------------------------------------------------------------------------------------------------------------*/
-Evolve.Plugins = {}
+Evolve.Plugins = { }
+Evolve.UserGroups = { }
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Messaging functions
@@ -12,6 +13,8 @@ function Evolve:Message( Message )
 end
 
 function Evolve:Notify( Message )
+	if CLIENT then return  end
+	
 	local rf = RecipientFilter()
 	rf:AddAllPlayers()
 	
@@ -28,7 +31,7 @@ function meta:Notify( Message )
 end
 
 function Evolve:ShowNotify( um )
-	chat.AddText( Color( 255, 255, 100 ), "[EV] ", color_white, um:ReadString() )
+	chat.AddText( Color( 195 * 0.9, 255 * 0.9, 100 ), "[EV] ", color_white, um:ReadString() )
 end
 usermessage.Hook( "EV_Notification", function( um ) Evolve:ShowNotify( um ) end )
 
@@ -66,28 +69,34 @@ function Evolve:FindPlayer( Nick )
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------
-	Functions to check immunity
+	User group functions
 -------------------------------------------------------------------------------------------------------------------------*/
 
-function meta:GetGroupRating( )
-	if self:IsUserGroup( "owner" ) then
-		return 4
-	elseif self:IsUserGroup( "superadmin" ) then
-		return 3
-	elseif self:IsUserGroup( "admin" ) then
-		return 2
-	elseif self:IsUserGroup( "respected" ) then
-		return 1
-	else
-		return 0
+function Evolve:CreateUserGroups( )
+	table.insert( Evolve.UserGroups, { name = "Owner", group = "superadmin", immunity = 4 } )
+	table.insert( Evolve.UserGroups, { name = "Super Admin", group = "superadmin", immunity = 3 } )
+	table.insert( Evolve.UserGroups, { name = "Admin", group = "admin", immunity = 2 } )
+	table.insert( Evolve.UserGroups, { name = "Respected", group = "unknown", immunity = 1 } )
+	table.insert( Evolve.UserGroups, { name = "Guest", group = "unknown", immunity = 0 } )
+	table.SortByMember( Evolve.UserGroups, "immunity", function( a, b ) return a > b end )
+end
+Evolve:CreateUserGroups( )
+
+function Evolve:GetGroup( name )
+	for _, g in pairs( Evolve.UserGroups ) do
+		if string.lower( g.name ) == string.lower( name ) then return g end
 	end
+end
+
+function meta:GetGroup( )
+	return Evolve:GetGroup( self:GetNWString( "EV_UserGroup" ) )
 end
 
 function meta:SameOrBetterThan( ply )
 	if self == ply then
 		return true
 	else
-		if self:GetGroupRating( ) >= ply:GetGroupRating( ) then
+		if self:GetGroup( ).immunity >= ply:GetGroup( ).immunity then
 			return true
 		else
 			return false
@@ -99,7 +108,7 @@ function meta:BetterThan( ply )
 	if self == ply then
 		return true
 	else
-		if self:GetGroupRating( ) > ply:GetGroupRating( ) then
+		if self:GetGroup( ).immunity > ply:GetGroup( ).immunity then
 			return true
 		else
 			return false
@@ -112,19 +121,14 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 function Evolve:GetCommand( msg )
-	local pos = string.find( msg, " " )
-	if pos then
-		return string.sub( msg, 2, pos-1 )
-	else
-		return string.sub( msg, 2 )
-	end
+	return string.match( msg, "%w+" )
 end
 
 function Evolve:GetArguments( msg )
 	local args = {}
 	local i = 1
 	
-	for v in string.gmatch( msg, "[%w^_]+" ) do
+	for v in string.gmatch( msg, "%S+" ) do
 		if i > 1 then table.insert( args, v ) end
 		i = i + 1
 	end
@@ -151,9 +155,9 @@ hook.Call = function( name, gm, ... )
 		if p.Mounted and p[name] then
 			res, ret = pcall( p[name], p, ... )
 			
-			if res then
-				if ret then return ret end
-			else
+			if res and ret then
+				return ret
+			elseif !res then
 				Evolve:Notify( "Something went wrong D:" )
 				Evolve:Notify( ret )
 			end
@@ -179,4 +183,32 @@ function Evolve:UnMountPlugin( PLUGIN )
 		hook.Remove( v.Event, v.Name )
 	end
 	PLUGIN.Mounted = false
+end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Settings saving
+-------------------------------------------------------------------------------------------------------------------------*/
+
+Evolve.Settings = { }
+
+function Evolve.Settings:Load( )
+	if file.Exists( "Evolve/settings.txt" ) then
+		Evolve.Settings.Settings = glon.decode( file.Read( "Evolve/settings.txt" ) )
+	else
+		Evolve.Settings.Settings = { }
+	end
+end
+Evolve.Settings:Load( )
+
+function Evolve.Settings:Save( )
+	file.Write( "Evolve/settings.txt", glon.encode( Evolve.Settings.Settings ) )
+end
+
+function Evolve:GetSetting( id )
+	return self.Settings.Settings[ id ]
+end
+
+function Evolve:SetSetting( id, value )
+	self.Settings.Settings[ id ] = value
+	self.Settings:Save( )
 end
