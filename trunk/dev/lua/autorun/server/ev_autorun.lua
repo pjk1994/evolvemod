@@ -2,6 +2,8 @@
 	Serverside autorun file
 -------------------------------------------------------------------------------------------------------------------------*/
 
+require( "glon" )
+
 // The table holding all built in functions used by Evolve
 Evolve = {}
 

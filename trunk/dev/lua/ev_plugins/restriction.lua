@@ -8,7 +8,6 @@ PLUGIN.Title = "Restriction"
 PLUGIN.Description = "Restrict weapons and entities"
 PLUGIN.Author = "Overv"
 PLUGIN.Chat = "restrict"
-PLUGIN.Enabled = false
 
 function PLUGIN:Call( ply, args )
 	// First check if the caller is an admin
@@ -17,28 +16,32 @@ function PLUGIN:Call( ply, args )
 		if args[1] then
 			if tonumber( args[1] ) then
 				if tonumber( args[1] ) > 0 then
-					self.Enabled = true
+					Evolve:SetSetting( "WeaponEntityRestriction", true )
 				else
-					self.Enabled = false
+					Evolve:SetSetting( "WeaponEntityRestriction", false )
 				end
 			else
 				return false, "The enabled argument must be numeric!"
 			end
 		else
-			self.Enabled = !self.Enabled
+			Evolve:SetSetting( "WeaponEntityRestriction", !Evolve:GetSetting( "WeaponEntityRestriction" ) )
 		end
 		
-		if self.Enabled then
+		if Evolve:GetSetting( "WeaponEntityRestriction" ) then
 			return true, ply:Nick() .. " has restricted weapons and entities for guests."
 		else
 			return true, ply:Nick() .. " has allowed weapons and entities for guests."
 		end
 		
+	else
+		
+		return false, "You are not a super administrator!"
+		
 	end
 end
 
 function PLUGIN:PlayerLoadout( ply )
-	if self.Enabled and !ply:IsAdmin() then
+	if Evolve:GetSetting( "WeaponEntityRestriction" ) and !ply:GetGroup( ).immunity > Evolve:GetGroup( "Guest" ).immunity then
 		ply:Give( "weapon_physgun" )
 		ply:Give( "weapon_physcannon" )
 		ply:Give( "gmod_camera" )
@@ -49,12 +52,12 @@ function PLUGIN:PlayerLoadout( ply )
 end
 
 function PLUGIN:PlayerCanPickupWeapon( ply, wep )
-	if !self.Enabled then
+	if Evolve:GetSetting( "WeaponEntityRestriction" ) then
 		local class = wep:GetClass()
 		if class == "weapon_physgun" or class == "weapon_physcannon" or class == "gmod_camera" or class == "gmod_tool" or class == ply:GetNWString( "EV_AllowedWeapon", "" ) then
 			if ply:GetNWString( "EV_AllowedWeapon", "" ) != "" then ply:SetNWString( "EV_AllowedWeapon", "" ) end
 			return true
-		elseif !ply:IsAdmin() then
+		elseif !ply:GetGroup( ).immunity > Evolve:GetGroup( "Guest" ).immunity then
 			wep:Remove()
 			return false
 		end
@@ -62,7 +65,7 @@ function PLUGIN:PlayerCanPickupWeapon( ply, wep )
 end
 
 function PLUGIN:PlayerSpawnSENT( ply )
-	if self.Enabled and !ply:IsAdmin() then
+	if Evolve:GetSetting( "WeaponEntityRestriction" ) and !ply:GetGroup( ).immunity > Evolve:GetGroup( "Guest" ).immunity then
 		return false
 	end
 end
