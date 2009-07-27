@@ -92,22 +92,13 @@ hook.Call = function( name, gm, ... )
 			if ( res and ret ) then
 				return ret
 			elseif ( !res ) then
-				evolve:message( "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )
-				evolve:message( ret )
+				evolve:notify( evolve.colors.red, "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )
+				evolve:notify( evolve.colors.red, ret )
 			end
 		end
 	end
 	
 	return evolve.hookcall( name, gm, ... )
-end
-
-// Removes number as last item from a table
-function evolve:filterNumber( tbl )
-	local tbl = table.Copy( tbl )
-	if ( #tbl > 1 and tonumber( tbl[ #tbl ] ) ) then
-		table.remove( tbl, #tbl )
-	end
-	return tbl
 end
 
 // Match player and string
@@ -124,16 +115,20 @@ function evolve:nameMatch( ply, str )
 end
 
 // Find a player by name
-function evolve:findPlayer( name, def )
+function evolve:findPlayer( name, def, nonum )
 	local matches = { }
 	
 	if ( !name or #name == 0 ) then
 		matches[1] = def
 	else
 		if ( type( name ) != "table" ) then name = { name } end
+		name2 = table.Copy( name )
+		if ( nonum ) then
+			if ( #name2 > 1 and tonumber( name2[ #name2 ] ) ) then table.remove( name2, #name2 ) end
+		end
 		
 		for _, ply in pairs( player.GetAll( ) ) do
-			for _, pm in pairs( name ) do
+			for _, pm in pairs( name2 ) do
 				if ( self:nameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
 			end
 		end

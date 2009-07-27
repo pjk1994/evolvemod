@@ -32,7 +32,14 @@ function PLUGIN:PlayerSay( ply, msg )
 		
 		for _, plugin in pairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
-				plugin:Call( ply, args )
+				res, ret = pcall( plugin.Call, plugin, ply, args )
+				
+				if ( !res ) then
+					evolve:notify( evolve.colors.red, "Plugin '" .. plugin.Title .. "' failed with error:" )
+					evolve:notify( evolve.colors.red, ret )
+				end
+				
+				//plugin:Call( ply, args )
 				return ""
 			end
 		end

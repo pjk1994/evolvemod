@@ -11,7 +11,7 @@ PLUGIN.Usage = "<players> [deaths]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin( ) ) then
-		local pls = evolve:findPlayer( evolve:filterNumber( args ), ply )
+		local pls = evolve:findPlayer( args, ply, true )
 		if ( #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
 		local deaths = 0
 		if ( tonumber( args[ #args ] ) ) then deaths = tonumber( args[ #args ] ) end
