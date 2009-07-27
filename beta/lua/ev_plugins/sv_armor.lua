@@ -11,7 +11,7 @@ PLUGIN.Usage = "<players> [armor]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin( ) ) then
-		local pls = evolve:findPlayer( evolve:filterNumber( args ), ply )
+		local pls = evolve:findPlayer( args, ply, true )
 		if ( #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
 		local armor = 100
 		if ( tonumber( args[ #args ] ) ) then armor = tonumber( args[ #args ] ) end
