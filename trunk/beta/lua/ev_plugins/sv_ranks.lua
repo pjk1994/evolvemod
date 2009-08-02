@@ -68,7 +68,7 @@ function PLUGIN:setRank( ply, newrank )
 			rank.rank = newrank
 			self:save( )
 			
-			ply:SetNWString( "EV_UserGroup", newrank )
+			ply:SetNWString( "EV_UserGroup", rank.rank )
 			self:rankGroup( ply )
 			
 			return
