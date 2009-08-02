@@ -2,6 +2,9 @@
 	Serverside initialization
 -------------------------------------------------------------------------------------------------------------------------*/
 
+// Requirements
+require( "glon" )
+
 // Show startup message
 print( "\n=====================================================" )
 print( " Evolve 1.0 by Overv succesfully started serverside." )
