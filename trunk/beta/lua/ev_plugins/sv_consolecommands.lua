@@ -30,6 +30,6 @@ function PLUGIN:cCommand( ply, com, cargs )
 	
 	evolve:message( "Unknown command '" .. command .. "'" )
 end
-concommand.Add( "evolve", function( ply, com, args ) PLUGIN:cCommand( ply, com, args ) end )
+concommand.Add( "ev", function( ply, com, args ) PLUGIN:cCommand( ply, com, args ) end )
 
 evolve:registerPlugin( PLUGIN )
