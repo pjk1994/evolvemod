@@ -63,10 +63,10 @@ else
 	end
 
 	function PLUGIN:StartChat( )
-		RunConsoleCommand( "self_SetChatState", 1 )
+		RunConsoleCommand( "EV_SetChatState", 1 )
 	end
 	function PLUGIN:FinishChat( )
-		RunConsoleCommand( "self_SetChatState", 0 )
+		RunConsoleCommand( "EV_SetChatState", 0 )
 	end
 end
 
