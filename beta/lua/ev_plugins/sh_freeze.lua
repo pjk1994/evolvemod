@@ -38,4 +38,13 @@ function PLUGIN:Move( ply, data )
 	return ply:GetNWBool( "EV_Frozen", false )
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "freeze", unpack( players ) )
+	else
+		return "Freeze", evolve.category.punishment, { { "Enable", 1 }, { "Disable", 0 } }
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

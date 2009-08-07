@@ -14,6 +14,11 @@ evolve.colors.yellow = Color( 236, 227, 203, 255 )
 evolve.colors.blue = Color( 98, 176, 255, 255 )
 evolve.colors.red = Color( 255, 62, 62, 255 )
 evolve.colors.white = color_white
+evolve.category = { }
+evolve.category.administration = 1
+evolve.category.actions = 2
+evolve.category.punishment = 3
+evolve.category.teleportation = 4
 
 // Prints a message to the console
 function evolve:message( msg )
@@ -49,6 +54,15 @@ if ( SERVER ) then
 		if ( ply ) then evolve:message( ply:Nick( ) .. " -> " .. str ) else evolve:message( str ) end
 	end
 else
+	function evolve:notify( ... )
+		args = { }
+		for _, v in pairs( arg ) do
+			if ( type( v ) == "string" or type( v ) == "table" ) then table.insert( args, v ) end
+		end
+		
+		chat.AddText( unpack( args ) )
+	end
+	
 	usermessage.Hook( "EV_Notification", function( um )
 		local argc = um:ReadShort( )
 		local args = { }
@@ -145,6 +159,8 @@ function evolve:createPlayerList( tbl, notall )
 	
 	if ( #tbl == 1 ) then
 		lst = tbl[1]:Nick( )
+	elseif ( #tbl == #player.GetAll( ) ) then
+		lst = "everyone"
 	else
 		for i = 1, #tbl do
 			if ( i == #tbl ) then lst = lst .. " " .. lword .. " " .. tbl[i]:Nick( ) elseif ( i == 1 ) then lst = tbl[i]:Nick( ) else lst = lst .. ", " .. tbl[i]:Nick( ) end

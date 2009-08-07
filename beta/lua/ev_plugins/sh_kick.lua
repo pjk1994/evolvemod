@@ -18,7 +18,7 @@ function PLUGIN:Call( ply, args )
 		elseif ( #pl == 1 ) then
 			local reason = table.concat( args, " ", 2 )
 			
-			if ( #reason == 0 ) then
+			if ( #reason == 0 || reason == "No reason" ) then
 				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, "." )
 				pl[1]:Kick( "No reason specified." )
 			else
@@ -30,6 +30,14 @@ function PLUGIN:Call( ply, args )
 		end
 	else
 		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+	end
+end
+
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		RunConsoleCommand( "ev", "kick", players[1], arg )
+	else
+		return "Kick", evolve.category.administration, { { "No reason" }, { "Spammer" }, { "Asshole" }, { "Mingebag" }, { "Retard" }, { "Continued despite warning" } }
 	end
 end
 

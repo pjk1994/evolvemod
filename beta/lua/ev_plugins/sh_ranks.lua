@@ -121,4 +121,18 @@ function PLUGIN:PlayerSpawn( ply )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		RunConsoleCommand( "ev", "rank", players[1], arg )
+	else
+		return "Rank", evolve.category.administration, {
+			{ "Guest", "guest" },
+			{ "Respected", "respected" },
+			{ "Admin", "admin" },
+			{ "Super Admin", "superadmin" },
+			{ "Owner", "owner" }
+		}
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

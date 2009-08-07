@@ -41,4 +41,12 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		RunConsoleCommand( "ev", "rocket", unpack( players ) )
+	else
+		return "Rocket", evolve.category.punishment
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

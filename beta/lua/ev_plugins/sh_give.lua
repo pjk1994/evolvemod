@@ -34,4 +34,28 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "give", unpack( players ) )
+	else
+		return "Give", evolve.category.actions, {
+			{ "Gravity gun", "weapon_physcannon" },
+			{ "Physgun", "weapon_physgun" },
+			{ "Crowbar", "weapon_crowbar" },
+			{ "Stunstick", "weapon_stunstick" },
+			{ "Pistol", "weapon_pistol" },
+			{ ".357", "weapon_357" },
+			{ "SMG", "weapon_smg1" },
+			{ "Shotgun", "weapon_shotgun" },
+			{ "Crossbow", "weapon_crossbow" },
+			{ "AR2", "weapon_ar2" },
+			{ "Bug bait", "weapon_bugbait" },
+			{ "RPG", "weapon_rpg" },
+			{ "Toolgun", "gmod_tool" },
+			{ "Camera", "gmod_camera" }
+		}
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

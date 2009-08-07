@@ -1,12 +1,12 @@
 /*-------------------------------------------------------------------------------------------------------------------------
-	Enable godmode for a player
+	Enable speedmode for a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = { }
-PLUGIN.Title = "Godmode"
-PLUGIN.Description = "Enable godmode for a player."
+PLUGIN.Title = "Speed"
+PLUGIN.Description = "Enable speedmode for a player."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = "god"
+PLUGIN.ChatCommand = "speed"
 PLUGIN.Usage = "[players] [1/0]"
 
 function PLUGIN:Call( ply, args )
@@ -17,15 +17,20 @@ function PLUGIN:Call( ply, args )
 		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
 		
 		for _, pl in pairs( pls ) do
-			if ( enabled ) then pl:GodEnable( ) else pl:GodDisable( ) end
-			pl.EV_GodMode = enabled
+			if ( enabled ) then
+				GAMEMODE:SetPlayerSpeed( pl, 1000, 2000 )
+			else
+				GAMEMODE:SetPlayerSpeed( pl, 200, 500 )
+			end
+			
+			pl.EV_Speed = enabled
 		end
 		
 		if ( #pls > 0 ) then
 			if ( enabled ) then
-				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has enabled godmode for ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has enabled speed for ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
 			else
-				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has disabled godmode for ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has disabled speed for ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
 			end
 		else
 			evolve:notify( ply, evolve.colors.red, "No matching players found." )
@@ -35,8 +40,13 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:PlayerSpawn( ply )
-	if ( ply.EV_GodMode ) then ply:GodEnable( ) end
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "speed", unpack( players ) )
+	else
+		return "Speed", evolve.category.actions, { { "Enable", 1 }, { "Disable", 0 } }
+	end
 end
 
 evolve:registerPlugin( PLUGIN )

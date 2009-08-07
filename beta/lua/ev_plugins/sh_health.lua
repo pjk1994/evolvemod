@@ -14,7 +14,7 @@ function PLUGIN:Call( ply, args )
 		local pls = evolve:findPlayer( args, ply, true )
 		if ( #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
 		local hp = 100
-		if ( tonumber( args[ #args ] ) ) then hp = tonumber( args[ #args ] ) end
+		if ( tonumber( args[ #args ] ) ) then hp = math.Clamp( tonumber( args[ #args ] ), 0, 99999 ) end
 		
 		for _, pl in pairs( pls ) do
 			pl:SetHealth( hp )
@@ -27,6 +27,19 @@ function PLUGIN:Call( ply, args )
 		end
 	else
 		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+	end
+end
+
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "hp", unpack( players ) )
+	else
+		args = { }
+		for i = 1, 10 do
+			args[i] = { i * 10 }
+		end
+		return "Health", evolve.category.actions, args
 	end
 end
 

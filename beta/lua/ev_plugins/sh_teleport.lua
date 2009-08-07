@@ -14,9 +14,10 @@ function PLUGIN:Call( ply, args )
 		local pls = evolve:findPlayer( args, ply )
 				
 		if ( #pls > 0 ) then
-			local pos = ply:GetEyeTrace( ).HitPos
-			for _, pl in pairs( pls ) do
-				pl:SetPos( pos )
+			local tr = ply:GetEyeTrace( )
+			local pos = tr.HitPos
+			for i, pl in pairs( pls ) do
+				pl:SetPos( pos + i * tr.HitNormal * 128 )
 			end
 			
 			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
@@ -25,6 +26,14 @@ function PLUGIN:Call( ply, args )
 		end
 	else
 		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+	end
+end
+
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		RunConsoleCommand( "ev", "tp", unpack( players ) )
+	else
+		return "Teleport", evolve.category.teleportation
 	end
 end
 

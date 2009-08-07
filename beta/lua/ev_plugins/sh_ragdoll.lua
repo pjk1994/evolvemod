@@ -76,4 +76,13 @@ function PLUGIN:PlayerSpawn( ply )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "ragdoll", unpack( players ) )
+	else
+		return "Ragdoll", evolve.category.punishment, { { "Enable", 1 }, { "Disable", 0 } }
+	end
+end
+
 evolve:registerPlugin( PLUGIN )
