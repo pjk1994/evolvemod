@@ -41,9 +41,20 @@ function PLUGIN:PlayerDeath( ply )
 end
 
 function PLUGIN:Move( ply )
+	if ( !SERVER ) then return end
+	
 	if ( ply:IsOnFire( ) and ply:WaterLevel( ) == 3 ) then
 		ply:Extinguish( )
 		evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " extinguished himself by jumping into water." )
+	end
+end
+
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "ignite", unpack( players ) )
+	else
+		return "Ignite", evolve.category.punishment, { { "Enable", 1 }, { "Disable", 0 } }
 	end
 end
 

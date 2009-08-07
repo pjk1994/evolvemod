@@ -30,4 +30,17 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "armor", unpack( players ) )
+	else
+		args = { }
+		for i = 1, 10 do
+			args[i] = { i * 10 }
+		end
+		return "Armor", evolve.category.actions, args
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

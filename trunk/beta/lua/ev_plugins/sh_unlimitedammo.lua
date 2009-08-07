@@ -50,4 +50,13 @@ function PLUGIN:Tick( )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "uammo", unpack( players ) )
+	else
+		return "Unlimited ammo", evolve.category.actions, { { "Enable", 1 }, { "Disable", 0 } }
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

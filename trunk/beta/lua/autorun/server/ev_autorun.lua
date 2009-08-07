@@ -12,7 +12,9 @@ require( "glon" )
 AddCSLuaFile( "autorun/client/ev_autorun.lua" )
 AddCSLuaFile( "ev_framework.lua" )
 AddCSLuaFile( "ev_cl_init.lua" )
-AddCSLuaFile( "ev_cl_menu.lua" )
+for _, v in pairs( file.FindInLua( "ev_menu/*.lua" ) ) do
+	AddCSLuaFile( "ev_menu/" .. v )
+end
 
 // Load serverside initialization file
 include( "ev_framework.lua" )

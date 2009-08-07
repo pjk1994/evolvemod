@@ -33,4 +33,17 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		table.insert( players, arg )
+		RunConsoleCommand( "ev", "slap", unpack( players ) )
+	else
+		args = { }
+		for i = 1, 10 do
+			args[i] = { i * 10 }
+		end
+		return "Slap", evolve.category.punishment, args
+	end
+end
+
 evolve:registerPlugin( PLUGIN )

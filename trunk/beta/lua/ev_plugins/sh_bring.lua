@@ -27,4 +27,12 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:Menu( arg, players )
+	if ( arg ) then
+		RunConsoleCommand( "ev", "bring", unpack( players ) )
+	else
+		return "Bring", evolve.category.teleportation
+	end
+end
+
 evolve:registerPlugin( PLUGIN )
