@@ -18,6 +18,10 @@ function PLUGIN:Call( ply, args )
 		elseif ( #pl == 1 ) then
 			local reason = table.concat( args, " ", 2 )
 			
+			for _, v in pairs( ents.GetAll( ) ) do
+				if ( v:GetNWString( "Owner" ) == pl[1]:Nick( ) ) then v:Remove( ) end
+			end
+			
 			if ( #reason == 0 || reason == "No reason" ) then
 				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, "." )
 				pl[1]:Kick( "No reason specified." )
