@@ -16,7 +16,7 @@ function concommand.Run( ply, com, args )
 		local rating = args[2]
 		
 		if ( tonumber( target ) and ValidEntity( ents.GetByIndex( target ) ) and rating ) then
-			evolve:notify( ply, evolve.colors.blue, ply:Nick( ), evolve.colors.white, " rated you ", evolve.colors.red, " " .. rating, evolve.colors.white, "." )
+			evolve:notify( ents.GetByIndex( target ), evolve.colors.blue, ply:Nick( ), evolve.colors.white, " rated you", evolve.colors.red, " " .. rating, evolve.colors.white, "." )
 		end
 	end
 	

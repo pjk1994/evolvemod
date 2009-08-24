@@ -35,6 +35,7 @@ function evolve:buildMenu( )
 end
 
 function evolve:openMenu( )
+	if ( !LocalPlayer( ):EV_IsAdmin( ) ) then return false end
 	if ( !self.menu ) then self:buildMenu( ) end
 	
 	for _, tab in pairs( self.menutabs ) do tab.update( ) end
