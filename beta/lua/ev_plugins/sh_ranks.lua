@@ -25,10 +25,10 @@ function PLUGIN:getRealName( rankname )
 	end
 end
 
-function PLUGIN:rankGroup( ply )
-	if ( ply:EV_IsOwner( ) or ply:EV_IsSuperAdmin( ) ) then
+function PLUGIN:rankGroup( ply, rank )
+	if ( rank == "owner" or rank == "superadmin" ) then
 		ply:SetUserGroup( "superadmin" )
-	elseif ( ply:EV_IsAdmin( ) ) then
+	elseif ( rank == "admin" ) then
 		ply:SetUserGroup( "admin" )
 	else
 		ply:SetUserGroup( "guest" )
@@ -59,7 +59,7 @@ function PLUGIN:rank( ply )
 	end
 	
 	ply:SetNWString( "EV_UserGroup", ply:GetNWString( "UserGroup", "guest" ) )
-	self:rankGroup( ply )
+	self:rankGroup( ply, ply:GetNWString( "UserGroup", "guest" ) )
 end
 
 function PLUGIN:setRank( ply, newrank )
@@ -69,7 +69,7 @@ function PLUGIN:setRank( ply, newrank )
 			self:save( )
 			
 			ply:SetNWString( "EV_UserGroup", rank.rank )
-			self:rankGroup( ply )
+			self:rankGroup( ply, rank.rank )
 			
 			return
 		end
@@ -82,7 +82,7 @@ function PLUGIN:setRank( ply, newrank )
 	self:save( )
 	
 	ply:SetNWString( "EV_UserGroup", newrank )
-	self:rankGroup( ply )
+	self:rankGroup( ply, newrank )
 end
 
 function PLUGIN:Call( ply, args )
@@ -96,9 +96,13 @@ function PLUGIN:Call( ply, args )
 					evolve:notify( ply, evolve.colors.blue, pl:Nick( ), evolve.colors.white, " is ranked " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
 				else
 					if ( self:getRealName( args[2] ) != "invalid" ) then
-						self:setRank( pl, args[2] )
-						local rank, prefix = self:getRealName( args[2] )
-						evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick( ), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
+						if ( !pl:EV_IsOwner( ) or ( pl:EV_IsOwner( ) and ply == NULL ) ) then
+							self:setRank( pl, args[2] )
+							local rank, prefix = self:getRealName( args[2] )
+							evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick( ), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
+						else
+							evolve:notify( ply, evolve.colors.red, "An owner can only be ranked by the server console." )
+						end
 					else
 						evolve:notify( ply, evolve.colors.red, "Unknown rank specified." )
 					end
@@ -126,11 +130,11 @@ function PLUGIN:Menu( arg, players )
 		RunConsoleCommand( "ev", "rank", players[1], arg )
 	else
 		return "Rank", evolve.category.administration, {
-			{ "Guest", "guest" },
-			{ "Respected", "respected" },
-			{ "Admin", "admin" },
+			{ "Owner", "owner" },
 			{ "Super Admin", "superadmin" },
-			{ "Owner", "owner" }
+			{ "Admin", "admin" },
+			{ "Respected", "respected" },
+			{ "Guest", "guest" }
 		}
 	end
 end

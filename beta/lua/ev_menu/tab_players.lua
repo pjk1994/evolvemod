@@ -15,6 +15,33 @@ end
 
 local lAlts = { }
 local submenuButtons = { }
+
+local function clearSubmenu( )
+	for _, v in pairs( submenuButtons ) do
+		tab.submenu.container:RemoveItem( v, true )
+		v:RemoveEx( )
+	end
+	submenuButtons = { }
+	if ( tab.submenu:GetExpanded( ) == true ) then tab.submenu:Toggle( ) end
+end
+
+local function closeSubmenu( )
+	timer.Destroy( "tmSubmenu" )
+	timer.Create( "tmSubmenu", 0.01, 0, function( )
+		local x, y = tab.categoryContainer:GetPos( )
+		tab.categoryContainer:SetPos( x + ( -x / 5 ), y )
+		tab.submenu:SetPos( tab.categoryContainer:GetPos( ) + tab.categoryContainer:GetWide( ), 0 )
+		
+		if ( x > -5 ) then
+			tab.categoryContainer:SetPos( 0, y )
+			tab.submenu:SetPos( tab.categoryContainer:GetWide( ), 0 )
+			clearSubmenu( )
+			
+			timer.Destroy( "tmSubmenu" )
+		end
+	end )
+end
+
 local function addButton( plugin )
 	if ( !plugin.Menu ) then return end
 	
@@ -24,6 +51,7 @@ local function addButton( plugin )
 	button:SetText( button.title )
 	button.OnSelect = function( )
 		if ( button.submenu ) then
+			clearSubmenu( )			
 			tab.submenu:Toggle( )
 			tab.submenu:InvalidateLayout( )
 			tab.submenu:SetLabel( button.title )
@@ -37,26 +65,7 @@ local function addButton( plugin )
 				button.plugin = plugin
 				button.OnSelect = function( )
 					button.plugin:Menu( button.value, getSelectedPlayers( ) )
-					
-					timer.Destroy( "tmSubmenu" )
-					timer.Create( "tmSubmenu", 0.01, 0, function( )
-						local x, y = tab.categoryContainer:GetPos( )
-						tab.categoryContainer:SetPos( x + ( -x / 5 ), y )
-						tab.submenu:SetPos( tab.categoryContainer:GetPos( ) + tab.categoryContainer:GetWide( ), 0 )
-						
-						if ( x > -5 ) then
-							tab.categoryContainer:SetPos( 0, y )
-							tab.submenu:SetPos( tab.categoryContainer:GetWide( ), 0 )
-							for _, v in pairs( submenuButtons ) do
-								tab.submenu.container:RemoveItem( v, true )
-								v:RemoveEx( )
-							end
-							submenuButtons = { }
-							
-							tab.submenu:Toggle( )
-							timer.Destroy( "tmSubmenu" )
-						end
-					end )
+					closeSubmenu( )
 				end
 				button.m_bAlt = lAlt
 				tab.submenu.container:AddItem( button )
@@ -64,6 +73,14 @@ local function addButton( plugin )
 				
 				table.insert( submenuButtons, button )
 			end
+			local button = vgui.Create( "ToolMenuButton", tab.submenu.container )
+			button:SetText( "Cancel" )
+			button.OnSelect = function( )
+				closeSubmenu( )
+			end
+			button.m_bAlt = lAlt
+			tab.submenu.container:AddItem( button )
+			table.insert( submenuButtons, button )
 			
 			timer.Destroy( "tmSubmenu" )
 			timer.Create( "tmSubmenu", 0.01, 0, function( )

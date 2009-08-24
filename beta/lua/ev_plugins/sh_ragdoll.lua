@@ -59,13 +59,17 @@ function PLUGIN:Call( ply, args )
 end
 
 function PLUGIN:CanPlayerSuicide( ply )
-	ply.EV_Ragdolled = false
-	ply:SetNoTarget( false )
-	ply:SetParent( )
+	if ( ply.EV_Ragdolled ) then return false end
 end
 
 function PLUGIN:PlayerDisconnect( ply )
 	if ( ply.EV_Ragdoll and ply.EV_Ragdoll:IsValid( ) ) then ply.EV_Ragdoll:Remove( ) end
+end
+
+function PLUGIN:PlayerDeath( ply )
+	ply:SetNoTarget( false )
+	ply:SetParent( )
+	ply.EV_Ragdolled = false
 end
 
 function PLUGIN:PlayerSpawn( ply )

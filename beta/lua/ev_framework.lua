@@ -103,7 +103,7 @@ hook.Call = function( name, gm, ... )
 	for _, plugin in pairs( evolve.plugins ) do
 		if ( plugin[ name ] ) then
 			res, ret = pcall( plugin[name], plugin, ... )
-			if ( res and ret ) then
+			if ( res and ret != nil ) then
 				return ret
 			elseif ( !res ) then
 				evolve:notify( evolve.colors.red, "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )

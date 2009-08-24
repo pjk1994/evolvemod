@@ -6,12 +6,18 @@ local PLUGIN = { }
 PLUGIN.Title = "Player Names"
 PLUGIN.Description = "Displays player names above heads."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = nil
+PLUGIN.ChatCommand = "togglechat"
 PLUGIN.Usage = nil
 
 if ( SERVER ) then
-	resource.AddFile( "materials/gui/silkicons/comment.vtf" )
-	resource.AddFile( "materials/gui/silkicons/comment.vmt" )
+	resource.AddFile( "materials/gui/silkicons/comments.vtf" )
+	resource.AddFile( "materials/gui/silkicons/comments.vmt" )
+	resource.AddFile( "materials/gui/silkicons/user_add.vtf" )
+	resource.AddFile( "materials/gui/silkicons/user_add.vmt" )
+	resource.AddFile( "materials/gui/silkicons/shield_add.vtf" )
+	resource.AddFile( "materials/gui/silkicons/shield_add.vmt" )
+	resource.AddFile( "materials/gui/silkicons/key.vtf" )
+	resource.AddFile( "materials/gui/silkicons/key.vmt" )
 	
 	concommand.Add( "EV_SetChatState", function( ply, cmd, args )
 		if ( tonumber( args[1] ) ) then
@@ -20,7 +26,11 @@ if ( SERVER ) then
 	end )
 else
 	PLUGIN.iconUser = surface.GetTextureID( "gui/silkicons/user" )
-	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comment" )
+	PLUGIN.iconRespected = surface.GetTextureID( "gui/silkicons/user_add" )
+	PLUGIN.iconAdmin = surface.GetTextureID( "gui/silkicons/shield" )
+	PLUGIN.iconSuperAdmin = surface.GetTextureID( "gui/silkicons/shield_add" )
+	PLUGIN.iconOwner = surface.GetTextureID( "gui/silkicons/key" )
+	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 
 	function PLUGIN:HUDPaint( )
 		for _, pl in pairs( player.GetAll( ) ) do
@@ -35,12 +45,10 @@ else
 					local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
 					local h = 24
 					
-					local drawPos = pl:GetBonePosition( pl:LookupBone( "ValveBiped.Bip01_Head1" ) ):ToScreen( )
+					local drawPos = pl:GetShootPos( ):ToScreen( )
 					local distance = LocalPlayer( ):GetShootPos( ):Distance( pl:GetShootPos( ) )
-					drawPos.y = drawPos.y - 50
-					drawPos.y = drawPos.y + 100 * distance / 4096
 					drawPos.x = drawPos.x - w / 2
-					drawPos.y = drawPos.y - h / 2
+					drawPos.y = drawPos.y - h - 8
 					
 					local alpha = 128
 					if ( distance > 512 ) then
@@ -50,12 +58,25 @@ else
 					surface.SetDrawColor( 0, 0, 0, alpha )
 					surface.DrawRect( drawPos.x, drawPos.y, w, h )
 					
-					surface.SetDrawColor( 255, 255, 255, alpha )
-					if ( pl:GetNWBool( "EV_Chatting", false ) ) then surface.SetTexture( self.iconChat ) else surface.SetTexture( self.iconUser ) end
+					surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
+					if ( pl:GetNWBool( "EV_Chatting", false ) ) then
+						surface.SetTexture( self.iconChat )
+					elseif ( pl:EV_IsOwner( ) ) then
+						surface.SetTexture( self.iconOwner )
+					elseif ( pl:EV_IsSuperAdmin( ) ) then
+						surface.SetTexture( self.iconSuperAdmin )
+					elseif ( pl:EV_IsAdmin( ) ) then
+						surface.SetTexture( self.iconAdmin )
+					elseif ( pl:EV_IsRespected( ) ) then
+						surface.SetTexture( self.iconRespected)
+					else
+						surface.SetTexture( self.iconUser )
+					end
 					surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
 					
 					local teamColor = team.GetColor( pl:Team( ) )
-					draw.DrawText( pl:Nick( ), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, Color( teamColor.r, teamColor.g, teamColor.b, alpha ), 0 )
+					teamColor.a = math.Clamp( alpha * 2, 0, 255 )
+					draw.DrawText( pl:Nick( ), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, teamColor, 0 )
 				end
 				
 			end
