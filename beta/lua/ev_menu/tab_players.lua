@@ -10,6 +10,7 @@ local function getSelectedPlayers( )
 	for _, v in pairs( tab.playerList:GetSelectedItems( ) ) do
 		table.insert( players, v:GetValue( ) )
 	end
+	
 	return players
 end
 
@@ -107,6 +108,37 @@ local function addButton( plugin )
 	tab.categories[ button.category ].container:AddItem( button )
 end
 
+local function rebuildPlayerList( )
+	tab.playerList:Clear( )
+	tab.playerList.players = { }
+	
+	for _, ply in pairs( player.GetAll( ) ) do
+		local li = tab.playerList:AddItem( ply:Nick( ) )
+		
+		if ( table.HasValue( tab.playerList.selected, ply:Nick( ) ) ) then
+			li:Select( )
+		end
+		
+		table.insert( tab.playerList.players, ply )
+	end
+end
+
+local function updateTab( )
+	rebuildPlayerList( )
+	
+	if ( #submenuButtons > 0 ) then
+		timer.Destroy( "tmSubmenu" )
+		tab.categoryContainer:SetPos( 0, y )
+		tab.submenu:SetPos( tab.categoryContainer:GetWide( ), 0 )
+		for _, v in pairs( submenuButtons ) do
+			tab.submenu.container:RemoveItem( v, true )
+			v:RemoveEx( )
+		end
+		submenuButtons = { }
+		tab.submenu:Toggle( )
+	end
+end
+
 local function buildTab( )
 	tab.container = vgui.Create( "DPanel", evolve.menuContainer )
 	tab.container:SetSize( evolve.menuw - 10, evolve.menuh - 30 )
@@ -117,13 +149,30 @@ local function buildTab( )
 	tab.playerList:SetPos( 0, 2 )
 	tab.playerList:SetSize( 420, tab.container:GetTall( ) - 3 )
 	tab.playerList:SetMultiple( true )
+	tab.playerList.players = { }
+	tab.playerList.selected = { player.GetAll( )[1]:Nick( ) }
 	local fi = false
 	for _, ply in pairs( player.GetAll( ) ) do
 		local li = tab.playerList:AddItem( ply:Nick( ) )
+		
 		if ( !fi ) then
 			li:Select( true )
 			fi = true
 		end
+		
+		table.insert( tab.playerList.players, ply )
+	end
+	tab.playerList.oldPaint = tab.playerList.Paint
+	tab.playerList.Paint = function( )
+		for _, v in pairs( tab.playerList.players ) do
+			if ( !ValidEntity( v ) ) then
+				rebuildPlayerList( )	
+				break
+			end
+		end
+		
+		tab.playerList.selected = getSelectedPlayers( )
+		tab.playerList:oldPaint( )
 	end
 	
 	tab.commandsContainer = vgui.Create( "DPanelList", tab.container )
@@ -205,30 +254,6 @@ local function buildTab( )
 			offset = offset + v:GetTall( ) + 1
 		end
 	end )
-end
-
-local function updateTab( )
-	tab.playerList:Clear( )
-	local fi = false
-	for _, ply in pairs( player.GetAll( ) ) do
-		local li = tab.playerList:AddItem( ply:Nick( ) )
-		if ( !fi ) then
-			li:Select( true )
-			fi = true
-		end
-	end
-	
-	if ( #submenuButtons > 0 ) then
-		timer.Destroy( "tmSubmenu" )
-		tab.categoryContainer:SetPos( 0, y )
-		tab.submenu:SetPos( tab.categoryContainer:GetWide( ), 0 )
-		for _, v in pairs( submenuButtons ) do
-			tab.submenu.container:RemoveItem( v, true )
-			v:RemoveEx( )
-		end
-		submenuButtons = { }
-		tab.submenu:Toggle( )
-	end
 end
 
 evolve:registerMenuTab( buildTab, updateTab )
