@@ -98,6 +98,8 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin( ) ) then
 		evolve.jailPos = ply:GetEyeTrace( ).HitPos
 		evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has set the jail position." )
+	else
+		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
