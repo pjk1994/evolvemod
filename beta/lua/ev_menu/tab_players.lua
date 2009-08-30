@@ -140,14 +140,16 @@ local function updateTab( )
 end
 
 local function buildTab( )
-	tab.container = vgui.Create( "DPanel", evolve.menuContainer )
+	tab.container = vgui.Create( "DHorizontalDivider", evolve.menuContainer )
 	tab.container:SetSize( evolve.menuw - 10, evolve.menuh - 30 )
-	tab.container.Paint = function( ) end
+	tab.container:SetDividerWidth( 5 )
+	tab.container:SetLeftWidth( 420 )
+	tab.container:SetLeftMin( 200 )
+	tab.container:SetRightMin( 120 )
 	evolve.menuContainer:AddSheet( "Players", tab.container, "gui/silkicons/group", false, false, "Player commands." )
 	
 	tab.playerList = vgui.Create( "DComboBox", tab.container )
 	tab.playerList:SetPos( 0, 2 )
-	tab.playerList:SetSize( 420, tab.container:GetTall( ) - 3 )
 	tab.playerList:SetMultiple( true )
 	tab.playerList.players = { }
 	tab.playerList.selected = { player.GetAll( )[1]:Nick( ) }
@@ -174,6 +176,8 @@ local function buildTab( )
 		tab.playerList.selected = getSelectedPlayers( )
 		tab.playerList:oldPaint( )
 	end
+	
+	tab.container:SetLeft( tab.playerList )
 	
 	tab.commandsContainer = vgui.Create( "DPanelList", tab.container )
 	tab.commandsContainer:SetPos( tab.playerList:GetWide( ) + 5, 0 )
@@ -254,6 +258,8 @@ local function buildTab( )
 			offset = offset + v:GetTall( ) + 1
 		end
 	end )
+	
+	tab.container:SetRight( tab.commandsContainer )
 end
 
 evolve:registerMenuTab( buildTab, updateTab )
