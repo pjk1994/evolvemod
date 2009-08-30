@@ -4,7 +4,7 @@
 
 local PLUGIN = { }
 PLUGIN.Title = "Notice"
-PLUGIN.Description = "Pops up a notification for everyone at the top of the screen."
+PLUGIN.Description = "Pops up a notification for everyone."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "notice"
 PLUGIN.Usage = "<message> [time=10]"
@@ -19,11 +19,11 @@ function PLUGIN:Call( ply, args )
 		local msg = table.concat( args, " " )
 		
 		if ( #msg > 0 ) then
-			umsg.Start( "EV_NotificationTop" )
-				umsg.Short( CurTime( ) + time )
+			umsg.Start( "EV_Notify" )
+				umsg.Short( time )
 				umsg.String( msg )
 			umsg.End( )
-			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has posted a notice." )
+			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has added a notice." )
 		end
 	else
 		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
@@ -31,41 +31,12 @@ function PLUGIN:Call( ply, args )
 end
 
 if ( CLIENT ) then
-	PLUGIN.TimeOut = 0
-	PLUGIN.Message = ""
-	PLUGIN.FadeEnd = 0
-	PLUGIN.FadeTime = 2.0
-	PLUGIN.Icon = surface.GetTextureID( "gui/silkicons/exclamation" )
-	
-	function PLUGIN:GetAlphaMultiplier( )
-		if ( CurTime( ) > self.TimeOut + self.FadeTime ) then
-			return 0.0
-		else
-			if ( CurTime( ) < self.TimeOut ) then
-				return 1.0 - math.Clamp( ( self.FadeEnd - CurTime( ) ) * ( 1 / self.FadeTime ), 0.0, 1.0 )
-			else
-				return 1.0 - math.Clamp( ( CurTime( ) - self.TimeOut ) * ( 1 / self.FadeTime ), 0.0, 1.0 )
-			end
-		end
-	end
-
-	function PLUGIN:HUDPaint( )
-		surface.SetDrawColor( 255, 255, 204, 200 * self:GetAlphaMultiplier( ) )
-		surface.DrawRect( 10, 10, ScrW( ) - 20, 28 )
-		surface.SetDrawColor( 136, 136, 136, 200 * self:GetAlphaMultiplier( ) )
-		surface.DrawOutlinedRect( 10, 10, ScrW( ) - 20, 28 )
+	usermessage.Hook( "EV_Notify", function( um )
+		local time = um:ReadShort( )
+		local msg = um:ReadString( )
 		
-		surface.SetTexture( self.Icon )
-		surface.SetDrawColor( 255, 255, 255, 255 * self:GetAlphaMultiplier( ) )
-		surface.DrawTexturedRect( 16, 16, 16, 16 )
-		
-		draw.SimpleText( self.Message, "ScoreboardText", 40, 16, Color( 136, 136, 136, 255 * self:GetAlphaMultiplier( ) ), TEXT_ALIGN_LEFT )
-	end
-
-	usermessage.Hook( "EV_NotificationTop", function( um )
-		PLUGIN.TimeOut = um:ReadShort( )
-		PLUGIN.Message = um:ReadString( )
-		PLUGIN.FadeEnd = CurTime( ) + PLUGIN.FadeTime
+		GAMEMODE:AddNotify( msg, NOTIFY_GENERIC, time )
+		surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" )
 	end )
 end
 
