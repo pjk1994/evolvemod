@@ -37,26 +37,34 @@ local function updateTab( )
 	for _, v in pairs( convarsliders ) do
 		v:SetValue( GetConVar( v.ConVar ):GetInt( ) )
 	end
-	
-	tab.cmdApply:SetEnabled( LocalPlayer( ):EV_IsSuperAdmin( ) )
 end
 
 local function buildTab( )
 	tab.container = vgui.Create( "DPanel", evolve.menuContainer )
-	tab.container:SetSize( evolve.menuw - 10, evolve.menuh - 30 )
+	tab.container:SetSize( evolve.menuw - 10, evolve.menuh )
 	tab.container.Paint = function( ) end
 	evolve.menuContainer:AddSheet( "Sandbox", tab.container, "gui/silkicons/world", false, false, "Sandbox gamemode settings." )
 	
 	tab.limits = vgui.Create( "DPanelList", tab.container )
 	tab.limits:SetPos( 0, 2 )
 	tab.limits:SetSize( tab.container:GetWide( ) - 1, tab.container:GetTall( ) - 31 )
-	tab.limits:SetSpacing( 10 )
+	tab.limits:SetSpacing( 9 )
 	tab.limits:SetPadding( 10 )
+	tab.limits:EnableHorizontal( true )
 	tab.limits:EnableVerticalScrollbar( true )
+	tab.limits.Think = function( self )
+			if ( input.IsMouseDown( MOUSE_LEFT ) ) then
+				self.applySettings = true
+			elseif ( !input.IsMouseDown( MOUSE_LEFT ) and self.applySettings and LocalPlayer( ):EV_IsSuperAdmin( ) ) then
+				applySettings( )
+				self.applySettings = false
+			end
+		end
 	
 	for i, cv in pairs( convars ) do
 		local cvSlider = vgui.Create( "DNumSlider", tab.container )
 		cvSlider:SetText( cv[ 2 ] )
+		cvSlider:SetWide( tab.limits:GetWide( ) / 2 - 15 )
 		cvSlider:SetMin( 0 )
 		cvSlider:SetMax( 500 )
 		cvSlider:SetDecimals( 0 )
@@ -66,17 +74,6 @@ local function buildTab( )
 		
 		table.insert( convarsliders, cvSlider )
 	end
-	
-	tab.cmdApply = vgui.Create( "DButton", tab.container )
-	tab.cmdApply:SetPos( 0, tab.container:GetTall( ) - 21 )
-	tab.cmdApply:SetSize( 120, 20 )
-	tab.cmdApply:SetText( "Apply settings" )
-	tab.cmdApply.DoClick = function( )
-		if ( LocalPlayer( ):EV_IsSuperAdmin( ) ) then
-			applySettings( )
-		end
-	end
-	tab.cmdApply:SetEnabled( LocalPlayer( ):EV_IsSuperAdmin( ) )
 end
 
 evolve:registerMenuTab( buildTab, updateTab )
