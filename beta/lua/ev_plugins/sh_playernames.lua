@@ -6,8 +6,6 @@ local PLUGIN = { }
 PLUGIN.Title = "Player Names"
 PLUGIN.Description = "Displays player names above heads."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = "togglechat"
-PLUGIN.Usage = nil
 
 if ( SERVER ) then
 	resource.AddFile( "materials/gui/silkicons/comments.vtf" )

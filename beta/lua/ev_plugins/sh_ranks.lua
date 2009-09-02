@@ -86,7 +86,7 @@ function PLUGIN:setRank( ply, newrank )
 end
 
 function PLUGIN:Call( ply, args )
-	if ( #args <= 1 or ply:EV_IsOwner( ) ) then
+	if ( #args <= 1 or ply:EV_IsSuperAdmin( ) ) then
 		local pl = evolve:findPlayer( args[1], ply )
 		if ( #pl <= 1 ) then
 			pl = pl[1]
@@ -95,11 +95,17 @@ function PLUGIN:Call( ply, args )
 					local rank, prefix = self:getRealName( pl:EV_GetRank( ) )
 					evolve:notify( ply, evolve.colors.blue, pl:Nick( ), evolve.colors.white, " is ranked " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
 				else
-					if ( self:getRealName( args[2] ) != "invalid" ) then
+					local realName = self:getRealName( args[2] )
+					
+					if ( realName != "invalid" ) then
 						if ( !pl:EV_IsOwner( ) or ( pl:EV_IsOwner( ) and ply == NULL ) ) then
-							self:setRank( pl, args[2] )
-							local rank, prefix = self:getRealName( args[2] )
-							evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick( ), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
+							if ( ( ( realName == "Respected" or realName == "Guest" ) and !pl:EV_IsAdmin( ) ) or ply:EV_IsOwner( ) ) then
+								self:setRank( pl, args[2] )
+								local rank, prefix = self:getRealName( args[2] )
+								evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick( ), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
+							else
+								evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+							end
 						else
 							evolve:notify( ply, evolve.colors.red, "An owner can only be ranked by the server console." )
 						end
