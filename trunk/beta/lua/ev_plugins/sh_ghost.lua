@@ -37,7 +37,7 @@ function PLUGIN:Call( ply, args )
 				end
 			end
 			
-			pl.EV_Ghosted = enabled
+			pl:SetNWBool( "EV_Ghosted", enabled )
 		end
 		
 		if ( #pls > 0 ) then
