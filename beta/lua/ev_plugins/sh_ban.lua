@@ -11,34 +11,60 @@ PLUGIN.Usage = "<player> <time> [reason]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin( ) ) then
-		local pl = evolve:findPlayer( args )
+		local pl = evolve:findPlayer( args[1] )
+		if ( !pl[1] and string.match( args[1] or "", "^STEAM_[0-5]:[0-9]:[0-9]+$" ) ) then
+			pl[1] = args[1]
+		end
 		
 		if ( #pl > 1 ) then
 			evolve:notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:createPlayerList( pl, true ), evolve.colors.white, "?" )
 		elseif ( #pl == 1 ) then
-			local time = args[2]
+			local time = tonumber( args[2] ) or 5
+			local steamid = string.match( args[1], "^STEAM_[0-5]:[0-9]:[0-9]+$" )
 			local reason = table.concat( args, " ", 3 )
 			local treason = ""
 			if ( #reason == 0 ) then reason = "No reason specified." else treason = " with the reason \"" .. reason .. "\"" end
 			
-			if ( tonumber( time ) ) then
+			if ( time ) then
 				local it = { }
-				it.steamID = pl[1]:SteamID( )
+				if ( steamid ) then it.steamID = args[1] else it.steamID = pl[1]:SteamID( ) end
 				if ( time == "0" ) then it.banEnd = 0 else it.banEnd = os.time( ) + tonumber( time ) * 60 end
 				it.banReason = reason
 				table.insert( self.bans, it )
 				self:save( )
 				
 				for _, v in pairs( ents.GetAll( ) ) do
-					if ( v:GetNWString( "Owner" ) == pl[1]:Nick( ) ) then v:Remove( ) end
+					if ( !steamid and v:GetNWString( "Owner" ) == pl[1]:Nick( ) ) then v:Remove( ) end
 				end
 				
-				if ( time == "0" ) then					
-					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has permabanned ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, treason .. "." )
-					pl[1]:Kick( "Permabanned! (" .. reason .. ")" )
+				local msg = ""
+				local msg2 = ""
+				local nick = ""
+				
+				if ( time == 0 ) then
+					msg = "Permabanned"
+					msg2 = ""
 				else
-					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has banned ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, " for " .. time .. " minutes" .. treason .. "." )
-					pl[1]:Kick( "Banned for " .. time .. " minutes! (" .. reason .. ")" )
+					msg = "Banned"
+					msg2 = " for " .. time .. " minutes"
+				end
+				
+				if ( evolve:getPlugin( "Player Info" ):nickBySteamID( steamid ) ) then
+					nick = " (" .. evolve:getPlugin( "Player Info" ):nickBySteamID( steamid ) .. ")"
+				end
+				
+				if ( steamid ) then
+					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, steamid .. nick, evolve.colors.white, msg2 .. treason .. "." )
+					
+					for _, ply in pairs( player.GetAll( ) ) do
+						if ( ply:SteamID( ) == steamid ) then
+							ply:Kick( msg .. msg2 .. " (" .. reason .. ")" )
+							break
+						end
+					end
+				else
+					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, msg2 .. treason .. "." )
+					pl[1]:Kick( msg .. msg2 .. " (" .. reason .. ")" )
 				end
 			else
 				evolve:notify( ply, evolve.colors.red, "No valid time specified!" )

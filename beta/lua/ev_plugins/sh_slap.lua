@@ -14,7 +14,7 @@ function PLUGIN:Call( ply, args )
 		local pls = evolve:findPlayer( args, ply, true )
 		if ( #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
 		local dmg = 10
-		if ( tonumber( args[ #args ] ) ) then dmg = tonumber( args[ #args ] ) end
+		if ( tonumber( args[ #args ] ) ) then dmg = math.abs( tonumber( args[ #args ] ) ) end
 		
 		for _, pl in pairs( pls ) do
 			pl:SetHealth( pl:Health( ) - dmg )

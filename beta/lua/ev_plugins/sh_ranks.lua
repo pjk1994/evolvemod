@@ -60,6 +60,8 @@ function PLUGIN:rank( ply )
 	
 	ply:SetNWString( "EV_UserGroup", ply:GetNWString( "UserGroup", "guest" ) )
 	self:rankGroup( ply, ply:GetNWString( "UserGroup", "guest" ) )
+	
+	hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 end
 
 function PLUGIN:setRank( ply, newrank )
@@ -70,6 +72,8 @@ function PLUGIN:setRank( ply, newrank )
 			
 			ply:SetNWString( "EV_UserGroup", rank.rank )
 			self:rankGroup( ply, rank.rank )
+			
+			hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 			
 			return
 		end
@@ -83,6 +87,8 @@ function PLUGIN:setRank( ply, newrank )
 	
 	ply:SetNWString( "EV_UserGroup", newrank )
 	self:rankGroup( ply, newrank )
+	
+	hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 end
 
 function PLUGIN:Call( ply, args )

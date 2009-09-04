@@ -20,6 +20,14 @@ function PLUGIN:save( )
 	file.Write( "ev_playerinfo.txt", glon.encode( self.playerInfo ) )
 end
 
+function PLUGIN:nickBySteamID( steamID )
+	for _, item in pairs( self.playerInfo ) do
+		if ( steamID == item.steamID ) then
+			return item.lastNick
+		end
+	end
+end
+
 function PLUGIN:showPlayerInfo( ply )	
 	if ( !self.playerInfo ) then self:load( ) end
 	

@@ -92,6 +92,13 @@ function evolve:loadPlugins( )
 	end
 end
 
+// Get a plugin
+function evolve:getPlugin( title )
+	for _, plugin in pairs( self.plugins ) do
+		if ( plugin.Title == title ) then return plugin end
+	end
+end
+
 // Register a plugin
 function evolve:registerPlugin( plugin )
 	table.insert( self.plugins, plugin )
