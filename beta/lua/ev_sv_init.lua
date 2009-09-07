@@ -17,3 +17,6 @@ concommand.Add( "ev_reloadplugins", function( ply, com, args )
 		evolve:message( "Evolve plugins reloaded!" )
 	end
 end )
+
+// Add Evolve to the tag list (Probably beta only)
+RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString( ) .. ",Evolve" )
