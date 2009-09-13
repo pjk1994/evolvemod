@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = nil
 
 function PLUGIN:load( )
 	if ( file.Exists( "ev_playerinfo.txt" ) ) then
-		self.playerInfo = glon.decode( file.Read( "ev_playerinfo.txt" ) )
+		self.playerInfo = glon.decode( file.Read( "ev_playerinfo.txt" ) ) or { }
 	else
 		self.playerInfo = { }
 	end

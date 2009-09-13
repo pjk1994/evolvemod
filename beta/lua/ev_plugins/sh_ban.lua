@@ -28,7 +28,7 @@ function PLUGIN:Call( ply, args )
 			if ( time ) then
 				local it = { }
 				if ( steamid ) then it.steamID = args[1] else it.steamID = pl[1]:SteamID( ) end
-				if ( time == "0" ) then it.banEnd = 0 else it.banEnd = os.time( ) + tonumber( time ) * 60 end
+				if ( time == 0 ) then it.banEnd = 0 else it.banEnd = os.time( ) + tonumber( time ) * 60 end
 				it.banReason = reason
 				table.insert( self.bans, it )
 				self:save( )

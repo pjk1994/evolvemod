@@ -20,7 +20,7 @@ function PLUGIN:Call( ply, args )
 			if ( enabled ) then
 				GAMEMODE:SetPlayerSpeed( pl, 1000, 2000 )
 			else
-				GAMEMODE:SetPlayerSpeed( pl, 200, 500 )
+				GAMEMODE:SetPlayerSpeed( pl, 250, 500 )
 			end
 			
 			pl.EV_Speed = enabled
