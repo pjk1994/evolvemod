@@ -11,7 +11,7 @@ PLUGIN.Usage = "<player> [reason]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin( ) ) then
-		local pl = evolve:findPlayer( args )
+		local pl = evolve:findPlayer( args[1] )
 		
 		if ( #pl > 1 ) then
 			evolve:notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:createPlayerList( pl, true ), evolve.colors.white, "?" )
