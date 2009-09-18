@@ -18,11 +18,11 @@ function concommand.Run( ply, com, args )
 		local target = ents.GetByIndex( args[1] )
 		local rating = args[2]
 		
-		if ( ValidEntity( target ) and target:EV_IsRespected( ) and rating ) then
+		if ( ValidEntity( target ) and target:EV_IsRespected() and rating ) then
 			target.RatingTimers = target.RatingTimers or { }
-			if ( target.RatingTimers[ ply:UniqueID( ) ] and target.RatingTimers[ ply:UniqueID( ) ] > CurTime( ) + 60 ) then return end
+			if ( target.RatingTimers[ ply:UniqueID() ] and target.RatingTimers[ ply:UniqueID() ] > CurTime() + 60 ) then return end
 			
-			evolve:notify( target, evolve.colors.blue, ply:Nick( ), evolve.colors.white, " rated you", evolve.colors.red, " " .. rating, evolve.colors.white, "." )
+			evolve:notify( target, evolve.colors.blue, ply:Nick(), evolve.colors.white, " rated you", evolve.colors.red, " " .. rating, evolve.colors.white, "." )
 		end
 	end
 	

@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = "pa"
 PLUGIN.Usage = "<message>"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
+	if ( ply:EV_IsAdmin() ) then
 		if ( #args > 0 ) then
 			local msg = table.concat( args, " " )
 			evolve:notify( pl, evolve.colors.red, "(ADMIN)", evolve.colors.white, " " .. msg )

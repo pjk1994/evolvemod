@@ -10,16 +10,16 @@ PLUGIN.ChatCommand = "strip"
 PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
+	if ( ply:EV_IsAdmin() ) then
 		local pls = evolve:findPlayer( args, ply )
-		if ( !ply:IsValid( ) and #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
+		if ( !ply:IsValid() and #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 		
 		for _, pl in pairs( pls ) do
-			pl:StripWeapons( )
+			pl:StripWeapons()
 		end
 		
 		if ( #pls > 0 ) then
-			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has stripped the weapons of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has stripped the weapons of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
 		else
 			evolve:notify( ply, evolve.colors.red, "No matching players found." )
 		end

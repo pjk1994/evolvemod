@@ -35,7 +35,7 @@ function PLUGIN:rankGroup( ply, rank )
 	end
 end
 
-function PLUGIN:load( )
+function PLUGIN:load()
 	if ( file.Exists( "ev_ranks.txt" ) ) then
 		self.playerRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
 	else
@@ -43,15 +43,15 @@ function PLUGIN:load( )
 	end
 end
 
-function PLUGIN:save( )
+function PLUGIN:save()
 	file.Write( "ev_ranks.txt", glon.encode( self.playerRanks ) )
 end
 
 function PLUGIN:rank( ply )
-	if ( !self.playerRanks ) then self:load( ) end
+	if ( !self.playerRanks ) then self:load() end
 	
 	for _, rank in pairs( self.playerRanks ) do
-		if ( rank.steamID == ply:SteamID( ) ) then
+		if ( rank.steamID == ply:SteamID() ) then
 			self:setRank( ply, rank.rank )
 			
 			return
@@ -66,9 +66,9 @@ end
 
 function PLUGIN:setRank( ply, newrank )
 	for _, rank in pairs( self.playerRanks ) do
-		if ( rank.steamID == ply:SteamID( ) ) then
+		if ( rank.steamID == ply:SteamID() ) then
 			rank.rank = newrank
-			self:save( )
+			self:save()
 			
 			ply:SetNWString( "EV_UserGroup", rank.rank )
 			self:rankGroup( ply, rank.rank )
@@ -80,10 +80,10 @@ function PLUGIN:setRank( ply, newrank )
 	end
 	
 	local ranki = { }
-	ranki.steamID = ply:SteamID( )
+	ranki.steamID = ply:SteamID()
 	ranki.rank = newrank
 	table.insert( self.playerRanks, ranki )
-	self:save( )
+	self:save()
 	
 	ply:SetNWString( "EV_UserGroup", newrank )
 	self:rankGroup( ply, newrank )
@@ -92,23 +92,23 @@ function PLUGIN:setRank( ply, newrank )
 end
 
 function PLUGIN:Call( ply, args )
-	if ( #args <= 1 or ply:EV_IsSuperAdmin( ) ) then
+	if ( #args <= 1 or ply:EV_IsSuperAdmin() ) then
 		local pl = evolve:findPlayer( args[1], ply )
 		if ( #pl <= 1 ) then
 			pl = pl[1]
 			if ( pl ) then
 				if ( #args <= 1 ) then
-					local rank, prefix = self:getRealName( pl:EV_GetRank( ) )
-					evolve:notify( ply, evolve.colors.blue, pl:Nick( ), evolve.colors.white, " is ranked " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
+					local rank, prefix = self:getRealName( pl:EV_GetRank() )
+					evolve:notify( ply, evolve.colors.blue, pl:Nick(), evolve.colors.white, " is ranked " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
 				else
 					local realName = self:getRealName( args[2] )
 					
 					if ( realName != "invalid" ) then
-						if ( !pl:EV_IsOwner( ) or ( pl:EV_IsOwner( ) and ply == NULL ) ) then
-							if ( ( ( realName == "Respected" or realName == "Guest" ) and !pl:EV_IsAdmin( ) ) or ply:EV_IsOwner( ) ) then
+						if ( !pl:EV_IsOwner() or ( pl:EV_IsOwner() and ply == NULL ) ) then
+							if ( ( ( realName == "Respected" or realName == "Guest" ) and !pl:EV_IsAdmin() ) or ply:EV_IsOwner() ) then
 								self:setRank( pl, args[2] )
 								local rank, prefix = self:getRealName( args[2] )
-								evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick( ), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
+								evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick(), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
 							else
 								evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
 							end

@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = "scale"
 PLUGIN.Usage = "<players> <x> <y> <z>"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then		
+	if ( ply:EV_IsAdmin() ) then		
 		if ( #args >= 3 ) then
 			local x = tonumber( args[ #args - 2 ] )
 			local y = tonumber( args[ #args - 1 ] )
@@ -29,7 +29,7 @@ function PLUGIN:Call( ply, args )
 						pl:SetJumpPower( 160 + ( scale.z - 1 ) * 40 )
 					end
 					
-					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
+					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
 				else
 					evolve:notify( ply, evolve.colors.red, "No matching players found." )
 				end
@@ -44,16 +44,16 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:RenderScene( )
-	for _, v in pairs( player.GetAll( ) ) do
-		if ( v:GetModelScale( ) != v:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ) ) then
+function PLUGIN:RenderScene()
+	for _, v in pairs( player.GetAll() ) do
+		if ( v:GetModelScale() != v:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ) ) then
 			v:SetModelScale( v:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ) )
 		end
 	end
 end
 
 function PLUGIN:CalcView( ply, origin, angles, fov )
-	local onedist = ply:GetShootPos( ) - ply:GetPos( )
+	local onedist = ply:GetShootPos() - ply:GetPos()
 	
 	origin = origin + Vector( 0, 0, onedist.z * ( ply:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ).z - 1 ) )
 	

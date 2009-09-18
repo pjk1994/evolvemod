@@ -10,9 +10,9 @@ PLUGIN.ChatCommand = "frags"
 PLUGIN.Usage = "<players> [frags]"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
+	if ( ply:EV_IsAdmin() ) then
 		local pls = evolve:findPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
+		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 		local frags = 0
 		if ( tonumber( args[ #args ] ) ) then frags = tonumber( args[ #args ] ) end
 		
@@ -21,7 +21,7 @@ function PLUGIN:Call( ply, args )
 		end
 		
 		if ( #pls > 0 ) then
-			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has set the frags of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " to " .. frags .. "." )
+			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the frags of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " to " .. frags .. "." )
 		else
 			evolve:notify( ply, evolve.colors.red, "No matching players found." )
 		end

@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = "commands"
 PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
-	umsg.Start( "EV_CommandStart", ply ) umsg.End( )
+	umsg.Start( "EV_CommandStart", ply ) umsg.End()
 	local commands = table.Copy( evolve.plugins )
 	table.SortByMember( commands, "ChatCommand", function( a, b ) return a > b end )
 	
@@ -20,10 +20,10 @@ function PLUGIN:Call( ply, args )
 				umsg.String( plug.ChatCommand )
 				umsg.String( tostring( plug.Usage ) )
 				umsg.String( plug.Description )
-			umsg.End( )
+			umsg.End()
 		end
 	end
-	umsg.Start( "EV_CommandEnd", ply ) umsg.End( )
+	umsg.Start( "EV_CommandEnd", ply ) umsg.End()
 	
 	evolve:notify( ply, evolve.colors.white, "All chat commands have been printed to your console." )
 end
@@ -37,9 +37,9 @@ usermessage.Hook( "EV_CommandEnd", function( um )
 end )
 
 usermessage.Hook( "EV_Command", function( um )
-	local com = um:ReadString( )
-	local usage = um:ReadString( )
-	local desc = um:ReadString( )
+	local com = um:ReadString()
+	local usage = um:ReadString()
+	local desc = um:ReadString()
 	
 	if ( usage != "nil" ) then
 		print( "!" .. com .. " " .. usage .. " - " .. desc )

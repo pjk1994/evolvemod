@@ -10,11 +10,11 @@ PLUGIN.ChatCommand = "me"
 PLUGIN.Usage = "<action>"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsRespected( ) ) then
+	if ( ply:EV_IsRespected() ) then
 		local action = table.concat( args, " " )
 		
 		if ( #action > 0 ) then
-			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " " .. tostring( action ) )
+			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " " .. tostring( action ) )
 		else
 			evolve:notify( ply, evolve.colors.red, "No action specified." )
 		end

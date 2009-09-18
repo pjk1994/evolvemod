@@ -8,7 +8,7 @@ AccessorFunc( PANEL, "m_bSelected", 	"Selected" )
 /*---------------------------------------------------------
    Name: Paint
 ---------------------------------------------------------*/
-function PANEL:Init( )
+function PANEL:Init()
 
 	self:SetContentAlignment( 4 ) 
 	self:SetTextInset( 5 )
@@ -17,17 +17,17 @@ function PANEL:Init( )
 	
 end
 
-function PANEL:RemoveEx( )
+function PANEL:RemoveEx()
 	for k, v in pairs( ToolButtons ) do
 		if ( v == self ) then
 			table.remove( ToolButtons, k )
 			break
 		end
 	end
-	self:Remove( )
+	self:Remove()
 end
 
-function PANEL:Paint( )
+function PANEL:Paint()
 
 	if ( !self.m_bSelected ) then
 		if ( !self.m_bAlt ) then return end
@@ -36,7 +36,7 @@ function PANEL:Paint( )
 		surface.SetDrawColor( 50, 150, 255, 250 )
 	end
 	
-	self:DrawFilledRect( )
+	self:DrawFilledRect()
 	
 end
 
@@ -46,7 +46,7 @@ end
 function PANEL:OnMousePressed( mcode )
 
 	if ( mcode == MOUSE_LEFT ) then
-		self:OnSelect( )
+		self:OnSelect()
 	end
 	
 end
@@ -60,7 +60,7 @@ function PANEL:OnCursorMoved( x, y )
 	self.m_bSelected = true
 	
 	if ( input.IsMouseDown( MOUSE_LEFT ) ) then
-		self:OnSelect( )
+		self:OnSelect()
 	end
 	
 end
@@ -69,7 +69,7 @@ end
 /*---------------------------------------------------------
    Name: Paint
 ---------------------------------------------------------*/
-function PANEL:OnSelect( )
+function PANEL:OnSelect()
 
 	// Override
 	
@@ -78,12 +78,12 @@ end
 /*---------------------------------------------------------
    Name: Paint
 ---------------------------------------------------------*/
-function PANEL:PerformLayout( )
+function PANEL:PerformLayout()
 
 	if ( self.Checkbox ) then
 	
 		self.Checkbox:AlignRight( 4 )
-		self.Checkbox:CenterVertical( )
+		self.Checkbox:CenterVertical()
 	
 	end
 	
@@ -96,7 +96,7 @@ function PANEL:AddCheckBox( strConVar )
 	end
 	
 	self.Checkbox:SetConVar( strConVar )
-	self:InvalidateLayout( )
+	self:InvalidateLayout()
 
 end
 
