@@ -10,10 +10,10 @@ PLUGIN.ChatCommand = "thetime"
 
 function PLUGIN:Call( ply, args )
 	umsg.Start( "EV_ShowTime", ply )
-	umsg.End( )
+	umsg.End()
 end
 
-usermessage.Hook( "EV_ShowTime", function( )
+usermessage.Hook( "EV_ShowTime", function()
 	evolve:notify( evolve.colors.white, "It is now ", evolve.colors.blue, os.date( "%H:%M" ), evolve.colors.white, "." )
 end )
 

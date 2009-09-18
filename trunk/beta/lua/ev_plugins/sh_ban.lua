@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = "ban"
 PLUGIN.Usage = "<player> <time> [reason]"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
+	if ( ply:EV_IsSuperAdmin() ) then
 		local pl = evolve:findPlayer( args[1] )
 		if ( !pl[1] and string.match( args[1] or "", "^STEAM_[0-5]:[0-9]:[0-9]+$" ) ) then
 			pl[1] = args[1]
@@ -27,14 +27,14 @@ function PLUGIN:Call( ply, args )
 			
 			if ( time ) then
 				local it = { }
-				if ( steamid ) then it.steamID = args[1] else it.steamID = pl[1]:SteamID( ) end
-				if ( time == 0 ) then it.banEnd = 0 else it.banEnd = os.time( ) + tonumber( time ) * 60 end
+				if ( steamid ) then it.steamID = args[1] else it.steamID = pl[1]:SteamID() end
+				if ( time == 0 ) then it.banEnd = 0 else it.banEnd = os.time() + tonumber( time ) * 60 end
 				it.banReason = reason
 				table.insert( self.bans, it )
-				self:save( )
+				self:save()
 				
-				for _, v in pairs( ents.GetAll( ) ) do
-					if ( !steamid and v:GetNWString( "Owner" ) == pl[1]:Nick( ) ) then v:Remove( ) end
+				for _, v in pairs( ents.GetAll() ) do
+					if ( !steamid and v:GetNWString( "Owner" ) == pl[1]:Nick() ) then v:Remove() end
 				end
 				
 				local msg = ""
@@ -54,16 +54,16 @@ function PLUGIN:Call( ply, args )
 				end
 				
 				if ( steamid ) then
-					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, steamid .. nick, evolve.colors.white, msg2 .. treason .. "." )
+					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, steamid .. nick, evolve.colors.white, msg2 .. treason .. "." )
 					
-					for _, ply in pairs( player.GetAll( ) ) do
-						if ( ply:SteamID( ) == steamid ) then
+					for _, ply in pairs( player.GetAll() ) do
+						if ( ply:SteamID() == steamid ) then
 							ply:Kick( msg .. msg2 .. " (" .. reason .. ")" )
 							break
 						end
 					end
 				else
-					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, msg2 .. treason .. "." )
+					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, msg2 .. treason .. "." )
 					pl[1]:Kick( msg .. msg2 .. " (" .. reason .. ")" )
 				end
 			else
@@ -85,7 +85,7 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-function PLUGIN:load( )
+function PLUGIN:load()
 	if ( file.Exists( "ev_bans.txt" ) ) then
 		self.bans = glon.decode( file.Read( "ev_bans.txt" ) )
 	else
@@ -93,19 +93,19 @@ function PLUGIN:load( )
 	end
 end
 
-function PLUGIN:save( )
+function PLUGIN:save()
 	file.Write( "ev_bans.txt", glon.encode( self.bans ) )
 end
 
 function PLUGIN:checkBan( ply )
-	if ( !self.bans ) then self:load( ) end
+	if ( !self.bans ) then self:load() end
 	
 	for i, item in pairs( self.bans ) do
-		if ( item.steamID == ply:SteamID( ) and ( item.banEnd > os.time( ) or item.banEnd == 0 ) ) then
+		if ( item.steamID == ply:SteamID() and ( item.banEnd > os.time() or item.banEnd == 0 ) ) then
 			if ( item.banEnd == 0 ) then
 				ply:Kick( "Banned forever." )
 			else
-				ply:Kick( "Banned for " .. math.Round( ( item.banEnd - os.time( ) ) / 60 ) .. " more minutes" )
+				ply:Kick( "Banned for " .. math.Round( ( item.banEnd - os.time() ) / 60 ) .. " more minutes" )
 			end
 			return
 		else
@@ -113,7 +113,7 @@ function PLUGIN:checkBan( ply )
 		end
 	end
 	
-	self:save( )
+	self:save()
 end
 
 function PLUGIN:PlayerSpawn( ply )

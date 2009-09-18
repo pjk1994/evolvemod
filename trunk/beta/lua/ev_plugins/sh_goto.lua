@@ -10,13 +10,13 @@ PLUGIN.ChatCommand = "goto"
 PLUGIN.Usage = "[player]"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) and ply:IsValid( ) ) then	
+	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
 		local pl = evolve:findPlayer( args, ply )
 		
 		if ( #pl < 2 ) then			
 			if ( #pl > 0 ) then
-				ply:SetPos( pl[1]:GetPos( ) + Vector( 0, 0, 128 ) )
-				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has gone to ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, "." )
+				ply:SetPos( pl[1]:GetPos() + Vector( 0, 0, 128 ) )
+				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has gone to ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, "." )
 			else
 				evolve:notify( ply, evolve.colors.red, "No matching players found." )
 			end

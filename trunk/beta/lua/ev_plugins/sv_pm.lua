@@ -17,8 +17,8 @@ function PLUGIN:Call( ply, args )
 			local msg = table.concat( args, " ", 2 )
 			
 			if ( #msg > 0 ) then
-				evolve:notify( ply, evolve.colors.white, "To ", team.GetColor( pl[1]:Team( ) ), pl[1]:Nick( ), evolve.colors.white, ": " .. msg )
-				evolve:notify( pl[1], evolve.colors.white, "From ", team.GetColor( pl[1]:Team( ) ), ply:Nick( ), evolve.colors.white, ": " .. msg )
+				evolve:notify( ply, evolve.colors.white, "To ", team.GetColor( pl[1]:Team() ), pl[1]:Nick(), evolve.colors.white, ": " .. msg )
+				evolve:notify( pl[1], evolve.colors.white, "From ", team.GetColor( pl[1]:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg )
 			else
 				evolve:notify( ply, evolve.colors.red, "No message specified." )
 			end

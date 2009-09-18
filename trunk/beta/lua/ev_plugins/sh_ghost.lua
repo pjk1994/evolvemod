@@ -10,9 +10,9 @@ PLUGIN.ChatCommand = "ghost"
 PLUGIN.Usage = "[players] [1/0]"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
+	if ( ply:EV_IsAdmin() ) then
 		local pls = evolve:findPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid( ) ) then pls = { } end
+		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 		local enabled = true
 		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
 		
@@ -22,7 +22,7 @@ function PLUGIN:Call( ply, args )
 				pl:SetColor( 255, 255, 255, 0 )
 				pl:SetCollisionGroup( COLLISION_GROUP_WEAPON )
 				
-				for _, w in pairs( pl:GetWeapons( ) ) do
+				for _, w in pairs( pl:GetWeapons() ) do
 					w:SetRenderMode( RENDERMODE_NONE )
 					w:SetColor( 255, 255, 255, 0 )
 				end
@@ -31,7 +31,7 @@ function PLUGIN:Call( ply, args )
 				pl:SetColor( 255, 255, 255, 255 )
 				pl:SetCollisionGroup( COLLISION_GROUP_PLAYER )
 				
-				for _, w in pairs( pl:GetWeapons( ) ) do
+				for _, w in pairs( pl:GetWeapons() ) do
 					w:SetRenderMode( RENDERMODE_NORMAL )
 					w:SetColor( 255, 255, 255, 255 )
 				end
@@ -42,9 +42,9 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #pls > 0 ) then
 			if ( enabled ) then
-				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has ghosted ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has ghosted ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
 			else
-				evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has unghosted ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has unghosted ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
 			end
 		else
 			evolve:notify( ply, evolve.colors.red, "No matching players found." )
@@ -60,7 +60,7 @@ function PLUGIN:PlayerSpawn( ply )
 		ply:SetColor( 255, 255, 255, 0 )
 		ply:SetCollisionGroup( COLLISION_GROUP_WEAPON )
 		
-		for _, w in pairs( ply:GetWeapons( ) ) do
+		for _, w in pairs( ply:GetWeapons() ) do
 			w:SetRenderMode( RENDERMODE_NONE )
 			w:SetColor( 255, 255, 255, 0 )
 		end

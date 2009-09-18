@@ -13,11 +13,11 @@ PLUGIN.AllowedCommands = {
 }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsSuperAdmin( ) ) then
+	if ( ply:EV_IsSuperAdmin() ) then
 		if ( tonumber( args[ 2 ] ) ) then
 			if ( !GetConVar( args[ 1 ] ) ) then
 				evolve:notify( ply, evolve.colors.red, "Unknown convar!" )
-			elseif ( GetConVar( args[ 1 ] ):GetInt( ) == tonumber( args[ 2 ] ) ) then
+			elseif ( GetConVar( args[ 1 ] ):GetInt() == tonumber( args[ 2 ] ) ) then
 				evolve:notify( ply, evolve.colors.red, "That convar is already set to that value." )
 			else
 				local allowed = false
@@ -30,7 +30,7 @@ function PLUGIN:Call( ply, args )
 				
 				if ( allowed ) then
 					RunConsoleCommand( args[ 1 ], args[ 2 ] )
-					evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has changed ", evolve.colors.red, args[ 1 ], evolve.colors.white, " to " .. math.Round( args[ 2 ] ) .. "." )
+					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has changed ", evolve.colors.red, args[ 1 ], evolve.colors.white, " to " .. math.Round( args[ 2 ] ) .. "." )
 				else
 					evolve:notify( ply, evolve.colors.red, "You are not allowed to change that convar!" )
 				end

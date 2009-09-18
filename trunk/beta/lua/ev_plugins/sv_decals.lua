@@ -10,10 +10,10 @@ PLUGIN.ChatCommand = "decals"
 PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
-		evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has cleaned up the decals." )
+	if ( ply:EV_IsAdmin() ) then
+		evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has cleaned up the decals." )
 		
-		for _, pl in pairs( player.GetAll( ) ) do
+		for _, pl in pairs( player.GetAll() ) do
 			pl:ConCommand( "r_cleardecals" )
 		end
 	else

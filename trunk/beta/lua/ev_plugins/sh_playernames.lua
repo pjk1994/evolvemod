@@ -30,12 +30,12 @@ else
 	PLUGIN.iconOwner = surface.GetTextureID( "gui/silkicons/key" )
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 
-	function PLUGIN:HUDPaint( )
-		for _, pl in pairs( player.GetAll( ) ) do
-			if ( pl != LocalPlayer( ) ) then
+	function PLUGIN:HUDPaint()
+		for _, pl in pairs( player.GetAll() ) do
+			if ( pl != LocalPlayer() ) then
 				local td = { }
-				td.start = LocalPlayer( ):GetShootPos( )
-				td.endpos = pl:GetShootPos( )
+				td.start = LocalPlayer():GetShootPos()
+				td.endpos = pl:GetShootPos()
 				local trace = util.TraceLine( td )
 				
 				if ( !trace.HitWorld and !pl:GetNWBool( "EV_Ghosted", false ) ) then
@@ -43,8 +43,8 @@ else
 					local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
 					local h = 24
 					
-					local drawPos = pl:GetShootPos( ):ToScreen( )
-					local distance = LocalPlayer( ):GetShootPos( ):Distance( pl:GetShootPos( ) )
+					local drawPos = pl:GetShootPos():ToScreen()
+					local distance = LocalPlayer():GetShootPos():Distance( pl:GetShootPos() )
 					drawPos.x = drawPos.x - w / 2
 					drawPos.y = drawPos.y - h - 8
 					
@@ -59,32 +59,32 @@ else
 					surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
 					if ( pl:GetNWBool( "EV_Chatting", false ) ) then
 						surface.SetTexture( self.iconChat )
-					elseif ( pl:EV_IsOwner( ) ) then
+					elseif ( pl:EV_IsOwner() ) then
 						surface.SetTexture( self.iconOwner )
-					elseif ( pl:EV_IsSuperAdmin( ) ) then
+					elseif ( pl:EV_IsSuperAdmin() ) then
 						surface.SetTexture( self.iconSuperAdmin )
-					elseif ( pl:EV_IsAdmin( ) ) then
+					elseif ( pl:EV_IsAdmin() ) then
 						surface.SetTexture( self.iconAdmin )
-					elseif ( pl:EV_IsRespected( ) ) then
+					elseif ( pl:EV_IsRespected() ) then
 						surface.SetTexture( self.iconRespected)
 					else
 						surface.SetTexture( self.iconUser )
 					end
 					surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
 					
-					local teamColor = team.GetColor( pl:Team( ) )
+					local teamColor = team.GetColor( pl:Team() )
 					teamColor.a = math.Clamp( alpha * 2, 0, 255 )
-					draw.DrawText( pl:Nick( ), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, teamColor, 0 )
+					draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, teamColor, 0 )
 				end
 				
 			end
 		end
 	end
 
-	function PLUGIN:StartChat( )
+	function PLUGIN:StartChat()
 		RunConsoleCommand( "EV_SetChatState", 1 )
 	end
-	function PLUGIN:FinishChat( )
+	function PLUGIN:FinishChat()
 		RunConsoleCommand( "EV_SetChatState", 0 )
 	end
 end

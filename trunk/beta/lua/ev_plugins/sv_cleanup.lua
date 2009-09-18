@@ -10,9 +10,9 @@ PLUGIN.ChatCommand = "cleanup"
 PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) ) then
-		evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has cleaned up the map." )
-		game.CleanUpMap( )
+	if ( ply:EV_IsAdmin() ) then
+		evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has cleaned up the map." )
+		game.CleanUpMap()
 	else
 		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end

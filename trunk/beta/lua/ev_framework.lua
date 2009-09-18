@@ -9,6 +9,7 @@ local playermeta = FindMetaTable( "Player" )
 // Constants for comfort
 evolve.constants = { }
 evolve.colors = { }
+evolve.ranks = { }
 evolve.constants.notallowed = "You are not allowed to do that!"
 evolve.colors.yellow = Color( 236, 227, 203, 255 )
 evolve.colors.blue = Color( 98, 176, 255, 255 )
@@ -19,6 +20,11 @@ evolve.category.administration = 1
 evolve.category.actions = 2
 evolve.category.punishment = 3
 evolve.category.teleportation = 4
+evolve.ranks.guest = 0
+evolve.ranks.respected = 1
+evolve.ranks.admin = 2
+evolve.ranks.superadmin = 3
+evolve.ranks.owner = 4
 
 // Prints a message to the console
 function evolve:message( msg )
@@ -43,7 +49,7 @@ if ( SERVER ) then
 						umsg.Short( v.a )
 					end
 				end
-			umsg.End( )
+			umsg.End()
 		end
 		
 		// Display in server console
@@ -51,7 +57,7 @@ if ( SERVER ) then
 		for _, v in pairs( arg ) do
 			if ( type( v ) == "string" ) then str = str .. v end
 		end
-		if ( ply ) then evolve:message( ply:Nick( ) .. " -> " .. str ) else evolve:message( str ) end
+		if ( ply ) then evolve:message( ply:Nick() .. " -> " .. str ) else evolve:message( str ) end
 	end
 else
 	function evolve:notify( ... )
@@ -64,11 +70,11 @@ else
 	end
 	
 	usermessage.Hook( "EV_Notification", function( um )
-		local argc = um:ReadShort( )
+		local argc = um:ReadShort()
 		local args = { }
 		for i = 1, argc / 2, 1 do
-			table.insert( args, Color( um:ReadShort( ), um:ReadShort( ), um:ReadShort( ), um:ReadShort( ) ) )
-			table.insert( args, um:ReadString( ) )
+			table.insert( args, Color( um:ReadShort(), um:ReadShort(), um:ReadShort(), um:ReadShort() ) )
+			table.insert( args, um:ReadString() )
 		end
 		
 		chat.AddText( unpack( args ) )
@@ -76,7 +82,7 @@ else
 end
 
 // Load plugins from the plugin directory and distribute shared and clientside plugins on the server
-function evolve:loadPlugins( )
+function evolve:loadPlugins()
 	evolve.plugins = { }
 	
 	local plugins = file.FindInLua( "ev_plugins/*.lua" )
@@ -126,12 +132,12 @@ end
 function evolve:nameMatch( ply, str )
 	if ( str == "*" ) then
 		return true
-	elseif ( str == "@" and ply:IsAdmin( ) ) then
+	elseif ( str == "@" and ply:IsAdmin() ) then
 		return true
-	elseif ( str == "!@" and !ply:IsAdmin( ) ) then
+	elseif ( str == "!@" and !ply:IsAdmin() ) then
 		return true
 	else
-		return ( string.lower( ply:Nick( ) ) == string.lower( str ) or string.find( string.lower( ply:Nick( ) ), string.lower( str ) ) )
+		return ( string.lower( ply:Nick() ) == string.lower( str ) or string.find( string.lower( ply:Nick() ), string.lower( str ) ) )
 	end
 end
 
@@ -148,7 +154,7 @@ function evolve:findPlayer( name, def, nonum )
 			if ( #name2 > 1 and tonumber( name2[ #name2 ] ) ) then table.remove( name2, #name2 ) end
 		end
 		
-		for _, ply in pairs( player.GetAll( ) ) do
+		for _, ply in pairs( player.GetAll() ) do
 			for _, pm in pairs( name2 ) do
 				if ( self:nameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
 			end
@@ -165,12 +171,12 @@ function evolve:createPlayerList( tbl, notall )
 	if ( notall ) then lword = "or" end
 	
 	if ( #tbl == 1 ) then
-		lst = tbl[1]:Nick( )
-	elseif ( #tbl == #player.GetAll( ) ) then
+		lst = tbl[1]:Nick()
+	elseif ( #tbl == #player.GetAll() ) then
 		lst = "everyone"
 	else
 		for i = 1, #tbl do
-			if ( i == #tbl ) then lst = lst .. " " .. lword .. " " .. tbl[i]:Nick( ) elseif ( i == 1 ) then lst = tbl[i]:Nick( ) else lst = lst .. ", " .. tbl[i]:Nick( ) end
+			if ( i == #tbl ) then lst = lst .. " " .. lword .. " " .. tbl[i]:Nick() elseif ( i == 1 ) then lst = tbl[i]:Nick() else lst = lst .. ", " .. tbl[i]:Nick() end
 		end
 	end
 	
@@ -178,34 +184,38 @@ function evolve:createPlayerList( tbl, notall )
 end
 
 // Custom group checking functions
-function playermeta:EV_IsRespected( )
-	return self:GetNWString( "EV_UserGroup" ) == "respected" or self:EV_IsAdmin( )
+function playermeta:EV_IsRespected()
+	return self:GetNWString( "EV_UserGroup" ) == "respected" or self:EV_IsAdmin()
 end
 
-function playermeta:EV_IsAdmin( )
-	return self:GetNWString( "EV_UserGroup" ) == "admin" or self:IsAdmin( ) or self:EV_IsSuperAdmin( )
+function playermeta:EV_IsAdmin()
+	return self:GetNWString( "EV_UserGroup" ) == "admin" or self:IsAdmin() or self:EV_IsSuperAdmin()
 end
 
-function playermeta:EV_IsSuperAdmin( )
-	return self:GetNWString( "EV_UserGroup" ) == "superadmin" or self:IsSuperAdmin( ) or self:EV_IsOwner( )
+function playermeta:EV_IsSuperAdmin()
+	return self:GetNWString( "EV_UserGroup" ) == "superadmin" or self:IsSuperAdmin() or self:EV_IsOwner()
 end
 
-function playermeta:EV_IsOwner( )
+function playermeta:EV_IsOwner()
 	return self:GetNWString( "EV_UserGroup" ) == "owner"
 end
 
-function playermeta:EV_GetRank( )
-	if ( self:EV_IsOwner( ) ) then return "owner"
-	elseif ( self:EV_IsSuperAdmin( ) ) then return "superadmin"
-	elseif ( self:EV_IsAdmin( ) ) then return "admin"
-	elseif ( self:EV_IsRespected( ) ) then return "respected" end
+function playermeta:EV_IsRank( rank )
+	return ( rank == evolve.ranks.guest or ( rank == evolve.ranks.admin and self:EV_IsAdmin() ) or ( rank == evolve.ranks.superadmin and self:EV_IsSuperAdmin() ) or ( rank == evolve.ranks.owner and self:EV_IsOwner() ) )
+end
+
+function playermeta:EV_GetRank()
+	if ( self:EV_IsOwner() ) then return "owner"
+	elseif ( self:EV_IsSuperAdmin() ) then return "superadmin"
+	elseif ( self:EV_IsAdmin() ) then return "admin"
+	elseif ( self:EV_IsRespected() ) then return "respected" end
 	return "guest"
 end
 
 // Console functions
-function entmeta:Nick( ) if ( !self:IsValid( ) ) then return "Console" end end
-function entmeta:EV_IsRespected( ) if ( !self:IsValid( ) ) then return true end end
-function entmeta:EV_IsAdmin( ) if ( !self:IsValid( ) ) then return true end end
-function entmeta:EV_IsSuperAdmin( ) if ( !self:IsValid( ) ) then return true end end
-function entmeta:EV_IsOwner( ) if ( !self:IsValid( ) ) then return true end end
-function entmeta:EV_GetRank( ) if ( !self:IsValid( ) ) then return "owner" end end
+function entmeta:Nick() if ( !self:IsValid() ) then return "Console" end end
+function entmeta:EV_IsRespected() if ( !self:IsValid() ) then return true end end
+function entmeta:EV_IsAdmin() if ( !self:IsValid() ) then return true end end
+function entmeta:EV_IsSuperAdmin() if ( !self:IsValid() ) then return true end end
+function entmeta:EV_IsOwner() if ( !self:IsValid() ) then return true end end
+function entmeta:EV_GetRank() if ( !self:IsValid() ) then return "owner" end end

@@ -10,17 +10,17 @@ PLUGIN.ChatCommand = "tp"
 PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin( ) and ply:IsValid( ) ) then	
+	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
 		local pls = evolve:findPlayer( args, ply )
 				
 		if ( #pls > 0 ) then
-			local tr = ply:GetEyeTrace( )
+			local tr = ply:GetEyeTrace()
 			local pos = tr.HitPos
 			for i, pl in pairs( pls ) do
 				pl:SetPos( pos + i * tr.HitNormal * 128 )
 			end
 			
-			evolve:notify( evolve.colors.blue, ply:Nick( ), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
 		else
 			evolve:notify( ply, evolve.colors.red, "No matching players found." )
 		end
