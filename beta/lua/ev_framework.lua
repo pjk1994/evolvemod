@@ -197,7 +197,11 @@ function playermeta:EV_IsSuperAdmin()
 end
 
 function playermeta:EV_IsOwner()
-	return self:GetNWString( "EV_UserGroup" ) == "owner"
+	if ( SERVER ) then
+		return self:GetNWString( "EV_UserGroup" ) == "owner" or self:IsListenServerHost()
+	else
+		return self:GetNWString( "EV_UserGroup" ) == "owner"
+	end
 end
 
 function playermeta:EV_IsRank( rank )

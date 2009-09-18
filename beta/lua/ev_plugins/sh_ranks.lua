@@ -99,12 +99,12 @@ function PLUGIN:Call( ply, args )
 			if ( pl ) then
 				if ( #args <= 1 ) then
 					local rank, prefix = self:getRealName( pl:EV_GetRank() )
-					evolve:notify( ply, evolve.colors.blue, pl:Nick(), evolve.colors.white, " is ranked " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
+					evolve:notify( ply, evolve.colors.blue, pl:Nick(), evolve.colors.white, " is ranked as " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
 				else
 					local realName = self:getRealName( args[2] )
 					
 					if ( realName != "invalid" ) then
-						if ( !pl:EV_IsOwner() or ( pl:EV_IsOwner() and ply == NULL ) ) then
+						if ( !pl:EV_IsOwner() or ( pl:EV_IsOwner() and ( ply == NULL or ply:IsListenServerHost() ) ) ) then
 							if ( ( ( realName == "Respected" or realName == "Guest" ) and !pl:EV_IsAdmin() ) or ply:EV_IsOwner() ) then
 								self:setRank( pl, args[2] )
 								local rank, prefix = self:getRealName( args[2] )
