@@ -32,7 +32,7 @@ elseif ( CLIENT ) then
 	end
 	
 	function PLUGIN:HUDPaint()
-		if ( CurTime() > self.LastPing + 5 ) then
+		if ( CurTime() > self.LastPing + 5 and evolve.installed ) then
 			surface.SetDrawColor( 255, 255, 255, 255 )
 			surface.DrawRect( 0, 0, ScrW(), ScrH() )
 			
