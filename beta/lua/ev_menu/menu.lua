@@ -4,15 +4,16 @@
 
 evolve.menuw = 600
 evolve.menuh = 400
-evolve.menutabs = { }
+evolve.menutabs = {}
 
-function evolve:registerMenuTab( funcBuild, funcUpdate, minRank )
-	local tab = { }
-	tab.build = funcBuild
-	tab.update = funcUpdate
-	tab.rank = minRank
-	
+function evolve:registerMenuTab( tab )
 	table.insert( self.menutabs, tab )
+end
+
+function evolve:loadMenuTabs()
+	for _, v in pairs( file.FindInLua( "ev_menu/tab_*.lua" ) ) do
+		include( "ev_menu/" .. v )
+	end
 end
 
 function evolve:buildMenu()	
@@ -33,7 +34,7 @@ function evolve:buildMenu()
 	for _, v in pairs( file.FindInLua( "ev_menu/tab_*.lua" ) ) do
 		include( "ev_menu/" .. v )
 		
-		self.menutabs[ #self.menutabs ].build()
+		self.menutabs[ #self.menutabs ]:Initialize()
 	end
 end
 
@@ -41,15 +42,15 @@ function evolve:openMenu()
 	if ( !LocalPlayer():EV_IsAdmin() ) then return false end
 	if ( !self.menu ) then self:buildMenu() end
 	
-	for _, tab in pairs( self.menutabs ) do
-		tab.update()
+	for _, tab in ipairs( self.menutabs ) do
+		tab:Update()
 	end
 	
 	self.menu:SetVisible( true )
 end
 
 function evolve:closeMenu()
-	self.menu:SetVisible( false )
+	if ( self.menu ) then self.menu:SetVisible( false ) end
 end
 
 concommand.Add( "+ev_menu", function()

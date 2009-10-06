@@ -3,7 +3,7 @@
 -------------------------------------------------------------------------------------------------------------------------*/
 
 // Set up Evolve table
-evolve = { }
+evolve = {}
 
 // Requirements
 require( "glon" )
@@ -16,6 +16,7 @@ for _, v in pairs( file.FindInLua( "ev_menu/*.lua" ) ) do
 	AddCSLuaFile( "ev_menu/" .. v )
 end
 
-// Load serverside initialization file
+// Load serverside files
 include( "ev_framework.lua" )
+include( "ev_menu/menu.lua" )
 include( "ev_sv_init.lua" )

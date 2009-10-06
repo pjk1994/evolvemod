@@ -10,6 +10,7 @@ PLUGIN.ChatCommand = "convar"
 PLUGIN.Usage = "<limit, e.g. sbox_maxthrusters or ai_disabled> <value>"
 PLUGIN.AllowedCommands = {
 	"sbox_",
+	"g_"
 }
 
 function PLUGIN:Call( ply, args )
