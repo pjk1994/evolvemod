@@ -3,9 +3,9 @@
 -------------------------------------------------------------------------------------------------------------------------*/
 
 // Set up evolve table
-evolve = { }
+evolve = {}
 
-// Load clientside initialization file
+// Load clientside files
 include( "ev_framework.lua" )
 include( "ev_menu/menu.lua" )
 include( "ev_cl_init.lua" )

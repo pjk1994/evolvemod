@@ -81,6 +81,11 @@ else
 	end )
 end
 
+// Convert bool to int
+function evolve:boolToInt( bool )
+	if ( bool ) then return 1 else return 0 end
+end
+
 // Load plugins from the plugin directory and distribute shared and clientside plugins on the server
 function evolve:loadPlugins()
 	evolve.plugins = { }
@@ -120,6 +125,18 @@ hook.Call = function( name, gm, ... )
 				return ret
 			elseif ( !res ) then
 				evolve:notify( evolve.colors.red, "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )
+				evolve:notify( evolve.colors.red, ret )
+			end
+		end
+	end
+	
+	for _, tab in pairs( evolve.menutabs ) do
+		if ( name != "Initialize" and tab[ name ] ) then
+			res, ret = pcall( tab[name], tab, ... )
+			if ( res and ret != nil ) then
+				return ret
+			elseif ( !res ) then
+				evolve:notify( evolve.colors.red, "Hook '" .. name .. "' in tab '" .. tab.Title .. "' failed with error:" )
 				evolve:notify( evolve.colors.red, ret )
 			end
 		end
@@ -181,6 +198,22 @@ function evolve:createPlayerList( tbl, notall )
 	end
 	
 	return lst
+end
+
+function evolve:getRealName( rankname )
+	if ( rankname == "owner" ) then
+		return "Owner", "an"
+	elseif ( rankname == "superadmin" ) then
+		return "Super Admin", "a"
+	elseif ( rankname == "admin" ) then
+		return "Admin", "an"
+	elseif ( rankname == "respected" ) then
+		return "Respected", "a"
+	elseif ( rankname == "guest" ) then
+		return "Guest", "a"
+	else
+		return "invalid"
+	end
 end
 
 // Custom group checking functions

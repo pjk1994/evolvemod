@@ -9,22 +9,6 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rank"
 PLUGIN.Usage = "<player> [rank]"
 
-function PLUGIN:getRealName( rankname )
-	if ( rankname == "owner" ) then
-		return "Owner", "an"
-	elseif ( rankname == "superadmin" ) then
-		return "Super Admin", "a"
-	elseif ( rankname == "admin" ) then
-		return "Admin", "an"
-	elseif ( rankname == "respected" ) then
-		return "Respected", "a"
-	elseif ( rankname == "guest" ) then
-		return "Guest", "a"
-	else
-		return "invalid"
-	end
-end
-
 function PLUGIN:rankGroup( ply, rank )
 	if ( rank == "owner" or rank == "superadmin" ) then
 		ply:SetUserGroup( "superadmin" )
@@ -58,8 +42,11 @@ function PLUGIN:rank( ply )
 		end
 	end
 	
-	ply:SetNWString( "EV_UserGroup", ply:GetNWString( "UserGroup", "guest" ) )
-	self:rankGroup( ply, ply:GetNWString( "UserGroup", "guest" ) )
+	local usergroup = ply:GetNWString( "UserGroup", "guest" )
+	if ( usergroup == "user" ) then usergroup = "guest" end
+	
+	ply:SetNWString( "EV_UserGroup", usergroup )
+	self:rankGroup( ply, usergroup )
 	
 	hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 end
@@ -98,16 +85,16 @@ function PLUGIN:Call( ply, args )
 			pl = pl[1]
 			if ( pl ) then
 				if ( #args <= 1 ) then
-					local rank, prefix = self:getRealName( pl:EV_GetRank() )
+					local rank, prefix = evolve:getRealName( pl:EV_GetRank() )
 					evolve:notify( ply, evolve.colors.blue, pl:Nick(), evolve.colors.white, " is ranked as " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
 				else
-					local realName = self:getRealName( args[2] )
+					local realName = evolve:getRealName( args[2] )
 					
 					if ( realName != "invalid" ) then
 						if ( !pl:EV_IsOwner() or ( pl:EV_IsOwner() and ( ply == NULL or ply:IsListenServerHost() ) ) ) then
 							if ( ( ( realName == "Respected" or realName == "Guest" ) and !pl:EV_IsAdmin() ) or ply:EV_IsOwner() ) then
 								self:setRank( pl, args[2] )
-								local rank, prefix = self:getRealName( args[2] )
+								local rank, prefix = evolve:getRealName( args[2] )
 								evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick(), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
 							else
 								evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )

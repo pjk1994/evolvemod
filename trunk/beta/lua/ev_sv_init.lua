@@ -9,14 +9,7 @@ print( "=====================================================\n" )
 
 // Load plugins
 evolve:loadPlugins()
-
-// Console command to reload all plugins
-concommand.Add( "ev_reloadplugins", function( ply, com, args )
-	if ( ply == NULL ) then
-		evolve:loadPlugins()
-		evolve:message( "Evolve plugins reloaded!" )
-	end
-end )
+evolve:loadMenuTabs()
 
 // Tell the clients Evolve is installed on the server
 hook.Add( "PlayerInitialSpawn", "EvolveInit", function( ply )
@@ -25,4 +18,6 @@ hook.Add( "PlayerInitialSpawn", "EvolveInit", function( ply )
 end )
 
 // Add Evolve to the tag list (Probably beta only)
-RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString() .. ",Evolve" )
+if ( !string.find( GetConVar( "sv_tags" ):GetString(), "Evolve" ) ) then
+	RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString() .. ",Evolve" )
+end
