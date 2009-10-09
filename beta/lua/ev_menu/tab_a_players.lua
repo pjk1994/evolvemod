@@ -132,9 +132,17 @@ end
 
 function TAB:RebuildPlayerList()
 	self.PlayerList:Clear()
-	self.PlayerList.Players = { }
+	self.PlayerList.Players = {}
+	
+	local tempList = {}
 	
 	for _, ply in pairs( player.GetAll() ) do
+		table.insert( tempList, { Ply = ply, Nick = ply:Nick() } )
+	end
+	table.SortByMember( tempList, "Nick", function( a, b ) return a > b end )
+	
+	for _, entry in ipairs( tempList ) do
+		local ply = entry.Ply
 		local li = self.PlayerList:AddItem( "" )
 		li.Value = ply:Nick()
 		

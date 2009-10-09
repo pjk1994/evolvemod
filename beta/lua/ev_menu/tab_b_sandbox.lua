@@ -43,7 +43,7 @@ function TAB:ApplySettings()
 	end
 	
 	for _, v in pairs( self.ConVarCheckboxes ) do
-		if ( GetConVar( v.ConVar ):GetInt() != evolve:boolToInt( v:GetChecked() ) ) then
+		if ( GetConVar( v.ConVar ):GetBool() != v:GetChecked() ) then
 			RunConsoleCommand( "ev", "convar", v.ConVar, evolve:boolToInt( v:GetChecked() ) * ( v.OnValue or 1 ) )
 		end
 	end
@@ -113,10 +113,10 @@ function TAB:Initialize()
 		local cvCheckbox = vgui.Create( "DCheckBoxLabel", self.Settings )
 		cvCheckbox:SetText( cv[ 2 ] )
 		cvCheckbox:SetWide( self.Settings:GetWide() - 15 )
-		cvCheckbox:SetValue( GetConVar( cv[ 1 ] ):GetInt() )
+		cvCheckbox:SetValue( GetConVar( cv[ 1 ] ):GetInt() > 0 )
 		cvCheckbox.ConVar = cv[ 1 ]
 		cvCheckbox.OnValue = cv[ 3 ]
-		cvCheckbox.DoClick = function()
+		cvCheckbox.DoClick = function( self )
 			TAB:ApplySettings()
 		end
 		self.Settings:AddItem( cvCheckbox )
