@@ -39,7 +39,10 @@ function evolve:buildMenu()
 end
 
 function evolve:openMenu()
-	if ( !LocalPlayer():EV_IsAdmin() ) then return false end
+	if ( !LocalPlayer():EV_IsAdmin() ) then
+		chat.AddText( evolve.colors.red, evolve.constants.notallowed )
+		return false
+	end
 	if ( !self.menu ) then self:buildMenu() end
 	
 	for _, tab in ipairs( self.menutabs ) do
