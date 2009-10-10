@@ -9,11 +9,11 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = nil
 PLUGIN.Usage = nil
 
-function PLUGIN:getCommand( msg )
+function PLUGIN:GetCommand( msg )
 	return string.match( msg, "%w+" )
 end
 
-function PLUGIN:getArguments( msg )
+function PLUGIN:GetArguments( msg )
 	local args = { }
 	local i = 1
 	
@@ -27,16 +27,16 @@ end
 
 function PLUGIN:PlayerSay( ply, msg )
 	if ( string.Left( msg, 1 ) == "!" ) then
-		local command = self:getCommand( msg )
-		local args = self:getArguments( msg )
+		local command = self:GetCommand( msg )
+		local args = self:GetArguments( msg )
 		
 		for _, plugin in pairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
 				res, ret = pcall( plugin.Call, plugin, ply, args )
 				
 				if ( !res ) then
-					evolve:notify( evolve.colors.red, "Plugin '" .. plugin.Title .. "' failed with error:" )
-					evolve:notify( evolve.colors.red, ret )
+					evolve:Notify( evolve.colors.red, "Plugin '" .. plugin.Title .. "' failed with error:" )
+					evolve:Notify( evolve.colors.red, ret )
 				end
 				
 				//plugin:Call( ply, args )
@@ -44,8 +44,8 @@ function PLUGIN:PlayerSay( ply, msg )
 			end
 		end
 		
-		evolve:notify( ply, evolve.colors.red, "Unknown command '" .. ( command or "" ) .. "'." )
+		evolve:Notify( ply, evolve.colors.red, "Unknown command '" .. ( command or "" ) .. "'." )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

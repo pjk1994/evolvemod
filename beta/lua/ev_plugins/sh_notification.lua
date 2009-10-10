@@ -25,12 +25,12 @@ function PLUGIN:Call( ply, args )
 			umsg.End()
 			
 			for _, pl in pairs( player.GetAll() ) do
-				if ( pl:EV_IsAdmin() ) then evolve:notify( pl, evolve.colors.blue, ply:Nick(), evolve.colors.white, " has added a notice." ) end
+				if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.blue, ply:Nick(), evolve.colors.white, " has added a notice." ) end
 			end
-			evolve:notify( evolve.colors.red, msg )
+			evolve:Notify( evolve.colors.red, msg )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -44,4 +44,4 @@ if ( CLIENT ) then
 	end )
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

@@ -13,11 +13,11 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		if ( #args > 0 ) then
 			local msg = table.concat( args, " " )
-			evolve:notify( pl, evolve.colors.red, "(ADMIN)", evolve.colors.white, " " .. msg )
+			evolve:Notify( pl, evolve.colors.red, "(ADMIN)", evolve.colors.white, " " .. msg )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

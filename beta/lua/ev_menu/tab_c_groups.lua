@@ -18,4 +18,4 @@ function TAB:Update()
 	
 end
 
-evolve:registerMenuTab( TAB )
+evolve:RegisterMenuTab( TAB )

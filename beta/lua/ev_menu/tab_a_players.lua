@@ -289,4 +289,4 @@ function TAB:PlayerInitialSpawn( ply )
 	ply:SetNWString( "SteamID", ply:SteamID() )
 end
 
-evolve:registerMenuTab( TAB )
+evolve:RegisterMenuTab( TAB )

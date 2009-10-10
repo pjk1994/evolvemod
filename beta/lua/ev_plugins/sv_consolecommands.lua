@@ -9,7 +9,7 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = nil
 PLUGIN.Usage = nil
 
-function PLUGIN:getArguments( allargs )
+function PLUGIN:GetArguments( allargs )
 	local newargs = { }
 	for i = 2, #allargs do
 		table.insert( newargs, allargs[i] )
@@ -17,9 +17,9 @@ function PLUGIN:getArguments( allargs )
 	return newargs
 end
 
-function PLUGIN:cCommand( ply, com, cargs )
+function PLUGIN:CCommand( ply, com, cargs )
 	local command = cargs[1]
-	local args = self:getArguments( cargs )
+	local args = self:GetArguments( cargs )
 	
 	for _, plugin in pairs( evolve.plugins ) do
 		if ( plugin.ChatCommand == string.lower( command or "" ) ) then
@@ -28,8 +28,8 @@ function PLUGIN:cCommand( ply, com, cargs )
 		end
 	end
 	
-	evolve:message( "Unknown command '" .. command .. "'" )
+	evolve:Message( "Unknown command '" .. command .. "'" )
 end
-concommand.Add( "ev", function( ply, com, args ) PLUGIN:cCommand( ply, com, args ) end )
+concommand.Add( "ev", function( ply, com, args ) PLUGIN:CCommand( ply, com, args ) end )
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

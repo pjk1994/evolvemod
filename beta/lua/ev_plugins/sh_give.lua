@@ -11,11 +11,11 @@ PLUGIN.Usage = "<players> <weapon>"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:findPlayer( args, ply )
+		local pls = evolve:FindPlayer( args, ply )
 		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 		local wep = ""
 		if ( #args < 2 ) then
-			evolve:notify( ply, evolve.colors.red, "No weapon specified!" )
+			evolve:Notify( ply, evolve.colors.red, "No weapon specified!" )
 		else
 			wep = args[ #args ]
 			
@@ -24,13 +24,13 @@ function PLUGIN:Call( ply, args )
 					pl:Give( wep )
 				end
 				
-				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has given ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " a " .. wep .. "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has given ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " a " .. wep .. "." )
 			else
-				evolve:notify( ply, evolve.colors.red, "No matching players found." )
+				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 			end
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -58,4 +58,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

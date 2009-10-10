@@ -12,14 +12,14 @@ PLUGIN.Usage = nil
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		if ( args[1] and file.Exists( "../maps/" .. args[1] .. ".bsp" ) ) then
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has changed the map to ", evolve.colors.red, args[1], evolve.colors.white, "." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has changed the map to ", evolve.colors.red, args[1], evolve.colors.white, "." )
 			timer.Simple( 0.5, function() RunConsoleCommand( "changelevel", args[1] ) end )
 		else
-			evolve:notify( ply, evolve.colors.red, "Specified map not found!" )
+			evolve:Notify( ply, evolve.colors.red, "Specified map not found!" )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

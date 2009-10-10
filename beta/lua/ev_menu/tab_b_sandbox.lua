@@ -44,7 +44,7 @@ function TAB:ApplySettings()
 	
 	for _, v in pairs( self.ConVarCheckboxes ) do
 		if ( GetConVar( v.ConVar ):GetBool() != v:GetChecked() ) then
-			RunConsoleCommand( "ev", "convar", v.ConVar, evolve:boolToInt( v:GetChecked() ) * ( v.OnValue or 1 ) )
+			RunConsoleCommand( "ev", "convar", v.ConVar, evolve:BoolToInt( v:GetChecked() ) * ( v.OnValue or 1 ) )
 		end
 	end
 end
@@ -139,4 +139,4 @@ function TAB:Initialize()
 	if ( LocalPlayer():EV_IsSuperAdmin() ) then self.Block:SetPos( self.Block:GetWide(), 0 ) end
 end
 
-evolve:registerMenuTab( TAB )
+evolve:RegisterMenuTab( TAB )

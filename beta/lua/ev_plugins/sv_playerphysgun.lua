@@ -29,4 +29,4 @@ function PLUGIN:EntityTakeDamage( ent, inflictor, attacker, dmg, dmginfo )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

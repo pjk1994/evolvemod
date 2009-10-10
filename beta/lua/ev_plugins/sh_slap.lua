@@ -11,7 +11,7 @@ PLUGIN.Usage = "[players] [damage]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:findPlayer( args, ply, true )
+		local pls = evolve:FindPlayer( args, ply, true )
 		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 		local dmg = 10
 		if ( tonumber( args[ #args ] ) ) then dmg = math.abs( tonumber( args[ #args ] ) ) end
@@ -24,12 +24,12 @@ function PLUGIN:Call( ply, args )
 		end
 		
 		if ( #pls > 0 ) then
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has slapped ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " with " .. dmg .. " damage." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has slapped ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " with " .. dmg .. " damage." )
 		else
-			evolve:notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -46,4 +46,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

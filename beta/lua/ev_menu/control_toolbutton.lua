@@ -59,10 +59,6 @@ function PANEL:OnCursorMoved( x, y )
 	for _, b in pairs( ToolButtons ) do b.m_bSelected = false end
 	self.m_bSelected = true
 	
-	if ( input.IsMouseDown( MOUSE_LEFT ) ) then
-		self:OnSelect()
-	end
-	
 end
 
 

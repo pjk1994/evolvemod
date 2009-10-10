@@ -9,7 +9,7 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rocket"
 PLUGIN.Usage = "[players]"
 
-function evolve:explode( ply )
+function evolve:Explode( ply )
 	local explosive = ents.Create( "env_explosion" )
 	explosive:SetPos( ply:GetPos() )
 	explosive:SetOwner( ply )
@@ -23,21 +23,21 @@ end
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local victims = evolve:findPlayer( args, ply )
+		local victims = evolve:FindPlayer( args, ply )
 		if ( #victims > 0 and !victims[1]:IsValid() ) then victims = { } end
 		
 		for _, victim in pairs( victims ) do
 			victim:SetVelocity( Vector( 0, 0, 4000 ) )
-			timer.Simple( 1, evolve.explode, evolve, victim )
+			timer.Simple( 1, evolve.Explode, evolve, victim )
 		end
 		
 		if ( #victims > 0 ) then
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has rocketed ", evolve.colors.red, evolve:createPlayerList( victims ), evolve.colors.white, "." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has rocketed ", evolve.colors.red, evolve:CreatePlayerList( victims ), evolve.colors.white, "." )
 		else
-			evolve:notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -49,4 +49,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )
