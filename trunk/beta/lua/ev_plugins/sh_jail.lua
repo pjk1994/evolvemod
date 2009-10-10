@@ -12,7 +12,7 @@ PLUGIN.Usage = "[players] [1/0]"
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		if ( evolve.jailPos ) then
-			local pls = evolve:findPlayer( args, ply, true )
+			local pls = evolve:FindPlayer( args, ply, true )
 			if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 			local enabled = true
 			if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
@@ -34,18 +34,18 @@ function PLUGIN:Call( ply, args )
 			
 			if ( #pls > 0 ) then
 				if ( enabled ) then
-					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has jailed ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has jailed ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
 				else
-					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has released ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has released ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
 				end
 			else
-				evolve:notify( ply, evolve.colors.red, "No matching players found." )
+				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 			end
 		else
-			evolve:notify( ply, evolve.colors.red, "No jail position set yet." )
+			evolve:Notify( ply, evolve.colors.red, "No jail position set yet." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -86,7 +86,7 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )
 
 local PLUGIN = { }
 PLUGIN.Title = "Set jail"
@@ -97,10 +97,10 @@ PLUGIN.ChatCommand = "setjail"
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		evolve.jailPos = ply:GetEyeTrace().HitPos
-		evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the jail position." )
+		evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the jail position." )
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

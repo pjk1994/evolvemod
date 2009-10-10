@@ -11,7 +11,7 @@ PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
-		local pls = evolve:findPlayer( args, ply )
+		local pls = evolve:FindPlayer( args, ply )
 				
 		if ( #pls > 0 ) then
 			local tr = ply:GetEyeTrace()
@@ -20,12 +20,12 @@ function PLUGIN:Call( ply, args )
 				pl:SetPos( pos + i * tr.HitNormal * 128 )
 			end
 			
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, "." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
 		else
-			evolve:notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -37,4 +37,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

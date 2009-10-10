@@ -14,7 +14,7 @@ function PLUGIN:Call( ply, args )
 end
 
 usermessage.Hook( "EV_ShowTime", function()
-	evolve:notify( evolve.colors.white, "It is now ", evolve.colors.blue, os.date( "%H:%M" ), evolve.colors.white, "." )
+	evolve:Notify( evolve.colors.white, "It is now ", evolve.colors.blue, os.date( "%H:%M" ), evolve.colors.white, "." )
 end )
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

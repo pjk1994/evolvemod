@@ -17,9 +17,9 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsSuperAdmin() ) then
 		if ( tonumber( args[ 2 ] ) ) then
 			if ( !GetConVar( args[ 1 ] ) ) then
-				evolve:notify( ply, evolve.colors.red, "Unknown convar!" )
+				evolve:Notify( ply, evolve.colors.red, "Unknown convar!" )
 			elseif ( GetConVar( args[ 1 ] ):GetInt() == tonumber( args[ 2 ] ) ) then
-				evolve:notify( ply, evolve.colors.red, "That convar is already set to that value." )
+				evolve:Notify( ply, evolve.colors.red, "That convar is already set to that value." )
 			else
 				local allowed = false
 				for _, v in pairs( self.AllowedCommands ) do
@@ -31,17 +31,17 @@ function PLUGIN:Call( ply, args )
 				
 				if ( allowed ) then
 					RunConsoleCommand( args[ 1 ], args[ 2 ] )
-					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has changed ", evolve.colors.red, args[ 1 ], evolve.colors.white, " to " .. math.Round( args[ 2 ] ) .. "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has changed ", evolve.colors.red, args[ 1 ], evolve.colors.white, " to " .. math.Round( args[ 2 ] ) .. "." )
 				else
-					evolve:notify( ply, evolve.colors.red, "You are not allowed to change that convar!" )
+					evolve:Notify( ply, evolve.colors.red, "You are not allowed to change that convar!" )
 				end
 			end
 		else
-			evolve:notify( ply, evolve.colors.red, "The value must be a number!" )
+			evolve:Notify( ply, evolve.colors.red, "The value must be a number!" )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

@@ -11,13 +11,13 @@ PLUGIN.Usage = "<player> <time> [reason]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsSuperAdmin() ) then
-		local pl = evolve:findPlayer( args[1] )
+		local pl = evolve:FindPlayer( args[1] )
 		if ( !pl[1] and string.match( args[1] or "", "^STEAM_[0-5]:[0-9]:[0-9]+$" ) ) then
 			pl[1] = args[1]
 		end
 		
 		if ( #pl > 1 ) then
-			evolve:notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:createPlayerList( pl, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
 		elseif ( #pl == 1 ) then
 			local time = tonumber( args[2] ) or 5
 			local steamid = string.match( args[1], "^STEAM_[0-5]:[0-9]:[0-9]+$" )
@@ -31,7 +31,7 @@ function PLUGIN:Call( ply, args )
 				if ( time == 0 ) then it.banEnd = 0 else it.banEnd = os.time() + tonumber( time ) * 60 end
 				it.banReason = reason
 				table.insert( self.bans, it )
-				self:save()
+				self:Save()
 				
 				for _, v in pairs( ents.GetAll() ) do
 					if ( !steamid and v:GetNWString( "Owner" ) == pl[1]:Nick() ) then v:Remove() end
@@ -49,12 +49,12 @@ function PLUGIN:Call( ply, args )
 					msg2 = " for " .. time .. " minutes"
 				end
 				
-				if ( evolve:getPlugin( "Player Info" ):nickBySteamID( steamid ) ) then
-					nick = " (" .. evolve:getPlugin( "Player Info" ):nickBySteamID( steamid ) .. ")"
+				if ( evolve:Plugin( "Player Info" ):NickBySteamID( steamid ) ) then
+					nick = " (" .. evolve:Plugin( "Player Info" ):NickBySteamID( steamid ) .. ")"
 				end
 				
 				if ( steamid ) then
-					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, steamid .. nick, evolve.colors.white, msg2 .. treason .. "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, steamid .. nick, evolve.colors.white, msg2 .. treason .. "." )
 					
 					for _, ply in pairs( player.GetAll() ) do
 						if ( ply:SteamID() == steamid ) then
@@ -63,17 +63,17 @@ function PLUGIN:Call( ply, args )
 						end
 					end
 				else
-					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, msg2 .. treason .. "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has " .. string.lower( msg ) .. " ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, msg2 .. treason .. "." )
 					pl[1]:Kick( msg .. msg2 .. " (" .. reason .. ")" )
 				end
 			else
-				evolve:notify( ply, evolve.colors.red, "No valid time specified!" )
+				evolve:Notify( ply, evolve.colors.red, "No valid time specified!" )
 			end
 		else
-			evolve:notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -85,7 +85,7 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-function PLUGIN:load()
+function PLUGIN:Load()
 	if ( file.Exists( "ev_bans.txt" ) ) then
 		self.bans = glon.decode( file.Read( "ev_bans.txt" ) )
 	else
@@ -93,12 +93,12 @@ function PLUGIN:load()
 	end
 end
 
-function PLUGIN:save()
+function PLUGIN:Save()
 	file.Write( "ev_bans.txt", glon.encode( self.bans ) )
 end
 
-function PLUGIN:checkBan( ply )
-	if ( !self.bans ) then self:load() end
+function PLUGIN:CheckBan( ply )
+	if ( !self.bans ) then self:Load() end
 	
 	for i, item in pairs( self.bans ) do
 		if ( item.steamID == ply:SteamID() and ( item.banEnd > os.time() or item.banEnd == 0 ) ) then
@@ -113,14 +113,14 @@ function PLUGIN:checkBan( ply )
 		end
 	end
 	
-	self:save()
+	self:Save()
 end
 
 function PLUGIN:PlayerSpawn( ply )
 	if ( !ply.EV_CheckedBan ) then
-		self:checkBan( ply )
+		self:CheckBan( ply )
 		ply.EV_CheckedBan = true
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

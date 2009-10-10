@@ -6,17 +6,17 @@ evolve.menuw = 600
 evolve.menuh = 400
 evolve.menutabs = {}
 
-function evolve:registerMenuTab( tab )
+function evolve:RegisterMenuTab( tab )
 	table.insert( self.menutabs, tab )
 end
 
-function evolve:loadMenuTabs()
+function evolve:LoadMenuTabs()
 	for _, v in pairs( file.FindInLua( "ev_menu/tab_*.lua" ) ) do
 		include( "ev_menu/" .. v )
 	end
 end
 
-function evolve:buildMenu()	
+function evolve:BuildMenu()	
 	self.menu = vgui.Create( "DFrame" )
 	self.menu:SetSize( self.menuw, self.menuh )
 	self.menu:SetPos( ScrW() / 2 - self.menuw / 2, ScrH() / 2 - self.menuh / 2 )
@@ -38,12 +38,12 @@ function evolve:buildMenu()
 	end
 end
 
-function evolve:openMenu()
+function evolve:OpenMenu()
 	if ( !LocalPlayer():EV_IsAdmin() ) then
 		chat.AddText( evolve.colors.red, evolve.constants.notallowed )
 		return false
 	end
-	if ( !self.menu ) then self:buildMenu() end
+	if ( !self.menu ) then self:BuildMenu() end
 	
 	for _, tab in ipairs( self.menutabs ) do
 		tab:Update()
@@ -52,13 +52,13 @@ function evolve:openMenu()
 	self.menu:SetVisible( true )
 end
 
-function evolve:closeMenu()
+function evolve:CloseMenu()
 	if ( self.menu ) then self.menu:SetVisible( false ) end
 end
 
 concommand.Add( "+ev_menu", function()
-	evolve:openMenu()
+	evolve:OpenMenu()
 end )
 concommand.Add( "-ev_menu", function()
-	evolve:closeMenu()
+	evolve:CloseMenu()
 end )

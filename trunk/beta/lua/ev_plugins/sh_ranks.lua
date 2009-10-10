@@ -9,7 +9,7 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rank"
 PLUGIN.Usage = "<player> [rank]"
 
-function PLUGIN:rankGroup( ply, rank )
+function PLUGIN:RankGroup( ply, rank )
 	if ( rank == "owner" or rank == "superadmin" ) then
 		ply:SetUserGroup( "superadmin" )
 	elseif ( rank == "admin" ) then
@@ -19,7 +19,7 @@ function PLUGIN:rankGroup( ply, rank )
 	end
 end
 
-function PLUGIN:load()
+function PLUGIN:Load()
 	if ( file.Exists( "ev_ranks.txt" ) ) then
 		self.playerRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
 	else
@@ -27,16 +27,16 @@ function PLUGIN:load()
 	end
 end
 
-function PLUGIN:save()
+function PLUGIN:Save()
 	file.Write( "ev_ranks.txt", glon.encode( self.playerRanks ) )
 end
 
-function PLUGIN:rank( ply )
-	if ( !self.playerRanks ) then self:load() end
+function PLUGIN:Rank( ply )
+	if ( !self.playerRanks ) then self:Load() end
 	
 	for _, rank in pairs( self.playerRanks ) do
 		if ( rank.steamID == ply:SteamID() ) then
-			self:setRank( ply, rank.rank )
+			self:SetRank( ply, rank.rank )
 			
 			return
 		end
@@ -46,19 +46,19 @@ function PLUGIN:rank( ply )
 	if ( usergroup == "user" ) then usergroup = "guest" end
 	
 	ply:SetNWString( "EV_UserGroup", usergroup )
-	self:rankGroup( ply, usergroup )
+	self:RankGroup( ply, usergroup )
 	
 	hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 end
 
-function PLUGIN:setRank( ply, newrank )
+function PLUGIN:SetRank( ply, newrank )
 	for _, rank in pairs( self.playerRanks ) do
 		if ( rank.steamID == ply:SteamID() ) then
 			rank.rank = newrank
-			self:save()
+			self:Save()
 			
 			ply:SetNWString( "EV_UserGroup", rank.rank )
-			self:rankGroup( ply, rank.rank )
+			self:RankGroup( ply, rank.rank )
 			
 			hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 			
@@ -70,56 +70,56 @@ function PLUGIN:setRank( ply, newrank )
 	ranki.steamID = ply:SteamID()
 	ranki.rank = newrank
 	table.insert( self.playerRanks, ranki )
-	self:save()
+	self:Save()
 	
 	ply:SetNWString( "EV_UserGroup", newrank )
-	self:rankGroup( ply, newrank )
+	self:RankGroup( ply, newrank )
 	
 	hook.Call( "EV_PlayerRankChanged", GAMEMODE, ply )
 end
 
 function PLUGIN:Call( ply, args )
 	if ( #args <= 1 or ply:EV_IsSuperAdmin() ) then
-		local pl = evolve:findPlayer( args[1], ply )
+		local pl = evolve:FindPlayer( args[1], ply )
 		if ( #pl <= 1 ) then
 			pl = pl[1]
 			if ( pl ) then
 				if ( #args <= 1 ) then
-					local rank, prefix = evolve:getRealName( pl:EV_GetRank() )
-					evolve:notify( ply, evolve.colors.blue, pl:Nick(), evolve.colors.white, " is ranked as " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
+					local rank, prefix = evolve:GetRankName( pl:EV_GetRank() )
+					evolve:Notify( ply, evolve.colors.blue, pl:Nick(), evolve.colors.white, " is ranked as " .. prefix .. " ", evolve.colors.red, rank, evolve.colors.white, "." )
 				else
-					local realName = evolve:getRealName( args[2] )
+					local realName = evolve:GetRankName( args[2] )
 					
 					if ( realName != "invalid" ) then
 						if ( !pl:EV_IsOwner() or ( pl:EV_IsOwner() and ( ply == NULL or ply:IsListenServerHost() ) ) ) then
 							if ( ( ( realName == "Respected" or realName == "Guest" ) and !pl:EV_IsAdmin() ) or ply:EV_IsOwner() ) then
-								self:setRank( pl, args[2] )
-								local rank, prefix = evolve:getRealName( args[2] )
-								evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick(), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
+								self:SetRank( pl, args[2] )
+								local rank, prefix = evolve:GetRankName( args[2] )
+								evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick(), evolve.colors.white, " " .. prefix .. " " .. rank .. "." )
 							else
-								evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+								evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 							end
 						else
-							evolve:notify( ply, evolve.colors.red, "An owner can only be ranked by the server console." )
+							evolve:Notify( ply, evolve.colors.red, "An owner can only be ranked by the server console." )
 						end
 					else
-						evolve:notify( ply, evolve.colors.red, "Unknown rank specified." )
+						evolve:Notify( ply, evolve.colors.red, "Unknown rank specified." )
 					end
 				end
 			else
-				evolve:notify( ply, evolve.colors.red, "No matching player found." )
+				evolve:Notify( ply, evolve.colors.red, "No matching player found." )
 			end
 		else
-			evolve:notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:createPlayerList( pl, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
 function PLUGIN:PlayerSpawn( ply )
 	if ( !ply.EV_Ranked ) then
-		self:rank( ply )		
+		self:Rank( ply )		
 		ply.EV_Ranked = true
 	end
 end
@@ -138,4 +138,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

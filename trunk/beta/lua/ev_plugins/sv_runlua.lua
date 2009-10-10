@@ -18,15 +18,15 @@ function PLUGIN:Call( ply, args )
 			this = ply:GetEyeTrace().Entity
 			RunString( code )
 			
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " ran Lua code: ", evolve.colors.red, code )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " ran Lua code: ", evolve.colors.red, code )
 			
 			this, me = nil
 		else
-			evolve:notify( ply, evolve.colors.red, "No code specified." )
+			evolve:Notify( ply, evolve.colors.red, "No code specified." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

@@ -11,10 +11,10 @@ PLUGIN.Usage = "<player> [reason]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pl = evolve:findPlayer( args[1] )
+		local pl = evolve:FindPlayer( args[1] )
 		
 		if ( #pl > 1 ) then
-			evolve:notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:createPlayerList( pl, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
 		elseif ( #pl == 1 ) then
 			local reason = table.concat( args, " ", 2 )
 			
@@ -23,17 +23,17 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			if ( #reason == 0 || reason == "No reason" ) then
-				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, "." )
 				pl[1]:Kick( "No reason specified." )
 			else
-				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, " with the reason \"" .. reason .."\"." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, " with the reason \"" .. reason .."\"." )
 				pl[1]:Kick( reason )
 			end
 		else
-			evolve:notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -45,4 +45,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

@@ -12,4 +12,4 @@ usermessage.Hook( "EV_Init", function( um )
 end )
 
 // Load plugins
-evolve:loadPlugins()
+evolve:LoadPlugins()

@@ -20,7 +20,7 @@ function PLUGIN:Call( ply, args )
 			table.remove( args, #args )
 			
 			if ( x and y and z ) then
-				local pls = evolve:findPlayer( args, ply )
+				local pls = evolve:FindPlayer( args, ply )
 				local scale = Vector( x, y, z )
 				
 				if ( #pls > 0 ) then
@@ -29,18 +29,18 @@ function PLUGIN:Call( ply, args )
 						pl:SetJumpPower( 160 + ( scale.z - 1 ) * 40 )
 					end
 					
-					evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:createPlayerList( pls ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
 				else
-					evolve:notify( ply, evolve.colors.red, "No matching players found." )
+					evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 				end
 			else
-				evolve:notify( ply, evolve.colors.red, "The X, Y and Z scale parameters need to be numeric!" )
+				evolve:Notify( ply, evolve.colors.red, "The X, Y and Z scale parameters need to be numeric!" )
 			end
 		else
-			evolve:notify( ply, evolve.colors.red, "You need to specify at least one player and three scale parameters!" )
+			evolve:Notify( ply, evolve.colors.red, "You need to specify at least one player and three scale parameters!" )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -75,4 +75,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

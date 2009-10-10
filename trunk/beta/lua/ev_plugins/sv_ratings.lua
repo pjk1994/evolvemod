@@ -22,11 +22,11 @@ function concommand.Run( ply, com, args )
 			target.RatingTimers = target.RatingTimers or { }
 			if ( target.RatingTimers[ ply:UniqueID() ] and target.RatingTimers[ ply:UniqueID() ] > CurTime() + 60 ) then return end
 			
-			evolve:notify( target, evolve.colors.blue, ply:Nick(), evolve.colors.white, " rated you", evolve.colors.red, " " .. rating, evolve.colors.white, "." )
+			evolve:Notify( target, evolve.colors.blue, ply:Nick(), evolve.colors.white, " rated you", evolve.colors.red, " " .. rating, evolve.colors.white, "." )
 		end
 	end
 	
 	return evolve.oldConcommand( ply, com, args )
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

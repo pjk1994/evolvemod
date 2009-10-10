@@ -11,7 +11,7 @@ PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local victims = evolve:findPlayer( args, ply )
+		local victims = evolve:FindPlayer( args, ply )
 		if ( #victims > 0 and !victims[1]:IsValid() ) then victims = { } end
 		
 		for _, victim in pairs( victims ) do
@@ -28,12 +28,12 @@ function PLUGIN:Call( ply, args )
 		end
 		
 		if ( #victims > 0 ) then
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has exploded ", evolve.colors.red, evolve:createPlayerList( victims ), evolve.colors.white, "." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has exploded ", evolve.colors.red, evolve:CreatePlayerList( victims ), evolve.colors.white, "." )
 		else
-			evolve:notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -45,4 +45,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

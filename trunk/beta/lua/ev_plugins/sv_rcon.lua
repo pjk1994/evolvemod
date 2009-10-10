@@ -13,13 +13,13 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsOwner() ) then		
 		if ( #args > 0 ) then
 			RunConsoleCommand( unpack( args ) )
-			evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " executed ", evolve.colors.red, table.concat( args, " " ), evolve.colors.white, "." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " executed ", evolve.colors.red, table.concat( args, " " ), evolve.colors.white, "." )
 		else
-			evolve:notify( ply, evolve.colors.red, "No command specified." )
+			evolve:Notify( ply, evolve.colors.red, "No command specified." )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

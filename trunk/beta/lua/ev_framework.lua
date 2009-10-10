@@ -27,13 +27,13 @@ evolve.ranks.superadmin = 3
 evolve.ranks.owner = 4
 
 // Prints a message to the console
-function evolve:message( msg )
+function evolve:Message( msg )
 	print( "[EV] " .. msg )
 end
 
 // Display a notification
 if ( SERVER ) then
-	function evolve:notify( ... )
+	function evolve:Notify( ... )
 		local ply = nil
 		if ( type( arg[1] ) == "Player" or arg[1] == NULL ) then ply = arg[1] end
 		if ( ply != NULL ) then
@@ -57,10 +57,10 @@ if ( SERVER ) then
 		for _, v in pairs( arg ) do
 			if ( type( v ) == "string" ) then str = str .. v end
 		end
-		if ( ply ) then evolve:message( ply:Nick() .. " -> " .. str ) else evolve:message( str ) end
+		if ( ply ) then evolve:Message( ply:Nick() .. " -> " .. str ) else evolve:Message( str ) end
 	end
 else
-	function evolve:notify( ... )
+	function evolve:Notify( ... )
 		args = { }
 		for _, v in pairs( arg ) do
 			if ( type( v ) == "string" or type( v ) == "table" ) then table.insert( args, v ) end
@@ -82,12 +82,12 @@ else
 end
 
 // Convert bool to int
-function evolve:boolToInt( bool )
+function evolve:BoolToInt( bool )
 	if ( bool ) then return 1 else return 0 end
 end
 
 // Load plugins from the plugin directory and distribute shared and clientside plugins on the server
-function evolve:loadPlugins()
+function evolve:LoadPlugins()
 	evolve.plugins = { }
 	
 	local plugins = file.FindInLua( "ev_plugins/*.lua" )
@@ -104,19 +104,19 @@ function evolve:loadPlugins()
 end
 
 // Get a plugin
-function evolve:getPlugin( title )
+function evolve:Plugin( title )
 	for _, plugin in pairs( self.plugins ) do
 		if ( plugin.Title == title ) then return plugin end
 	end
 end
 
 // Register a plugin
-function evolve:registerPlugin( plugin )
+function evolve:RegisterPlugin( plugin )
 	table.insert( self.plugins, plugin )
 end
 
 // Take care of plugin hooks
-evolve.hookcall = hook.Call
+evolve.HookCall = hook.Call
 hook.Call = function( name, gm, ... )
 	for _, plugin in pairs( evolve.plugins ) do
 		if ( plugin[ name ] ) then
@@ -124,8 +124,8 @@ hook.Call = function( name, gm, ... )
 			if ( res and ret != nil ) then
 				return ret
 			elseif ( !res ) then
-				evolve:notify( evolve.colors.red, "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )
-				evolve:notify( evolve.colors.red, ret )
+				evolve:Notify( evolve.colors.red, "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )
+				evolve:Notify( evolve.colors.red, ret )
 			end
 		end
 	end
@@ -136,17 +136,17 @@ hook.Call = function( name, gm, ... )
 			if ( res and ret != nil ) then
 				return ret
 			elseif ( !res ) then
-				evolve:notify( evolve.colors.red, "Hook '" .. name .. "' in tab '" .. tab.Title .. "' failed with error:" )
-				evolve:notify( evolve.colors.red, ret )
+				evolve:Notify( evolve.colors.red, "Hook '" .. name .. "' in tab '" .. tab.Title .. "' failed with error:" )
+				evolve:Notify( evolve.colors.red, ret )
 			end
 		end
 	end
 	
-	return evolve.hookcall( name, gm, ... )
+	return evolve.HookCall( name, gm, ... )
 end
 
 // Match player and string
-function evolve:nameMatch( ply, str )
+function evolve:IsNameMatch( ply, str )
 	if ( str == "*" ) then
 		return true
 	elseif ( str == "@" and ply:IsAdmin() ) then
@@ -159,7 +159,7 @@ function evolve:nameMatch( ply, str )
 end
 
 // Find a player by name
-function evolve:findPlayer( name, def, nonum )
+function evolve:FindPlayer( name, def, nonum )
 	local matches = { }
 	
 	if ( !name or #name == 0 ) then
@@ -173,7 +173,7 @@ function evolve:findPlayer( name, def, nonum )
 		
 		for _, ply in pairs( player.GetAll() ) do
 			for _, pm in pairs( name2 ) do
-				if ( self:nameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
+				if ( self:IsNameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
 			end
 		end
 	end
@@ -182,7 +182,7 @@ function evolve:findPlayer( name, def, nonum )
 end
 
 // Turn a table with items into a string
-function evolve:createPlayerList( tbl, notall )
+function evolve:CreatePlayerList( tbl, notall )
 	local lst = ""
 	local lword = "and"
 	if ( notall ) then lword = "or" end
@@ -200,7 +200,7 @@ function evolve:createPlayerList( tbl, notall )
 	return lst
 end
 
-function evolve:getRealName( rankname )
+function evolve:GetRankName( rankname )
 	if ( rankname == "owner" ) then
 		return "Owner", "an"
 	elseif ( rankname == "superadmin" ) then

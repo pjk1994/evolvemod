@@ -25,7 +25,7 @@ function PLUGIN:Call( ply, args )
 	end
 	umsg.Start( "EV_CommandEnd", ply ) umsg.End()
 	
-	evolve:notify( ply, evolve.colors.white, "All chat commands have been printed to your console." )
+	evolve:Notify( ply, evolve.colors.white, "All chat commands have been printed to your console." )
 end
 
 usermessage.Hook( "EV_CommandStart", function( um )
@@ -48,4 +48,4 @@ usermessage.Hook( "EV_Command", function( um )
 	end
 end )
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )

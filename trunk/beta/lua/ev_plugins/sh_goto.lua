@@ -11,20 +11,20 @@ PLUGIN.Usage = "[player]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
-		local pl = evolve:findPlayer( args, ply )
+		local pl = evolve:FindPlayer( args, ply )
 		
 		if ( #pl < 2 ) then			
 			if ( #pl > 0 ) then
 				ply:SetPos( pl[1]:GetPos() + Vector( 0, 0, 128 ) )
-				evolve:notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has gone to ", evolve.colors.red, evolve:createPlayerList( pl ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has gone to ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, "." )
 			else
-				evolve:notify( ply, evolve.colors.red, "No matching players found." )
+				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 			end
 		else
-			evolve:notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:createPlayerList( pl, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
 		end
 	else
-		evolve:notify( ply, evolve.colors.red, evolve.constants.notallowed )
+		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
@@ -36,4 +36,4 @@ function PLUGIN:Menu( arg, players )
 	end
 end
 
-evolve:registerPlugin( PLUGIN )
+evolve:RegisterPlugin( PLUGIN )
