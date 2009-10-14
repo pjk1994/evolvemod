@@ -26,7 +26,7 @@ function PLUGIN:Call( ply, args )
 				if ( #pls > 0 ) then
 					for _, pl in pairs( pls ) do
 						pl:SetNWVector( "EV_Scale", scale )
-						pl:SetJumpPower( 160 + ( scale.z - 1 ) * 40 )
+						pl:SetJumpPower( 200 + ( scale.z - 1 ) * 50 )
 					end
 					
 					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
