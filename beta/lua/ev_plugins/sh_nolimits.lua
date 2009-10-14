@@ -4,8 +4,8 @@
 
 local PLUGIN = { }
 PLUGIN.Title = "No Limits"
-PLUGIN.Description = "Enable no limits for a player."
-PLUGIN.Author = "Overv"
+PLUGIN.Description = "Disable limits for a player."
+PLUGIN.Author = "Overv and Divran"
 PLUGIN.ChatCommand = "nolimits"
 PLUGIN.Usage = "[players] [1/0]"
 
@@ -22,9 +22,9 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #pls > 0 ) then
 			if ( enabled ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has enabled no-limits ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has disabled limits for ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
 			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has disabled no-limits ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has enabled limits for ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
 			end
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
