@@ -38,27 +38,45 @@ function evolve:BuildMenu()
 	end
 end
 
-function evolve:OpenMenu()
-	if ( !LocalPlayer():EV_IsAdmin() ) then
-		chat.AddText( evolve.colors.red, evolve.constants.notallowed )
-		return false
+function evolve:OpenMenu( ply )
+	if ( CLIENT ) then
+		if ( !LocalPlayer():EV_IsAdmin() ) then
+			chat.AddText( evolve.colors.red, evolve.constants.notallowed )
+			return false
+		end
+		if ( !self.menu ) then self:BuildMenu() end
+		
+		for _, tab in ipairs( self.menutabs ) do
+			tab:Update()
+		end
+		
+		self.menu:SetVisible( true )
+	else
+		umsg.Start( "EV_OpenMenu", ply )
+		umsg.End()
 	end
-	if ( !self.menu ) then self:BuildMenu() end
-	
-	for _, tab in ipairs( self.menutabs ) do
-		tab:Update()
-	end
-	
-	self.menu:SetVisible( true )
 end
 
-function evolve:CloseMenu()
-	if ( self.menu ) then self.menu:SetVisible( false ) end
+function evolve:CloseMenu( ply )
+	if ( CLIENT ) then
+		if ( self.menu ) then self.menu:SetVisible( false ) end
+	else
+		umsg.Start( "EV_CloseMenu", ply )
+		umsg.End()
+	end
 end
 
-concommand.Add( "+ev_menu", function()
+concommand.Add( "+ev_menu", function( ply )
+	evolve:OpenMenu( ply )
+end )
+concommand.Add( "-ev_menu", function( ply )
+	evolve:CloseMenu( ply )
+end )
+
+usermessage.Hook( "EV_OpenMenu", function()
 	evolve:OpenMenu()
 end )
-concommand.Add( "-ev_menu", function()
+
+usermessage.Hook( "EV_CloseMenu", function()
 	evolve:CloseMenu()
 end )
