@@ -34,7 +34,7 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:CheckLimit( ply, limit )
+function PLUGIN.CheckLimit( ply, limit )
 	local count = server_settings.Int( "sbox_max" .. limit, -1 )
 	
 	if ( ply.EV_NoLimits ) then
@@ -48,11 +48,11 @@ function PLUGIN:CheckLimit( ply, limit )
 end
 
 timer.Simple( 1, function()
-	function GAMEMODE:PlayerSpawnProp( ply, mdl ) return PLUGIN:CheckLimit( ply, "props" ) end
-	function GAMEMODE:PlayerSpawnVehicle( ply, mdl ) return PLUGIN:CheckLimit( ply, "vehicles" ) end
-	function GAMEMODE:PlayerSpawnNPC( ply, mdl ) return PLUGIN:CheckLimit( ply, "npcs" ) end
-	function GAMEMODE:PlayerSpawnEffect( ply, mdl ) return PLUGIN:CheckLimit( ply, "effects" ) end
-	function GAMEMODE:PlayerSpawnRagdoll( ply, mdl ) return PLUGIN:CheckLimit( ply, "ragdolls" ) end 
+	function GAMEMODE:PlayerSpawnProp( ply, mdl ) return PLUGIN.CheckLimit( ply, "props" ) end
+	function GAMEMODE:PlayerSpawnVehicle( ply, mdl ) return PLUGIN.CheckLimit( ply, "vehicles" ) end
+	function GAMEMODE:PlayerSpawnNPC( ply, mdl ) return PLUGIN.CheckLimit( ply, "npcs" ) end
+	function GAMEMODE:PlayerSpawnEffect( ply, mdl ) return PLUGIN.CheckLimit( ply, "effects" ) end
+	function GAMEMODE:PlayerSpawnRagdoll( ply, mdl ) return PLUGIN.CheckLimit( ply, "ragdolls" ) end 
 	
 	_R.Player.CheckLimit = PLUGIN.CheckLimit
 end )

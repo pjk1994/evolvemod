@@ -153,6 +153,9 @@ function evolve:IsNameMatch( ply, str )
 		return true
 	elseif ( str == "!@" and !ply:IsAdmin() ) then
 		return true
+	elseif ( string.Left( str, 1 ) == "\"" and string.Right( str, 1 ) == "\"" ) then
+		print( string.sub( str, 2, #str - 1 ) )
+		return ( ply:Nick() == string.sub( str, 2, #str - 1 ) )
 	else
 		return ( string.lower( ply:Nick() ) == string.lower( str ) or string.find( string.lower( ply:Nick() ), string.lower( str ) ) )
 	end
@@ -160,7 +163,7 @@ end
 
 // Find a player by name
 function evolve:FindPlayer( name, def, nonum )
-	local matches = { }
+	local matches = {}
 	
 	if ( !name or #name == 0 ) then
 		matches[1] = def

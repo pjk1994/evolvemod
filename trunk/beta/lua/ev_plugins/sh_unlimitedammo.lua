@@ -18,6 +18,12 @@ function PLUGIN:Call( ply, args )
 		
 		for _, pl in pairs( pls ) do
 			pl.EV_UnlimitedAmmo = enabled
+			
+			if ( enabled ) then
+				for _, ent in pairs( pl:GetWeapons() ) do
+					self:FillClips( pl, ent )
+				end
+			end
 		end
 		
 		if ( #pls > 0 ) then
@@ -34,18 +40,21 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:FillClips( ply, wep )
+	if wep:Clip1() < 255 then wep:SetClip1( 250 ) end
+	if wep:Clip2() < 255 then wep:SetClip2( 250 ) end
+	
+	if wep:GetPrimaryAmmoType() == 10 or wep:GetPrimaryAmmoType() == 8 then
+		ply:GiveAmmo( 9 - ply:GetAmmoCount( wep:GetPrimaryAmmoType() ), wep:GetPrimaryAmmoType() )
+	elseif wep:GetSecondaryAmmoType() == 9 or wep:GetSecondaryAmmoType() == 2 then
+		ply:GiveAmmo( 9 - ply:GetAmmoCount( wep:GetSecondaryAmmoType() ), wep:GetSecondaryAmmoType() )
+	end
+end
+
 function PLUGIN:Tick()
 	for _, ply in pairs( player.GetAll() ) do
 		if ( ply.EV_UnlimitedAmmo and ply:Alive() and ply:GetActiveWeapon() != NULL ) then
-			local wep = ply:GetActiveWeapon()
-			if wep:Clip1() < 255 then wep:SetClip1( 250 ) end
-			if wep:Clip2() < 255 then wep:SetClip2( 250 ) end
-			
-			if wep:GetPrimaryAmmoType() == 10 or wep:GetPrimaryAmmoType() == 8 then
-				ply:GiveAmmo( 9 - ply:GetAmmoCount( wep:GetPrimaryAmmoType() ), wep:GetPrimaryAmmoType() )
-			elseif wep:GetSecondaryAmmoType() == 9 or wep:GetSecondaryAmmoType() == 2 then
-				ply:GiveAmmo( 9 - ply:GetAmmoCount( wep:GetSecondaryAmmoType() ), wep:GetSecondaryAmmoType() )
-			end
+			self:FillClips( ply, ply:GetActiveWeapon() )
 		end
 	end
 end
