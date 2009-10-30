@@ -23,7 +23,10 @@ function evolve:BuildMenu()
 	self.menu:SetDraggable( false )
 	self.menu:ShowCloseButton( false )
 	self.menu:SetTitle( "" )
-	self.menu.Paint = function() end
+	self.menu.OpenTime = SysTime()
+	self.menu.Paint = function()
+		Derma_DrawBackgroundBlur( evolve.menu, self.menu.OpenTime )
+	end
 	self.menu:MakePopup()
 	
 	self.menuContainer = vgui.Create( "DPropertySheet", self.menu )
@@ -31,6 +34,7 @@ function evolve:BuildMenu()
 	self.menuContainer:SetSize( self.menuw, self.menuh )
 	
 	include( "ev_menu/control_toolbutton.lua" )
+	include( "ev_menu/control_logitem.lua" )
 	for _, v in pairs( file.FindInLua( "ev_menu/tab_*.lua" ) ) do
 		include( "ev_menu/" .. v )
 		
@@ -50,6 +54,7 @@ function evolve:OpenMenu( ply )
 			tab:Update()
 		end
 		
+		self.menu.OpenTime = SysTime()
 		self.menu:SetVisible( true )
 	else
 		umsg.Start( "EV_OpenMenu", ply )

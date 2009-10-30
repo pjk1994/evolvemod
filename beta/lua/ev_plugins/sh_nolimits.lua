@@ -62,7 +62,7 @@ function PLUGIN:Menu( arg, players )
 		table.insert( players, arg )
 		RunConsoleCommand( "ev", "nolimits", unpack( players ) )
 	else
-		return "No-limits", evolve.category.actions, { { "Enable", 1 }, { "Disable", 0 } }
+		return "No limits", evolve.category.actions, { { "Enable", 1 }, { "Disable", 0 } }
 	end
 end
 

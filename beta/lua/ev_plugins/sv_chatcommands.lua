@@ -14,12 +14,32 @@ function PLUGIN:GetCommand( msg )
 end
 
 function PLUGIN:GetArguments( msg )
-	local args = { }
-	local i = 1
+	local i, char, prevChar, nextChar
+	local args = {}
+	local buffer = ""
+	local ignores = false
 	
-	for v in string.gmatch( msg, "%S+" ) do
-		if i > 1 then table.insert( args, v ) end
-		i = i + 1
+	for i = #self:GetCommand( msg ) + 3, #msg do
+		char = string.sub( msg, i, i )
+		prevChar = string.sub( msg, i - 1, i - 1 )
+		nextChar = string.sub( msg, i + 1, i + 1 )
+		
+		if ( char == " " and !ignores and #buffer > 0 ) then
+			table.insert( args, buffer )
+			buffer = ""
+		elseif ( char == "\"" and ( i == #self:GetCommand( msg ) + 3 or prevChar != "\\" ) ) then
+			ignores = !ignores
+			if ( !ignores ) then
+				table.insert( args, buffer )
+				buffer = ""
+			end
+		elseif ( char != "\\" or nextChar != "\"" ) then
+			buffer = buffer .. char
+		end
+	end
+	
+	if ( #buffer > 0 ) then
+		table.insert( args, buffer )
 	end
 	
 	return args
@@ -39,7 +59,6 @@ function PLUGIN:PlayerSay( ply, msg )
 					evolve:Notify( evolve.colors.red, ret )
 				end
 				
-				//plugin:Call( ply, args )
 				return ""
 			end
 		end

@@ -34,8 +34,11 @@ function PLUGIN:ShowPlayerInfo( ply )
 	for _, item in pairs( self.playerInfo ) do
 		if ( item.steamID == ply:SteamID() ) then
 			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " last joined at ", evolve.colors.red, os.date( "%c", item.lastTime ), evolve.colors.white, " as " .. item.lastNick, evolve.colors.white, "." )
+			
 			item.lastNick = ply:Nick()
 			item.lastTime = os.time()
+			item.IP = ply:IPAddress()
+			
 			self:Save()
 			
 			return
@@ -43,11 +46,14 @@ function PLUGIN:ShowPlayerInfo( ply )
 	end
 	
 	evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has joined for the first time." )
+	
 	local item = { }
 	item.steamID = ply:SteamID()
+	item.IP = ply:IPAddress()
 	item.lastNick = ply:Nick()
 	item.lastTime = os.time()
 	table.insert( self.playerInfo, item )
+	
 	self:Save()
 end
 
