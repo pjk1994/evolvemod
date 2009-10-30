@@ -14,7 +14,7 @@ function PLUGIN:Call( ply, args )
 		local msg = table.concat( args, " " )
 		
 		for _, pl in pairs( player.GetAll() ) do
-			if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.red, "(To admins) ", team.GetColor( ply:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg ) end
+			if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.red, "(Admins) ", team.GetColor( ply:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg ) end
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

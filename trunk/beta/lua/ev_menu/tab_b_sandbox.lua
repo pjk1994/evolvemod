@@ -8,22 +8,22 @@ TAB.Description = "Sandbox gamemode settings."
 TAB.Author = "Overv"
 
 TAB.Limits = {
-	{ "sbox_maxprops", "Max Props" },
-	{ "sbox_maxragdolls", "Max Ragdolls" },
-	{ "sbox_maxvehicles", "Max Vehicles" },
-	{ "sbox_maxeffects", "Max Effects" },
-	{ "sbox_maxballoons", "Max Balloons" },
-	{ "sbox_maxnpcs", "Max NPCs" },
-	{ "sbox_maxdynamite", "Max Dynamite" },
-	{ "sbox_maxlamps", "Max Lamps" },
-	{ "sbox_maxlights", "Max Lights" },
-	{ "sbox_maxwheels", "Max Wheels" },
-	{ "sbox_maxthrusters", "Max Thrusters" },
-	{ "sbox_maxhoverballs", "Max Hoverballs" },
-	{ "sbox_maxbuttons", "Max Buttons" },
-	{ "sbox_maxemitters", "Max Emitters" },
-	{ "sbox_maxspawners", "Max Spawners" },
-	{ "sbox_maxturrets", "Max Turrets" }
+	{ "sbox_maxprops", "Props" },
+	{ "sbox_maxragdolls", "Ragdolls" },
+	{ "sbox_maxvehicles", "Vehicles" },
+	{ "sbox_maxeffects", "Effects" },
+	{ "sbox_maxballoons", "Balloons" },
+	{ "sbox_maxnpcs", "NPCs" },
+	{ "sbox_maxdynamite", "Dynamite" },
+	{ "sbox_maxlamps", "Lamps" },
+	{ "sbox_maxlights", "Lights" },
+	{ "sbox_maxwheels", "Wheels" },
+	{ "sbox_maxthrusters", "Thrusters" },
+	{ "sbox_maxhoverballs", "Hoverballs" },
+	{ "sbox_maxbuttons", "Buttons" },
+	{ "sbox_maxemitters", "Emitters" },
+	{ "sbox_maxspawners", "Spawners" },
+	{ "sbox_maxturrets", "Turrets" }
 }
 TAB.ConVars = {
 	{ "sbox_godmode", "Godmode" },
