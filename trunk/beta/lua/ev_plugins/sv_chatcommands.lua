@@ -14,32 +14,13 @@ function PLUGIN:GetCommand( msg )
 end
 
 function PLUGIN:GetArguments( msg )
-	local i, char, prevChar, nextChar
 	local args = {}
-	local buffer = ""
-	local ignores = false
+	local first = true
 	
-	for i = #self:GetCommand( msg ) + 3, #msg do
-		char = string.sub( msg, i, i )
-		prevChar = string.sub( msg, i - 1, i - 1 )
-		nextChar = string.sub( msg, i + 1, i + 1 )
-		
-		if ( char == " " and !ignores and #buffer > 0 ) then
-			table.insert( args, buffer )
-			buffer = ""
-		elseif ( char == "\"" and ( i == #self:GetCommand( msg ) + 3 or prevChar != "\\" ) ) then
-			ignores = !ignores
-			if ( !ignores ) then
-				table.insert( args, buffer )
-				buffer = ""
-			end
-		elseif ( char != "\\" or nextChar != "\"" ) then
-			buffer = buffer .. char
+	for match in string.gmatch( msg, "%S+" ) do
+		if ( first ) then first = false else
+			table.insert( args, match )
 		end
-	end
-	
-	if ( #buffer > 0 ) then
-		table.insert( args, buffer )
 	end
 	
 	return args
