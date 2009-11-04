@@ -44,7 +44,11 @@ function PLUGIN:PlayerSay( ply, msg )
 			end
 		end
 		
-		evolve:Notify( ply, evolve.colors.red, "Unknown command '" .. ( command or "" ) .. "'." )
+		if ( !ply.EV_Gagged ) then
+			return ""
+		else
+			evolve:Notify( ply, evolve.colors.red, "Unknown command '" .. ( command or "" ) .. "'." )
+		end
 	end
 end
 
