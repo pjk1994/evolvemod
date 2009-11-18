@@ -112,7 +112,7 @@ function TAB:Initialize()
 	self.Settings:EnableVerticalScrollbar( true )
 	
 	for i, cv in pairs( self.ConVars ) do
-	`	if ( ConVarExists( cv[1] ) ) then
+		if ( ConVarExists( cv[1] ) ) then
 			local cvCheckbox = vgui.Create( "DCheckBoxLabel", self.Settings )
 			cvCheckbox:SetText( cv[2] )
 			cvCheckbox:SetWide( self.Settings:GetWide() - 15 )
