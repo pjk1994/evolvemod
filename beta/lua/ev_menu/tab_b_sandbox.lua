@@ -88,17 +88,19 @@ function TAB:Initialize()
 	end
 	
 	for i, cv in pairs( self.Limits ) do
-		local cvSlider = vgui.Create( "DNumSlider", self.Container )
-		cvSlider:SetText( cv[ 2 ] )
-		cvSlider:SetWide( self.LimitsContainer:GetWide() / 2 - 15 )
-		cvSlider:SetMin( 0 )
-		cvSlider:SetMax( 200 )
-		cvSlider:SetDecimals( 0 )
-		cvSlider:SetValue( GetConVar( cv[ 1 ] ):GetInt() )
-		cvSlider.ConVar = cv[ 1 ]
-		self.LimitsContainer:AddItem( cvSlider )
+		if ( ConVarExists( cv[1] ) ) then
+			local cvSlider = vgui.Create( "DNumSlider", self.Container )
+			cvSlider:SetText( cv[2] )
+			cvSlider:SetWide( self.LimitsContainer:GetWide() / 2 - 15 )
+			cvSlider:SetMin( 0 )
+			cvSlider:SetMax( 200 )
+			cvSlider:SetDecimals( 0 )
+			cvSlider:SetValue( GetConVar( cv[1] ):GetInt() )
+			cvSlider.ConVar = cv[1]
+			self.LimitsContainer:AddItem( cvSlider )
 		
-		table.insert( self.ConVarSliders, cvSlider )
+			table.insert( self.ConVarSliders, cvSlider )
+		end
 	end
 	
 	self.Settings = vgui.Create( "DPanelList", self.Container )
@@ -110,18 +112,20 @@ function TAB:Initialize()
 	self.Settings:EnableVerticalScrollbar( true )
 	
 	for i, cv in pairs( self.ConVars ) do
-		local cvCheckbox = vgui.Create( "DCheckBoxLabel", self.Settings )
-		cvCheckbox:SetText( cv[ 2 ] )
-		cvCheckbox:SetWide( self.Settings:GetWide() - 15 )
-		cvCheckbox:SetValue( GetConVar( cv[ 1 ] ):GetInt() > 0 )
-		cvCheckbox.ConVar = cv[ 1 ]
-		cvCheckbox.OnValue = cv[ 3 ]
-		cvCheckbox.DoClick = function( self )
-			TAB:ApplySettings()
+	`	if ( ConVarExists( cv[1] ) ) then
+			local cvCheckbox = vgui.Create( "DCheckBoxLabel", self.Settings )
+			cvCheckbox:SetText( cv[2] )
+			cvCheckbox:SetWide( self.Settings:GetWide() - 15 )
+			cvCheckbox:SetValue( GetConVar( cv[1] ):GetInt() > 0 )
+			cvCheckbox.ConVar = cv[1]
+			cvCheckbox.OnValue = cv[3]
+			cvCheckbox.DoClick = function( self )
+				TAB:ApplySettings()
+			end
+			self.Settings:AddItem( cvCheckbox )
+			
+			table.insert( self.ConVarCheckboxes, cvCheckbox )
 		end
-		self.Settings:AddItem( cvCheckbox )
-		
-		table.insert( self.ConVarCheckboxes, cvCheckbox )
 	end
 	
 	self.Block = vgui.Create( "DFrame", self.Container )
