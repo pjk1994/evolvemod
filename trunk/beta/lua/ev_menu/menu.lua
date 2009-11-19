@@ -23,10 +23,7 @@ function evolve:BuildMenu()
 	self.menu:SetDraggable( false )
 	self.menu:ShowCloseButton( false )
 	self.menu:SetTitle( "" )
-	self.menu.OpenTime = SysTime()
-	self.menu.Paint = function()
-		Derma_DrawBackgroundBlur( evolve.menu, self.menu.OpenTime )
-	end
+	self.menu.Paint = function() end
 	self.menu:MakePopup()
 	
 	self.menuContainer = vgui.Create( "DPropertySheet", self.menu )
@@ -54,7 +51,6 @@ function evolve:OpenMenu( ply )
 			tab:Update()
 		end
 		
-		self.menu.OpenTime = SysTime()
 		self.menu:SetVisible( true )
 	else
 		umsg.Start( "EV_OpenMenu", ply )
