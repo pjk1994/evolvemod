@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		local enabled = true
 		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			pl.EV_Gagged = enabled
 		end
 		

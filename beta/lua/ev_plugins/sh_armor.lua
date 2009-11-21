@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		local armor = 100
 		if ( tonumber( args[ #args ] ) ) then armor = tonumber( args[ #args ] ) end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			pl:SetArmor( armor )
 		end
 		

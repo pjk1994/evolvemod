@@ -20,7 +20,7 @@ function PLUGIN:Call( ply, args )
 			wep = args[ #args ]
 			
 			if ( #pls > 0 ) then
-				for _, pl in pairs( pls ) do
+				for _, pl in ipairs( pls ) do
 					pl:Give( wep )
 				end
 				

@@ -16,13 +16,13 @@ function PLUGIN:Call( ply, args )
 		local enabled = true
 		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			if ( enabled ) then
 				pl:SetRenderMode( RENDERMODE_NONE )
 				pl:SetColor( 255, 255, 255, 0 )
 				pl:SetCollisionGroup( COLLISION_GROUP_WEAPON )
 				
-				for _, w in pairs( pl:GetWeapons() ) do
+				for _, w in ipairs( pl:GetWeapons() ) do
 					w:SetRenderMode( RENDERMODE_NONE )
 					w:SetColor( 255, 255, 255, 0 )
 				end
@@ -31,7 +31,7 @@ function PLUGIN:Call( ply, args )
 				pl:SetColor( 255, 255, 255, 255 )
 				pl:SetCollisionGroup( COLLISION_GROUP_PLAYER )
 				
-				for _, w in pairs( pl:GetWeapons() ) do
+				for _, w in ipairs( pl:GetWeapons() ) do
 					w:SetRenderMode( RENDERMODE_NORMAL )
 					w:SetColor( 255, 255, 255, 255 )
 				end
@@ -60,7 +60,7 @@ function PLUGIN:PlayerSpawn( ply )
 		ply:SetColor( 255, 255, 255, 0 )
 		ply:SetCollisionGroup( COLLISION_GROUP_WEAPON )
 		
-		for _, w in pairs( ply:GetWeapons() ) do
+		for _, w in ipairs( ply:GetWeapons() ) do
 			w:SetRenderMode( RENDERMODE_NONE )
 			w:SetColor( 255, 255, 255, 0 )
 		end

@@ -31,7 +31,7 @@ else
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 
 	function PLUGIN:HUDPaint()
-		for _, pl in pairs( player.GetAll() ) do
+		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() ) then
 				local td = { }
 				td.start = LocalPlayer():GetShootPos()

@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = "help"
 PLUGIN.Usage = "<command>"
 
 function PLUGIN:Call( ply, args )
-	for _, plugin in pairs( evolve.plugins ) do
+	for _, plugin in ipairs( evolve.plugins ) do
 		if ( plugin.ChatCommand and plugin.ChatCommand == string.lower( args[1] or "" ) ) then
 			if ( plugin.Usage ) then
 				evolve:Notify( ply, evolve.colors.blue, plugin.Title, evolve.colors.white, " - " .. plugin.Description )

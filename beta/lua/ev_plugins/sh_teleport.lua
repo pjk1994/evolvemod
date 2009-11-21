@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		if ( #pls > 0 ) then
 			local tr = ply:GetEyeTrace()
 			local pos = tr.HitPos
-			for i, pl in pairs( pls ) do
+			for i, pl in ipairs( pls ) do
 				pl:SetPos( pos + i * tr.HitNormal * 128 )
 			end
 			

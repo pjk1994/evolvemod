@@ -14,7 +14,7 @@ function PLUGIN:Call( ply, args )
 		local pls = evolve:FindPlayer( args, ply )
 		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			GAMEMODE:PlayerLoadout( pl )
 		end
 		

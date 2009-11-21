@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		local dmg = 10
 		if ( tonumber( args[ #args ] ) ) then dmg = math.abs( tonumber( args[ #args ] ) ) end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			pl:SetHealth( pl:Health() - dmg )
 			pl:ViewPunch( Angle( -10, 0, 0 ) )
 			

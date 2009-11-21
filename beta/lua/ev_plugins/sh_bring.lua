@@ -13,7 +13,7 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
 		local pl = evolve:FindPlayer( args, ply )
 		
-		for i, pl2 in pairs( pl ) do
+		for i, pl2 in ipairs( pl ) do
 			pl2:SetPos( ply:GetPos() + Vector( 0, 0, i * 128 ) )
 		end
 		

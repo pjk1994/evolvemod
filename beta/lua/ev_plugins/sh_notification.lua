@@ -24,7 +24,7 @@ function PLUGIN:Call( ply, args )
 				umsg.String( msg )
 			umsg.End()
 			
-			for _, pl in pairs( player.GetAll() ) do
+			for _, pl in ipairs( player.GetAll() ) do
 				if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.blue, ply:Nick(), evolve.colors.white, " has added a notice." ) end
 			end
 			evolve:Notify( evolve.colors.red, msg )

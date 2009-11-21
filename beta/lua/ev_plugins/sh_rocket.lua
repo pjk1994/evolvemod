@@ -26,7 +26,7 @@ function PLUGIN:Call( ply, args )
 		local victims = evolve:FindPlayer( args, ply )
 		if ( #victims > 0 and !victims[1]:IsValid() ) then victims = { } end
 		
-		for _, victim in pairs( victims ) do
+		for _, victim in ipairs( victims ) do
 			victim:SetVelocity( Vector( 0, 0, 4000 ) )
 			timer.Simple( 1, evolve.Explode, evolve, victim )
 		end

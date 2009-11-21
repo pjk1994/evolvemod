@@ -12,7 +12,7 @@ PLUGIN.Usage = "<steamid>"
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsSuperAdmin() ) then
 		if ( args[1] and string.match( args[1] or "", "^STEAM_[0-5]:[0-9]:[0-9]+$" ) ) then
-			for i, item in pairs( evolve:Plugin( "Ban" ).bans ) do
+			for i, item in ipairs( evolve:Plugin( "Ban" ).bans ) do
 				if ( item.steamID == args[1] ) then
 					local nick = " (" .. evolve:Plugin( "Player Info" ):NickBySteamID( args[1] ) .. ")" or ""
 					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has unbanned ", evolve.colors.red, args[1] .. nick, evolve.colors.white .. "." )

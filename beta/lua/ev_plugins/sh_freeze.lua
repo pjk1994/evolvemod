@@ -16,8 +16,12 @@ function PLUGIN:Call( ply, args )
 		local enabled = true
 		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
 		
-		for _, pl in pairs( pls ) do
-			pl:SetNWBool( "EV_Frozen", enabled )
+		for _, pl in ipairs( pls ) do
+			if ( enabled ) then
+				pl:Lock()
+			else
+				pl:UnLock()
+			end
 		end
 		
 		if ( #pls > 0 ) then
@@ -32,10 +36,6 @@ function PLUGIN:Call( ply, args )
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
-end
-
-function PLUGIN:Move( ply, data )
-	return ply:GetNWBool( "EV_Frozen", false )
 end
 
 function PLUGIN:Menu( arg, players )

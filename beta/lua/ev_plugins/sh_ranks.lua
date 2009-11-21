@@ -34,7 +34,7 @@ end
 function PLUGIN:Rank( ply )
 	if ( !self.playerRanks ) then self:Load() end
 	
-	for _, rank in pairs( self.playerRanks ) do
+	for _, rank in ipairs( self.playerRanks ) do
 		if ( rank.steamID == ply:SteamID() ) then
 			self:SetRank( ply, rank.rank )
 			
@@ -52,7 +52,7 @@ function PLUGIN:Rank( ply )
 end
 
 function PLUGIN:SetRank( ply, newrank )
-	for _, rank in pairs( self.playerRanks ) do
+	for _, rank in ipairs( self.playerRanks ) do
 		if ( rank.steamID == ply:SteamID() ) then
 			rank.rank = newrank
 			self:Save()

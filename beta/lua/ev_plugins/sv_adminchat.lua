@@ -13,7 +13,7 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		local msg = table.concat( args, " " )
 		
-		for _, pl in pairs( player.GetAll() ) do
+		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.red, "(Admins) ", team.GetColor( ply:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg ) end
 		end
 	else
