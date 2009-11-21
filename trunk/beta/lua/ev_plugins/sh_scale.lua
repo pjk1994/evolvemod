@@ -24,7 +24,7 @@ function PLUGIN:Call( ply, args )
 				local scale = Vector( x, y, z )
 				
 				if ( #pls > 0 ) then
-					for _, pl in pairs( pls ) do
+					for _, pl in ipairs( pls ) do
 						pl:SetNWVector( "EV_Scale", scale )
 						pl:SetJumpPower( 200 + ( scale.z - 1 ) * 50 )
 					end
@@ -45,7 +45,7 @@ function PLUGIN:Call( ply, args )
 end
 
 function PLUGIN:RenderScene()
-	for _, v in pairs( player.GetAll() ) do
+	for _, v in ipairs( player.GetAll() ) do
 		if ( v:GetModelScale() != v:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ) ) then
 			v:SetModelScale( v:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ) )
 		end

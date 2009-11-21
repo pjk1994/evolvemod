@@ -16,9 +16,9 @@ function PLUGIN:Call( ply, args )
 		if ( #pl > 1 ) then
 			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
 		elseif ( #pl == 1 ) then
-			local reason = args[2] or ""
+			local reason = table.concat( args, " ", 2 ) or ""
 			
-			for _, v in pairs( ents.GetAll() ) do
+			for _, v in ipairs( ents.GetAll() ) do
 				if ( v:GetNWString( "Owner" ) == pl[1]:Nick() ) then v:Remove() end
 			end
 			

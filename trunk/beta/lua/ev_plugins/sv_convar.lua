@@ -22,7 +22,7 @@ function PLUGIN:Call( ply, args )
 				evolve:Notify( ply, evolve.colors.red, "That convar is already set to that value." )
 			else
 				local allowed = false
-				for _, v in pairs( self.AllowedCommands ) do
+				for _, v in ipairs( self.AllowedCommands ) do
 					if ( string.Left( args[ 1 ], #v ) == v ) then
 						allowed = true
 						break

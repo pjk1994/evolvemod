@@ -13,7 +13,7 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has cleaned up the decals." )
 		
-		for _, pl in pairs( player.GetAll() ) do
+		for _, pl in ipairs( player.GetAll() ) do
 			pl:ConCommand( "r_cleardecals" )
 		end
 	else

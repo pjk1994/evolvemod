@@ -14,7 +14,7 @@ function PLUGIN:Call( ply, args )
 	local commands = table.Copy( evolve.plugins )
 	table.SortByMember( commands, "ChatCommand", function( a, b ) return a > b end )
 	
-	for _, plug in pairs( commands ) do
+	for _, plug in ipairs( commands ) do
 		if ( plug.ChatCommand ) then
 			umsg.Start( "EV_Command", ply )
 				umsg.String( plug.ChatCommand )

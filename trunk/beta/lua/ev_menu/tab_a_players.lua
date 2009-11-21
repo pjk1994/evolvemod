@@ -246,7 +246,7 @@ function TAB:Initialize()
 	self.CategoryContainer:SetPos( 0, 0 )
 	self.CategoryContainer:SetSize( self.CommandsContainer:GetWide(), self.CommandsContainer:GetTall() )
 	
-	self.Categories = { }
+	self.Categories = {}
 	
 	for i = 1, 4 do
 		self.Categories[i] = vgui.Create( "DCollapsibleCategory", self.CategoryContainer )

@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		local hp = 100
 		if ( tonumber( args[ #args ] ) ) then hp = math.Clamp( tonumber( args[ #args ] ), 0, 99999 ) end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			pl:SetHealth( hp )
 		end
 		

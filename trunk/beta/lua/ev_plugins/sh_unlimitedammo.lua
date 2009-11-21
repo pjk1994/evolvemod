@@ -16,11 +16,11 @@ function PLUGIN:Call( ply, args )
 		local enabled = true
 		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			pl.EV_UnlimitedAmmo = enabled
 			
 			if ( enabled ) then
-				for _, ent in pairs( pl:GetWeapons() ) do
+				for _, ent in ipairs( pl:GetWeapons() ) do
 					self:FillClips( pl, ent )
 				end
 			end
@@ -52,7 +52,7 @@ function PLUGIN:FillClips( ply, wep )
 end
 
 function PLUGIN:Tick()
-	for _, ply in pairs( player.GetAll() ) do
+	for _, ply in ipairs( player.GetAll() ) do
 		if ( ply.EV_UnlimitedAmmo and ply:Alive() and ply:GetActiveWeapon() != NULL ) then
 			self:FillClips( ply, ply:GetActiveWeapon() )
 		end

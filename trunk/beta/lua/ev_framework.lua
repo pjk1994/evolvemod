@@ -2,10 +2,6 @@
 	Framework providing the main Evolve functions
 -------------------------------------------------------------------------------------------------------------------------*/
 
-// Locals
-local entmeta = FindMetaTable( "Entity" )
-local playermeta = FindMetaTable( "Player" )
-
 // Constants for comfort
 evolve.constants = { }
 evolve.colors = { }
@@ -39,7 +35,7 @@ if ( SERVER ) then
 		if ( ply != NULL ) then
 			umsg.Start( "EV_Notification", ply )
 				umsg.Short( #arg )
-				for _, v in pairs( arg ) do
+				for _, v in ipairs( arg ) do
 					if ( type( v ) == "string" ) then
 						umsg.String( v )
 					elseif ( type ( v ) == "table" ) then
@@ -54,7 +50,7 @@ if ( SERVER ) then
 		
 		// Display in server console
 		local str = ""
-		for _, v in pairs( arg ) do
+		for _, v in ipairs( arg ) do
 			if ( type( v ) == "string" ) then str = str .. v end
 		end
 		if ( ply ) then evolve:Message( ply:Nick() .. " -> " .. str ) else evolve:Message( str ) end
@@ -62,7 +58,7 @@ if ( SERVER ) then
 else
 	function evolve:Notify( ... )
 		args = { }
-		for _, v in pairs( arg ) do
+		for _, v in ipairs( arg ) do
 			if ( type( v ) == "string" or type( v ) == "table" ) then table.insert( args, v ) end
 		end
 		
@@ -88,10 +84,10 @@ end
 
 // Load plugins from the plugin directory and distribute shared and clientside plugins on the server
 function evolve:LoadPlugins()
-	evolve.plugins = { }
+	evolve.plugins = {}
 	
 	local plugins = file.FindInLua( "ev_plugins/*.lua" )
-	for _, plugin in pairs( plugins ) do
+	for _, plugin in ipairs( plugins ) do
 		local prefix = string.Left( plugin, string.find( plugin, "_" ) - 1 )
 		
 		if ( CLIENT and ( prefix == "sh" or prefix == "cl" ) ) then
@@ -103,13 +99,6 @@ function evolve:LoadPlugins()
 	end
 end
 
-// Get a plugin
-function evolve:Plugin( title )
-	for _, plugin in pairs( self.plugins ) do
-		if ( plugin.Title == title ) then return plugin end
-	end
-end
-
 // Register a plugin
 function evolve:RegisterPlugin( plugin )
 	table.insert( self.plugins, plugin )
@@ -118,7 +107,7 @@ end
 // Take care of plugin hooks
 evolve.HookCall = hook.Call
 hook.Call = function( name, gm, ... )
-	for _, plugin in pairs( evolve.plugins ) do
+	for _, plugin in ipairs( evolve.plugins ) do
 		if ( plugin[ name ] ) then
 			res, ret = pcall( plugin[name], plugin, ... )
 			if ( res and ret != nil ) then
@@ -130,7 +119,7 @@ hook.Call = function( name, gm, ... )
 		end
 	end
 	
-	for _, tab in pairs( evolve.menutabs ) do
+	for _, tab in ipairs( evolve.menutabs ) do
 		if ( name != "Initialize" and tab[ name ] ) then
 			res, ret = pcall( tab[name], tab, ... )
 			if ( res and ret != nil ) then
@@ -154,7 +143,6 @@ function evolve:IsNameMatch( ply, str )
 	elseif ( str == "!@" and !ply:IsAdmin() ) then
 		return true
 	elseif ( string.Left( str, 1 ) == "\"" and string.Right( str, 1 ) == "\"" ) then
-		print( string.sub( str, 2, #str - 1 ) )
 		return ( ply:Nick() == string.sub( str, 2, #str - 1 ) )
 	else
 		return ( string.lower( ply:Nick() ) == string.lower( str ) or string.find( string.lower( ply:Nick() ), string.lower( str ) ) )
@@ -174,8 +162,8 @@ function evolve:FindPlayer( name, def, nonum )
 			if ( #name2 > 1 and tonumber( name2[ #name2 ] ) ) then table.remove( name2, #name2 ) end
 		end
 		
-		for _, ply in pairs( player.GetAll() ) do
-			for _, pm in pairs( name2 ) do
+		for _, ply in ipairs( player.GetAll() ) do
+			for _, pm in ipairs( name2 ) do
 				if ( self:IsNameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
 			end
 		end
@@ -219,20 +207,20 @@ function evolve:GetRankName( rankname )
 	end
 end
 
-// Custom group checking functions
-function playermeta:EV_IsRespected()
+// Group checking functions
+function _R.Player:EV_IsRespected()
 	return self:GetNWString( "EV_UserGroup" ) == "respected" or self:EV_IsAdmin()
 end
 
-function playermeta:EV_IsAdmin()
+function _R.Player:EV_IsAdmin()
 	return self:GetNWString( "EV_UserGroup" ) == "admin" or self:IsAdmin() or self:EV_IsSuperAdmin()
 end
 
-function playermeta:EV_IsSuperAdmin()
+function _R.Player:EV_IsSuperAdmin()
 	return self:GetNWString( "EV_UserGroup" ) == "superadmin" or self:IsSuperAdmin() or self:EV_IsOwner()
 end
 
-function playermeta:EV_IsOwner()
+function _R.Player:EV_IsOwner()
 	if ( SERVER ) then
 		return self:GetNWString( "EV_UserGroup" ) == "owner" or self:IsListenServerHost()
 	else
@@ -240,11 +228,11 @@ function playermeta:EV_IsOwner()
 	end
 end
 
-function playermeta:EV_IsRank( rank )
+function _R.Player:EV_IsRank( rank )
 	return ( rank == evolve.ranks.guest or ( rank == evolve.ranks.admin and self:EV_IsAdmin() ) or ( rank == evolve.ranks.superadmin and self:EV_IsSuperAdmin() ) or ( rank == evolve.ranks.owner and self:EV_IsOwner() ) )
 end
 
-function playermeta:EV_GetRank()
+function _R.Player:EV_GetRank()
 	if ( self:EV_IsOwner() ) then return "owner"
 	elseif ( self:EV_IsSuperAdmin() ) then return "superadmin"
 	elseif ( self:EV_IsAdmin() ) then return "admin"
@@ -252,10 +240,44 @@ function playermeta:EV_GetRank()
 	return "guest"
 end
 
-// Console functions
-function entmeta:Nick() if ( !self:IsValid() ) then return "Console" end end
-function entmeta:EV_IsRespected() if ( !self:IsValid() ) then return true end end
-function entmeta:EV_IsAdmin() if ( !self:IsValid() ) then return true end end
-function entmeta:EV_IsSuperAdmin() if ( !self:IsValid() ) then return true end end
-function entmeta:EV_IsOwner() if ( !self:IsValid() ) then return true end end
-function entmeta:EV_GetRank() if ( !self:IsValid() ) then return "owner" end end
+// Console wrapper functions
+function _R.Entity:Nick() if ( !self:IsValid() ) then return "Console" end end
+function _R.Entity:EV_IsRespected() if ( !self:IsValid() ) then return true end end
+function _R.Entity:EV_IsAdmin() if ( !self:IsValid() ) then return true end end
+function _R.Entity:EV_IsSuperAdmin() if ( !self:IsValid() ) then return true end end
+function _R.Entity:EV_IsOwner() if ( !self:IsValid() ) then return true end end
+function _R.Entity:EV_GetRank() if ( !self:IsValid() ) then return "owner" end end
+
+// Player info module
+function evolve:LoadPlayerInfo()
+	if ( file.Exists( "ev_playerinfo.txt" ) ) then
+		self.PlayerInfo = glon.decode( file.Read( "ev_playerinfo.txt" ) )
+	else
+		self.PlayerInfo = {}
+	end
+end
+
+function evolve:SavePlayerInfo()
+	file.Write( "ev_playerinfo.txt", glon.encode( self.PlayerInfo ) )
+end
+
+function _R.Player:GetProperty( id, defaultvalue )
+	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
+	
+	if ( evolve.PlayerInfo[ self:UniqueID() ] ) then
+		return evolve.PlayerInfo[ self:UniqueID() ][ id ]
+	else
+		return defaultvalue
+	end
+end
+
+function _R.Player:SetProperty( id, value )
+	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
+	if ( !evolve.PlayerInfo[ self:UniqueID() ] ) then evolve.PlayerInfo[ self:UniqueID() ] = {} end
+	
+	evolve.PlayerInfo[ self:UniqueID() ][ id ] = value
+end
+
+function _R.Player:CommitProperties()
+	evolve:SavePlayerInfo()
+end

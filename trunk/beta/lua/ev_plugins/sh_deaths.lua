@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		local deaths = 0
 		if ( tonumber( args[ #args ] ) ) then deaths = tonumber( args[ #args ] ) end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			pl:SetDeaths( deaths )
 		end
 		

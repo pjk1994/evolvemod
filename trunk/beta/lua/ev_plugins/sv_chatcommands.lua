@@ -31,7 +31,7 @@ function PLUGIN:PlayerSay( ply, msg )
 		local command = self:GetCommand( msg )
 		local args = self:GetArguments( msg )
 		
-		for _, plugin in pairs( evolve.plugins ) do
+		for _, plugin in ipairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
 				res, ret = pcall( plugin.Call, plugin, ply, args )
 				
@@ -44,7 +44,7 @@ function PLUGIN:PlayerSay( ply, msg )
 			end
 		end
 		
-		if ( !ply.EV_Gagged ) then
+		if ( ply.EV_Gagged ) then
 			return ""
 		else
 			evolve:Notify( ply, evolve.colors.red, "Unknown command '" .. ( command or "" ) .. "'." )

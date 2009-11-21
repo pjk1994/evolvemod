@@ -16,7 +16,7 @@ function PLUGIN:Call( ply, args )
 		local speed = 250
 		if ( tonumber( args[ #args ] ) ) then speed = math.abs( tonumber( args[ #args ] ) ) end
 		
-		for _, pl in pairs( pls ) do
+		for _, pl in ipairs( pls ) do
 			GAMEMODE:SetPlayerSpeed( pl, speed, speed * 2 )
 		end
 		
