@@ -36,7 +36,7 @@ function PLUGIN:RollTheDice( ply )
 	elseif ( choice == 3 ) then
 		ply:SetHealth( ply:Health() * 0.1 )
 		
-		return "was struck by lightning`"
+		return "was struck by lightning"
 	elseif ( choice == 4 ) then
 		ply:StripWeapons()
 		
