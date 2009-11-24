@@ -18,6 +18,10 @@ function PLUGIN:Call( ply, args )
 		elseif ( #pl == 0 ) then
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		else
+			for _, v in ipairs( ents.GetAll() ) do
+				if ( v:GetNWString( "Owner" ) == pl[1]:Nick() ) then v:Remove() end
+			end
+			
 			local time = math.abs( tonumber( args[2] ) or 5 )
 			local reason = table.concat( args, " ", 3 )
 			if ( #reason == 0 ) then reason = "No reason specified" end
