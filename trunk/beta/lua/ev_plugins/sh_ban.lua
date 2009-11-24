@@ -41,7 +41,7 @@ end
 
 function PLUGIN:PlayerAuthed( ply, steamid, uniqueid )
 	if ( ply:GetProperty( "BanEnd", false ) ) then
-		if ( ply:GetProperty( "BanEnd" ) > os.time() or tonumber( ply:GetProperty( "BanEnd" ) == 0 ) ) then
+		if ( ply:GetProperty( "BanEnd" ) > os.time() or tonumber( ply:GetProperty( "BanEnd" )  ) == 0 ) then
 			ply:Kick( "Banned." )
 		else
 			ply:SetProperty( "BanEnd", nil )

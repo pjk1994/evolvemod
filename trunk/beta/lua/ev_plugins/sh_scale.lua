@@ -57,7 +57,7 @@ function PLUGIN:CalcView( ply, origin, angles, fov )
 	
 	origin = origin + Vector( 0, 0, onedist.z * ( ply:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ).z - 1 ) )
 	
-	return GAMEMODE:CalcView( ply, origin, angles, fov )
+	return GAMEMODE.BaseClass:CalcView( ply, origin, angles, fov )
 end
 
 function PLUGIN:Menu( arg, players )
