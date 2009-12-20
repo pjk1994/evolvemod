@@ -27,7 +27,9 @@ function PLUGIN:Call( ply, args )
 		if ( #victims > 0 and !victims[1]:IsValid() ) then victims = { } end
 		
 		for _, victim in ipairs( victims ) do
+			victim:SetMoveType( MOVETYPE_WALK )
 			victim:SetVelocity( Vector( 0, 0, 4000 ) )
+			
 			timer.Simple( 1, evolve.Explode, evolve, victim )
 		end
 		

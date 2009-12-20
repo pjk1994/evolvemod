@@ -9,6 +9,21 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = nil
 PLUGIN.Usage = nil
 
+// Thank you http://lua-users.org/lists/lua-l/2009-07/msg00461.html
+function PLUGIN:Levenshtein( s, t )
+	local d, sn, tn = {}, #s, #t
+	local byte, min = string.byte, math.min
+	for i = 0, sn do d[i * tn] = i end
+	for j = 0, tn do d[j] = j end
+	for i = 1, sn do
+		local si = byte(s, i)
+		for j = 1, tn do
+d[i*tn+j] = min(d[(i-1)*tn+j]+1, d[i*tn+j-1]+1, d[(i-1)*tn+j-1]+(si == byte(t,j) and 0 or 1))
+		end
+	end
+	return d[#d]
+end
+
 function PLUGIN:GetCommand( msg )
 	return string.match( msg, "%w+" )
 end
@@ -30,6 +45,7 @@ function PLUGIN:PlayerSay( ply, msg )
 	if ( string.Left( msg, 1 ) == "!" ) then
 		local command = self:GetCommand( msg )
 		local args = self:GetArguments( msg )
+		local closest = { dist = 99, plugin = "" }
 		
 		for _, plugin in ipairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
@@ -41,13 +57,23 @@ function PLUGIN:PlayerSay( ply, msg )
 				end
 				
 				return ""
+			elseif ( plugin.ChatCommand ) then
+				local dist = self:Levenshtein( string.lower( command ), plugin.ChatCommand )
+				if ( dist < closest.dist ) then
+					closest.dist = dist
+					closest.plugin = plugin.ChatCommand
+				end
 			end
 		end
 		
 		if ( ply.EV_Gagged ) then
 			return ""
 		else
-			evolve:Notify( ply, evolve.colors.red, "Unknown command '" .. ( command or "" ) .. "'." )
+			if ( closest.dist <= 0.3 * #closest.plugin ) then
+				evolve:Notify( ply, evolve.colors.red, "Command '" .. ( command or "" ) .. "' not found! Did you mean !" .. closest.plugin .. "?" )
+			else
+				evolve:Notify( ply, evolve.colors.red, "Command '" .. ( command or "" ) .. "' not found!" )
+			end
 		end
 	end
 end
