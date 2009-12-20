@@ -18,6 +18,8 @@ hook.Add( "PlayerInitialSpawn", "EvolveInit", function( ply )
 end )
 
 // Add Evolve to the tag list (Probably beta only)
-if ( !string.find( GetConVar( "sv_tags" ):GetString(), "Evolve" ) ) then
-	RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString() .. ",Evolve" )
-end
+timer.Create( "TagCheck", 1, 0, function()
+	if ( !string.find( GetConVar( "sv_tags" ):GetString(), "Evolve" ) ) then
+		RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString() .. ",Evolve" )
+	end
+end )
