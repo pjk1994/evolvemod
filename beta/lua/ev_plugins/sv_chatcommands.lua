@@ -58,10 +58,10 @@ function PLUGIN:PlayerSay( ply, msg )
 				
 				return ""
 			elseif ( plugin.ChatCommand ) then
-				local dist = self:Levenshtein( string.lower( command ), plugin.ChatCommand )
+				local dist = self:Levenshtein( string.lower( command or "" ), plugin.ChatCommand )
 				if ( dist < closest.dist ) then
 					closest.dist = dist
-					closest.plugin = plugin.ChatCommand
+					closest.plugin = plugin
 				end
 			end
 		end
@@ -69,8 +69,15 @@ function PLUGIN:PlayerSay( ply, msg )
 		if ( ply.EV_Gagged ) then
 			return ""
 		else
-			if ( closest.dist <= 0.3 * #closest.plugin ) then
-				evolve:Notify( ply, evolve.colors.red, "Command '" .. ( command or "" ) .. "' not found! Did you mean !" .. closest.plugin .. "?" )
+			if ( closest.dist <= 0.25 * #closest.plugin.ChatCommand ) then
+				res, ret = pcall( closest.plugin.Call, closest.plugin, ply, args )
+				
+				if ( !res ) then
+					evolve:Notify( evolve.colors.red, "Plugin '" .. closest.plugin.Title .. "' failed with error:" )
+					evolve:Notify( evolve.colors.red, ret )
+				end
+				
+				return ""
 			else
 				evolve:Notify( ply, evolve.colors.red, "Command '" .. ( command or "" ) .. "' not found!" )
 			end
