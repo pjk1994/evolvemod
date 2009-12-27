@@ -281,3 +281,18 @@ end
 function _R.Player:CommitProperties()
 	evolve:SavePlayerInfo()
 end
+
+// Sync time with connecting players
+hook.Add( "PlayerInitialSpawn", "EV_SyncTime", function( ply )
+	umsg.Start( "EV_Timesync", ply )
+		umsg.Long( os.time() )
+	umsg.End()
+end )
+
+usermessage.Hook( "EV_Timesync", function( um )
+	evolve.TimeOffset = um:ReadLong() - os.time()
+end )
+
+function evolve:Time()
+	return os.time() + evolve.TimeOffset
+end
