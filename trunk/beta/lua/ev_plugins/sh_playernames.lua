@@ -43,10 +43,10 @@ else
 					local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
 					local h = 24
 					
-					local drawPos = pl:GetShootPos():ToScreen()
+					local drawPos = pl:GetAttachment( pl:LookupAttachment( "eyes" ) ).Pos:ToScreen()
 					local distance = LocalPlayer():GetShootPos():Distance( pl:GetShootPos() )
 					drawPos.x = drawPos.x - w / 2
-					drawPos.y = drawPos.y - h - 8
+					drawPos.y = drawPos.y - h - 12
 					
 					local alpha = 128
 					if ( distance > 512 ) then
