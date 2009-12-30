@@ -294,5 +294,5 @@ usermessage.Hook( "EV_Timesync", function( um )
 end )
 
 function evolve:Time()
-	return os.time() + evolve.TimeOffset
+	return os.time() + ( evolve.TimeOffset or 0 )
 end

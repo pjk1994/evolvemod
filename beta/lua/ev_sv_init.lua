@@ -19,7 +19,7 @@ end )
 
 // Add Evolve to the tag list (Probably beta only)
 timer.Create( "TagCheck", 1, 0, function()
-	if ( !string.find( GetConVar( "sv_tags" ):GetString(), "Evolve" ) ) then
-		RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString() .. ",Evolve" )
+	if ( !string.find( GetConVar( "sv_tags" ):GetString(), "EvolveSVN53" ) ) then
+		RunConsoleCommand( "sv_tags", GetConVar( "sv_tags" ):GetString() .. ",EvolveSVN53" )
 	end
 end )
