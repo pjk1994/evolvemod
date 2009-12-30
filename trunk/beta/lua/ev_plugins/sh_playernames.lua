@@ -31,6 +31,8 @@ else
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 
 	function PLUGIN:HUDPaint()
+		if ( !evolve.installed ) then return end
+		
 		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() ) then
 				local td = { }

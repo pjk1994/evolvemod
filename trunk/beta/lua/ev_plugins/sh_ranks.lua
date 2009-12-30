@@ -33,6 +33,7 @@ end
 
 function PLUGIN:Rank( ply )
 	if ( !self.playerRanks ) then self:Load() end
+	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
 	
 	for _, rank in ipairs( self.playerRanks ) do
 		if ( rank.steamID == ply:SteamID() ) then
