@@ -29,6 +29,7 @@ function PLUGIN:Call( ply, args )
 			if ( time > 0 ) then pl[1]:SetProperty( "BanEnd", os.time() + time * 60 ) else pl[1]:SetProperty( "BanEnd", 0 ) end
 			pl[1]:SetProperty( "BanReason", reason )
 			pl[1]:SetProperty( "BanAdmin", ply:UniqueID() )
+			evolve:CommitProperties()
 			
 			if ( time == 0 ) then
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, pl[1]:Nick(), evolve.colors.white, " permanently (" .. reason .. ")." )
@@ -49,6 +50,7 @@ function PLUGIN:PlayerAuthed( ply, steamid, uniqueid )
 			ply:Kick( "Banned." )
 		else
 			ply:SetProperty( "BanEnd", nil )
+			evolve:CommitProperties()
 		end
 	end
 end

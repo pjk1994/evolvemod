@@ -7,7 +7,6 @@ PLUGIN.Title = "Roll the Dice"
 PLUGIN.Description = "Roll a dice and see what happens!"
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rtd"
-PLUGIN.Usage = "[player]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsRespected() and ValidEntity( ply ) ) then			

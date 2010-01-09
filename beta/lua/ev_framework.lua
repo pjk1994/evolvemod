@@ -265,7 +265,7 @@ function _R.Player:GetProperty( id, defaultvalue )
 	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
 	
 	if ( evolve.PlayerInfo[ self:UniqueID() ] ) then
-		return evolve.PlayerInfo[ self:UniqueID() ][ id ]
+		return evolve.PlayerInfo[ self:UniqueID() ][ id ] or defaultvalue
 	else
 		return defaultvalue
 	end
@@ -278,7 +278,26 @@ function _R.Player:SetProperty( id, value )
 	evolve.PlayerInfo[ self:UniqueID() ][ id ] = value
 end
 
-function _R.Player:CommitProperties()
+function evolve:GetProperty( uniqueid, id, defaultvalue )
+	uniqueid = tostring( uniqueid )
+	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
+	
+	if ( evolve.PlayerInfo[ uniqueid ] ) then
+		return evolve.PlayerInfo[ uniqueid ][ id ] or defaultvalue
+	else
+		return defaultvalue
+	end
+end
+
+function evolve:SetProperty( uniqueid, id, value )
+	uniqueid = tostring( uniqueid )
+	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
+	if ( !evolve.PlayerInfo[ uniqueid ] ) then evolve.PlayerInfo[ uniqueid ] = {} end
+	
+	evolve.PlayerInfo[ uniqueid ][ id ] = value
+end
+
+function evolve:CommitProperties()
 	evolve:SavePlayerInfo()
 end
 

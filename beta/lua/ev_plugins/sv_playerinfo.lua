@@ -16,7 +16,7 @@ function PLUGIN:ShowPlayerInfo( ply )
 		ply:SetProperty( "LastJoin", os.time() )
 		ply:SetProperty( "SteamID", ply:SteamID() )
 		ply:SetProperty( "IPAddress", ply:IPAddress() )
-		ply:CommitProperties()
+		evolve:CommitProperties()
 	else
 		evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has joined for the first time." )
 		
@@ -24,7 +24,7 @@ function PLUGIN:ShowPlayerInfo( ply )
 		ply:SetProperty( "LastJoin", os.time() )
 		ply:SetProperty( "SteamID", ply:SteamID() )
 		ply:SetProperty( "IPAddress", ply:IPAddress() )
-		ply:CommitProperties()
+		evolve:CommitProperties()
 	end
 end
 
