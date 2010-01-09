@@ -42,7 +42,7 @@ function PLUGIN:GetArguments( msg )
 end
 
 function PLUGIN:PlayerSay( ply, msg )
-	if ( string.Left( msg, 1 ) == "!" ) then
+	if ( string.Left( msg, 1 ) == "/" or string.Left( msg, 1 ) == "!" ) then
 		local command = self:GetCommand( msg )
 		local args = self:GetArguments( msg )
 		local closest = { dist = 99, plugin = "" }
@@ -78,8 +78,6 @@ function PLUGIN:PlayerSay( ply, msg )
 				end
 				
 				return ""
-			else
-				evolve:Notify( ply, evolve.colors.red, "Command '" .. ( command or "" ) .. "' not found!" )
 			end
 		end
 	end
