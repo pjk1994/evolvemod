@@ -105,7 +105,7 @@ function evolve:RegisterPlugin( plugin )
 end
 
 // Take care of plugin hooks
-evolve.HookCall = hook.Call
+if ( !evolve.HookCall ) then evolve.HookCall = hook.Call end
 hook.Call = function( name, gm, ... )
 	for _, plugin in ipairs( evolve.plugins ) do
 		if ( plugin[ name ] ) then
@@ -276,6 +276,16 @@ function _R.Player:SetProperty( id, value )
 	if ( !evolve.PlayerInfo[ self:UniqueID() ] ) then evolve.PlayerInfo[ self:UniqueID() ] = {} end
 	
 	evolve.PlayerInfo[ self:UniqueID() ][ id ] = value
+end
+
+function evolve:UniqueIDByProperty( property, value, exact )
+	for k, v in pairs( evolve.PlayerInfo ) do
+		if ( v[ property ] == value ) then
+			return k
+		elseif ( !exact and string.find( string.lower( v[ property ] or "" ), string.lower( value ) ) ) then
+			return k
+		end
+	end
 end
 
 function evolve:GetProperty( uniqueid, id, defaultvalue )

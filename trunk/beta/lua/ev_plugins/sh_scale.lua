@@ -53,6 +53,8 @@ function PLUGIN:RenderScene()
 end
 
 function PLUGIN:CalcView( ply, origin, angles, fov )
+	if ( ply:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ) == Vector( 1, 1, 1 ) ) then return end
+	
 	local onedist = ply:GetShootPos() - ply:GetPos()
 	
 	origin = origin + Vector( 0, 0, onedist.z * ( ply:GetNWVector( "EV_Scale", Vector( 1, 1, 1 ) ).z - 1 ) )
