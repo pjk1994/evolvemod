@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = "im"
 PLUGIN.Usage = "<player> <message>"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
+	if ( ply:EV_IsAdmin() ) then	
 		local pl = evolve:FindPlayer( args[1] )
 		
 		if ( #pl < 2 or !pl[1] ) then			
