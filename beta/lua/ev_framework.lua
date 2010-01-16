@@ -2,12 +2,14 @@
 	Framework providing the main Evolve functions
 -------------------------------------------------------------------------------------------------------------------------*/
 
-// Constants for comfort
+/*-------------------------------------------------------------------------------------------------------------------------
+	Comfortable constants
+-------------------------------------------------------------------------------------------------------------------------*/
+
 evolve.constants = { }
 evolve.colors = { }
 evolve.ranks = { }
 evolve.constants.notallowed = "You are not allowed to do that!"
-evolve.colors.yellow = Color( 236, 227, 203, 255 )
 evolve.colors.blue = Color( 98, 176, 255, 255 )
 evolve.colors.red = Color( 255, 62, 62, 255 )
 evolve.colors.white = color_white
@@ -22,12 +24,14 @@ evolve.ranks.admin = 2
 evolve.ranks.superadmin = 3
 evolve.ranks.owner = 4
 
-// Prints a message to the console
+/*-------------------------------------------------------------------------------------------------------------------------
+	Messages and notifications
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function evolve:Message( msg )
 	print( "[EV] " .. msg )
 end
 
-// Display a notification
 if ( SERVER ) then
 	function evolve:Notify( ... )
 		local ply = nil
@@ -48,12 +52,11 @@ if ( SERVER ) then
 			umsg.End()
 		end
 		
-		// Display in server console
 		local str = ""
 		for _, v in ipairs( arg ) do
 			if ( type( v ) == "string" ) then str = str .. v end
 		end
-		if ( ply ) then evolve:Message( ply:Nick() .. " -> " .. str ) else evolve:Message( str ) end
+		if ( ply ) then print( "[EV] " .. ply:Nick() .. " -> " .. str ) else print( "[EV] " .. str ) end
 	end
 else
 	function evolve:Notify( ... )
@@ -77,12 +80,18 @@ else
 	end )
 end
 
-// Convert bool to int
+/*-------------------------------------------------------------------------------------------------------------------------
+	Utility functions
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function evolve:BoolToInt( bool )
 	if ( bool ) then return 1 else return 0 end
 end
 
-// Load plugins from the plugin directory and distribute shared and clientside plugins on the server
+/*-------------------------------------------------------------------------------------------------------------------------
+	Plugin management
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function evolve:LoadPlugins()
 	evolve.plugins = {}
 	
@@ -99,12 +108,10 @@ function evolve:LoadPlugins()
 	end
 end
 
-// Register a plugin
 function evolve:RegisterPlugin( plugin )
 	table.insert( self.plugins, plugin )
 end
 
-// Take care of plugin hooks
 if ( !evolve.HookCall ) then evolve.HookCall = hook.Call end
 hook.Call = function( name, gm, ... )
 	for _, plugin in ipairs( evolve.plugins ) do
@@ -134,7 +141,10 @@ hook.Call = function( name, gm, ... )
 	return evolve.HookCall( name, gm, ... )
 end
 
-// Match player and string
+/*-------------------------------------------------------------------------------------------------------------------------
+	Player collections
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function evolve:IsNameMatch( ply, str )
 	if ( str == "*" ) then
 		return true
@@ -149,7 +159,6 @@ function evolve:IsNameMatch( ply, str )
 	end
 end
 
-// Find a player by name
 function evolve:FindPlayer( name, def, nonum )
 	local matches = {}
 	
@@ -172,7 +181,6 @@ function evolve:FindPlayer( name, def, nonum )
 	return matches
 end
 
-// Turn a table with items into a string
 function evolve:CreatePlayerList( tbl, notall )
 	local lst = ""
 	local lword = "and"
@@ -191,6 +199,10 @@ function evolve:CreatePlayerList( tbl, notall )
 	return lst
 end
 
+/*-------------------------------------------------------------------------------------------------------------------------
+	Ranks
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function evolve:GetRankName( rankname )
 	if ( rankname == "owner" ) then
 		return "Owner", "an"
@@ -207,7 +219,6 @@ function evolve:GetRankName( rankname )
 	end
 end
 
-// Group checking functions
 function _R.Player:EV_IsRespected()
 	return self:GetNWString( "EV_UserGroup" ) == "respected" or self:EV_IsAdmin()
 end
@@ -240,7 +251,10 @@ function _R.Player:EV_GetRank()
 	return "guest"
 end
 
-// Console wrapper functions
+/*-------------------------------------------------------------------------------------------------------------------------
+	Console
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function _R.Entity:Nick() if ( !self:IsValid() ) then return "Console" end end
 function _R.Entity:EV_IsRespected() if ( !self:IsValid() ) then return true end end
 function _R.Entity:EV_IsAdmin() if ( !self:IsValid() ) then return true end end
@@ -248,7 +262,10 @@ function _R.Entity:EV_IsSuperAdmin() if ( !self:IsValid() ) then return true end
 function _R.Entity:EV_IsOwner() if ( !self:IsValid() ) then return true end end
 function _R.Entity:EV_GetRank() if ( !self:IsValid() ) then return "owner" end end
 
-// Player info module
+/*-------------------------------------------------------------------------------------------------------------------------
+	Player information
+-------------------------------------------------------------------------------------------------------------------------*/
+
 function evolve:LoadPlayerInfo()
 	if ( file.Exists( "ev_playerinfo.txt" ) ) then
 		self.PlayerInfo = glon.decode( file.Read( "ev_playerinfo.txt" ) )
@@ -311,17 +328,29 @@ function evolve:CommitProperties()
 	evolve:SavePlayerInfo()
 end
 
-// Sync time with connecting players
-hook.Add( "PlayerInitialSpawn", "EV_SyncTime", function( ply )
-	umsg.Start( "EV_Timesync", ply )
-		umsg.Long( os.time() )
-	umsg.End()
-end )
+/*-------------------------------------------------------------------------------------------------------------------------
+	Entity ownership
+-------------------------------------------------------------------------------------------------------------------------*/
 
-usermessage.Hook( "EV_Timesync", function( um )
-	evolve.TimeOffset = um:ReadLong() - os.time()
-end )
+hook.Add( "PlayerSpawnedProp", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply end )
+hook.Add( "PlayerSpawnedSENT", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply end )
+hook.Add( "PlayerSpawnedNPC", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply end )
+hook.Add( "PlayerSpawnedVehicle", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply end )
+hook.Add( "PlayerSpawnedEffect", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply end )
+hook.Add( "PlayerSpawnedRagdoll", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply end )
 
-function evolve:Time()
-	return os.time() + ( evolve.TimeOffset or 0 )
+evolve.AddCount = _R.Player.AddCount
+function _R.Player:AddCount( type, ent )
+	ent.EV_Owner = self
+	return evolve.AddCount( self, type, ent )
+end
+
+evolve.CleanupAdd = cleanup.Add
+function cleanup.Add( ply, type, ent )
+	if ( ent ) then ent.EV_Owner = ply end
+	return evolve.CleanupAdd( ply, type, ent )
+end
+
+function _R.Entity:EV_GetOwner()
+	return self.EV_Owner
 end

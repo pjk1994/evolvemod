@@ -12,7 +12,7 @@ PLUGIN.Usage = "<message>"
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		if ( #args > 0 ) then
-			evolve:Notify( pl, evolve.colors.red, "(ADMIN)", evolve.colors.white, " " .. table.concat( args, " " ) )
+			evolve:Notify( evolve.colors.red, "(ADMIN)", evolve.colors.white, " " .. table.concat( args, " " ) )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

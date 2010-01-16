@@ -19,7 +19,7 @@ function PLUGIN:Call( ply, args )
 			local reason = table.concat( args, " ", 2 ) or ""
 			
 			for _, v in ipairs( ents.GetAll() ) do
-				if ( v:GetNWString( "Owner" ) == pl[1]:Nick() ) then v:Remove() end
+				if ( v:EV_GetOwner() == pl[1] ) then v:Remove() end
 			end
 			
 			if ( #reason == 0 || reason == "No reason" ) then
