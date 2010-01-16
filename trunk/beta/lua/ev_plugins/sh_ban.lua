@@ -19,7 +19,7 @@ function PLUGIN:Call( ply, args )
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		else
 			for _, v in ipairs( ents.GetAll() ) do
-				if ( v:GetNWString( "Owner" ) == pl[1]:Nick() ) then v:Remove() end
+				if ( v:EV_GetOwner() == pl[1] ) then v:Remove() end
 			end
 			
 			local time = math.abs( tonumber( args[2] ) or 5 )

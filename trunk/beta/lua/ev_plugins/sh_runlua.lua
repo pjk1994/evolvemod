@@ -3,14 +3,14 @@
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = { }
-PLUGIN.Title = "Run Lua"
+PLUGIN.Title = "Lua"
 PLUGIN.Description = "Execute Lua on the server."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "lua"
 PLUGIN.Usage = "<code>"
 
-local mt = {}
-EVERYONE = {}
+local mt, mt2 = {}, {}
+EVERYONE, EVERYTHING = {}, {}
 
 function mt.__index( t, k )
 	return function( ply, ... )
@@ -20,7 +20,16 @@ function mt.__index( t, k )
 	end
 end
 
+function mt2.__index( t, k )
+	return function( ply, ... )
+		for _, ent in ipairs( ents.GetAll() ) do
+			if ( !ent:IsWorld() ) then ent[ k ]( ent, ... ) end
+		end
+	end
+end
+
 setmetatable( EVERYONE, mt )
+setmetatable( EVERYTHING, mt2 )
 
 function PLUGIN:Call( ply, args )	
 	if ( ply:EV_IsOwner() and ValidEntity( ply ) ) then

@@ -40,7 +40,7 @@ else
 				td.endpos = pl:GetShootPos()
 				local trace = util.TraceLine( td )
 				
-				if ( !trace.HitWorld and !pl:GetNWBool( "EV_Ghosted", false ) ) then
+				if ( !trace.HitWorld and !pl:GetNWBool( "EV_Ghosted", false ) ) then				
 					surface.SetFont( "ScoreboardText" )
 					local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
 					local h = 24

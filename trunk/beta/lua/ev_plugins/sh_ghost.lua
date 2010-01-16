@@ -54,8 +54,12 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:EV_ShouldDrawName( ply )
+	if ( ply:GetNWBool( "EV_Ghosted", false ) ) then return false end
+end
+
 function PLUGIN:PlayerSpawn( ply )
-	if ( ply.EV_Ghosted ) then
+	if ( ply:GetNWBool( "EV_Ghosted", false ) ) then
 		ply:SetRenderMode( RENDERMODE_NONE )
 		ply:SetColor( 255, 255, 255, 0 )
 		ply:SetCollisionGroup( COLLISION_GROUP_WEAPON )
@@ -68,7 +72,7 @@ function PLUGIN:PlayerSpawn( ply )
 end
 
 function PLUGIN:PlayerCanPickupWeapon( ply, wep )
-	if ( ply.EV_Ghosted ) then
+	if ( ply:GetNWBool( "EV_Ghosted", false ) ) then
 		wep:SetRenderMode( RENDERMODE_NONE )
 		wep:SetColor( 255, 255, 255, 0 )
 	end
