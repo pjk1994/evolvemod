@@ -2,12 +2,12 @@
 	Change the map
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Change Map"
 PLUGIN.Description = "Change the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "map"
-PLUGIN.Usage = nil
+PLUGIN.Usage = "<map>"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then

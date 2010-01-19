@@ -2,7 +2,7 @@
 	Jail a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Jail"
 PLUGIN.Description = "Jail a player."
 PLUGIN.Author = "Overv"
@@ -12,12 +12,10 @@ PLUGIN.Usage = "[players] [1/0]"
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
 		if ( evolve.jailPos ) then
-			local pls = evolve:FindPlayer( args, ply, true )
-			if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-			local enabled = true
-			if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
+			local players = evolve:FindPlayer( args, ply, true )
+			local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 			
-			for _, pl in ipairs( pls ) do
+			for _, pl in ipairs( players ) do
 				pl.EV_Jailed = enabled
 				
 				if ( enabled ) then
@@ -32,11 +30,11 @@ function PLUGIN:Call( ply, args )
 				end
 			end
 			
-			if ( #pls > 0 ) then
+			if ( #players > 0 ) then
 				if ( enabled ) then
-					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has jailed ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has jailed ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 				else
-					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has released ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has released ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 				end
 			else
 				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
@@ -88,14 +86,14 @@ end
 
 evolve:RegisterPlugin( PLUGIN )
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Set jail"
 PLUGIN.Description = "Set the jail position."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "setjail"
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_IsAdmin() and ply:IsValid() ) then
 		evolve.jailPos = ply:GetEyeTrace().HitPos
 		evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the jail position." )
 	else

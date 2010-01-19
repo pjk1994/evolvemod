@@ -2,7 +2,7 @@
 	Enable speedmode for a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Speed"
 PLUGIN.Description = "Enable speedmode for a player."
 PLUGIN.Author = "Overv"
@@ -11,17 +11,15 @@ PLUGIN.Usage = "[players] [speed]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local speed = 250
-		if ( tonumber( args[ #args ] ) ) then speed = math.abs( tonumber( args[ #args ] ) ) end
+		local players = evolve:FindPlayer( args, ply, true )
+		local speed = math.abs( tonumber( args[ #args ] ) or 250 )
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			GAMEMODE:SetPlayerSpeed( pl, speed, speed * 2 )
 		end
 		
-		if ( #pls > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the speed of ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " to " .. speed .. "." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the speed of ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " to " .. speed .. "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end

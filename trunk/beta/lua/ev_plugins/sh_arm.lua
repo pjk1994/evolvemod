@@ -2,7 +2,7 @@
 	Arm a player with the default loadout
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Arm"
 PLUGIN.Description = "Arm players with the default loadout."
 PLUGIN.Author = "Overv"
@@ -11,15 +11,14 @@ PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
+		local players = evolve:FindPlayer( args, ply )
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			GAMEMODE:PlayerLoadout( pl )
 		end
 		
-		if ( #pls > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has armed ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has armed ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end

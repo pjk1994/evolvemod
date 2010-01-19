@@ -2,12 +2,11 @@
 	Extinguish everything
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Extinguish"
 PLUGIN.Description = "Extinguish every entity in the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "extinguish"
-PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then

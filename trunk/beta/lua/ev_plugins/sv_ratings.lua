@@ -2,12 +2,10 @@
 	Shows who's rating who what
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Sandbox rating monitor"
 PLUGIN.Description = "Shows who's rating who what."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = nil
-PLUGIN.Usage = nil
 
 if ( !evolve.oldConcommand ) then
 	evolve.oldConcommand = concommand.Run
@@ -19,7 +17,7 @@ function concommand.Run( ply, com, args )
 		local rating = args[2]
 		
 		if ( ValidEntity( target ) and target:EV_IsRespected() and rating ) then
-			target.RatingTimers = target.RatingTimers or { }
+			target.RatingTimers = target.RatingTimers or {}
 			if ( target.RatingTimers[ ply:UniqueID() ] and target.RatingTimers[ ply:UniqueID() ] > CurTime() + 60 ) then return end
 			
 			evolve:Notify( target, evolve.colors.blue, ply:Nick(), evolve.colors.white, " rated you", evolve.colors.red, " " .. rating, evolve.colors.white, "." )

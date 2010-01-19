@@ -2,7 +2,7 @@
 	Run Lua on the server
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Lua"
 PLUGIN.Description = "Execute Lua on the server."
 PLUGIN.Author = "Overv"

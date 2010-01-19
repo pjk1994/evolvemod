@@ -2,7 +2,7 @@
 	Player Info
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Player Info"
 PLUGIN.Description = "When players join, show info about them."
 PLUGIN.Author = "Overv"

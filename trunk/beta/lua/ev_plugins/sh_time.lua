@@ -2,11 +2,11 @@
 	Current time
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Time"
 PLUGIN.Description = "Returns the current time."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = "thetime"
+PLUGIN.ChatCommand = "time"
 
 function PLUGIN:Call( ply, args )
 	umsg.Start( "EV_ShowTime", ply )

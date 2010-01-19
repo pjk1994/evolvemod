@@ -2,7 +2,7 @@
 	Display player names above heads
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Player Names"
 PLUGIN.Description = "Displays player names above heads."
 PLUGIN.Author = "Overv"
@@ -35,17 +35,17 @@ else
 		
 		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() ) then
-				local td = { }
+				local td = {}
 				td.start = LocalPlayer():GetShootPos()
 				td.endpos = pl:GetShootPos()
 				local trace = util.TraceLine( td )
 				
-				if ( !trace.HitWorld and !pl:GetNWBool( "EV_Ghosted", false ) ) then				
+				if ( !trace.HitWorld ) then				
 					surface.SetFont( "ScoreboardText" )
 					local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
 					local h = 24
 					
-					local drawPos = pl:GetAttachment( pl:LookupAttachment( "eyes" ) ).Pos:ToScreen()
+					local drawPos = pl:GetShootPos():ToScreen()
 					local distance = LocalPlayer():GetShootPos():Distance( pl:GetShootPos() )
 					drawPos.x = drawPos.x - w / 2
 					drawPos.y = drawPos.y - h - 12

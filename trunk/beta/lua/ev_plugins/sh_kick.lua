@@ -2,7 +2,7 @@
 	Kick a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Kick"
 PLUGIN.Description = "Kick a player."
 PLUGIN.Author = "Overv"

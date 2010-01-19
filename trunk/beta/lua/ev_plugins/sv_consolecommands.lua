@@ -2,7 +2,7 @@
 	Provides console commands
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Console Commands"
 PLUGIN.Description = "Provides console commands to run plugins."
 PLUGIN.Author = "Overv"
@@ -10,7 +10,7 @@ PLUGIN.ChatCommand = nil
 PLUGIN.Usage = nil
 
 function PLUGIN:GetArguments( allargs )
-	local newargs = { }
+	local newargs = {}
 	for i = 2, #allargs do
 		table.insert( newargs, allargs[i] )
 	end

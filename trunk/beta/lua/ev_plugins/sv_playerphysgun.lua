@@ -2,12 +2,10 @@
 	Physgun players
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Physgun Players"
 PLUGIN.Description = "Physgun a player."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = nil
-PLUGIN.Usage = nil
 
 function PLUGIN:PhysgunPickup( ply, pl )
 	if ply:EV_IsAdmin() and pl:IsPlayer() then

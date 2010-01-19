@@ -2,7 +2,7 @@
 	Set a convar
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Cconvar"
 PLUGIN.Description = "Set a convar."
 PLUGIN.Author = "Overv"

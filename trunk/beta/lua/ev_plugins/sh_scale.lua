@@ -2,7 +2,7 @@
 	Set the scale of a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Scale"
 PLUGIN.Description = "Set the scale of a player."
 PLUGIN.Author = "Overv"
@@ -20,16 +20,16 @@ function PLUGIN:Call( ply, args )
 			table.remove( args, #args )
 			
 			if ( x and y and z ) then
-				local pls = evolve:FindPlayer( args, ply )
+				local players = evolve:FindPlayer( args, ply )
 				local scale = Vector( x, y, z )
 				
-				if ( #pls > 0 ) then
-					for _, pl in ipairs( pls ) do
+				if ( #players > 0 ) then
+					for _, pl in ipairs( players ) do
 						pl:SetNWVector( "EV_Scale", scale )
 						pl:SetJumpPower( 200 + ( scale.z - 1 ) * 50 )
 					end
 					
-					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
+					evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the scale of ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " to " .. x .. ", " .. y .. ", " .. z .. "." )
 				else
 					evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 				end

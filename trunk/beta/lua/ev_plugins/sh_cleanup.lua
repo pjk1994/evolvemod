@@ -2,12 +2,11 @@
 	Clean up the map
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Cleanup"
 PLUGIN.Description = "Clean up the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "cleanup"
-PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then

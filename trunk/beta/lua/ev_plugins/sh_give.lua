@@ -2,7 +2,7 @@
 	Give a weapon to a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Give weapon"
 PLUGIN.Description = "Give a weapon to a player."
 PLUGIN.Author = "Overv"
@@ -11,20 +11,18 @@ PLUGIN.Usage = "<players> <weapon>"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local wep = ""
+		local players = evolve:FindPlayer( args, ply )
+		local wep = args[ #args ]
+		
 		if ( #args < 2 ) then
 			evolve:Notify( ply, evolve.colors.red, "No weapon specified!" )
-		else
-			wep = args[ #args ]
-			
-			if ( #pls > 0 ) then
-				for _, pl in ipairs( pls ) do
+		else			
+			if ( #players > 0 ) then
+				for _, pl in ipairs( players ) do
 					pl:Give( wep )
 				end
 				
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has given ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " a " .. wep .. "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has given ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " a " .. wep .. "." )
 			else
 				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 			end

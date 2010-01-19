@@ -2,7 +2,7 @@
 	Display a public message as an admin
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Public Admin Message"
 PLUGIN.Description = "Display a message to all online players as an admin."
 PLUGIN.Author = "Overv"

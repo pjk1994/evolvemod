@@ -2,7 +2,7 @@
 	View usage information for a given command
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Command Help"
 PLUGIN.Description = "View the usage of a command if available."
 PLUGIN.Author = "Overv"

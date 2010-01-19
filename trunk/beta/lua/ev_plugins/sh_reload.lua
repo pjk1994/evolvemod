@@ -2,7 +2,7 @@
 	Reload the map
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Reload"
 PLUGIN.Description = "Reload the map."
 PLUGIN.Author = "Overv"

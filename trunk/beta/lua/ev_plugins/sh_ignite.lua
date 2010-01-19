@@ -2,7 +2,7 @@
 	Ignite a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Ignite"
 PLUGIN.Description = "Ignite a player."
 PLUGIN.Author = "Overv"
@@ -11,20 +11,18 @@ PLUGIN.Usage = "[players] [1/0]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local enabled = true
-		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
+		local players = evolve:FindPlayer( args, ply, true )
+		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			if ( enabled ) then pl:Ignite( 99999, 1 ) else pl:Extinguish() end
 		end
 		
-		if ( #pls > 0 ) then
+		if ( #players > 0 ) then
 			if ( enabled ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has ignited ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has ignited ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has extinguished ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has extinguished ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 			end
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )

@@ -2,12 +2,10 @@
 	Provides chat commands
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Chat Commands"
 PLUGIN.Description = "Provides chat commands to run plugins."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = nil
-PLUGIN.Usage = nil
 
 // Thank you http://lua-users.org/lists/lua-l/2009-07/msg00461.html
 function PLUGIN:Levenshtein( s, t )

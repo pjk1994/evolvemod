@@ -2,7 +2,7 @@
 	Ranking
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Ranking"
 PLUGIN.Description = "Promote and demote people."
 PLUGIN.Author = "Overv"
@@ -23,7 +23,7 @@ function PLUGIN:Load()
 	if ( file.Exists( "ev_ranks.txt" ) ) then
 		self.playerRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
 	else
-		self.playerRanks = { }
+		self.playerRanks = {}
 	end
 end
 
@@ -67,7 +67,7 @@ function PLUGIN:SetRank( ply, newrank )
 		end
 	end
 	
-	local ranki = { }
+	local ranki = {}
 	ranki.steamID = ply:SteamID()
 	ranki.rank = newrank
 	table.insert( self.playerRanks, ranki )
