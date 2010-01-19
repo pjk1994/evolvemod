@@ -2,12 +2,11 @@
 	Display all chat commands
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Chatcommands"
 PLUGIN.Description = "Display all available chat commands."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "commands"
-PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
 	umsg.Start( "EV_CommandStart", ply ) umsg.End()

@@ -2,7 +2,7 @@
 	Enable godmode for a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Godmode"
 PLUGIN.Description = "Enable godmode for a player."
 PLUGIN.Author = "Overv"
@@ -11,21 +11,19 @@ PLUGIN.Usage = "[players] [1/0]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local enabled = true
-		if ( tonumber( args[ #args ] ) ) then enabled = tonumber( args[ #args ] ) > 0 end
+		local players = evolve:FindPlayer( args, ply, true )
+		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			if ( enabled ) then pl:GodEnable() else pl:GodDisable() end
 			pl.EV_GodMode = enabled
 		end
 		
-		if ( #pls > 0 ) then
+		if ( #players > 0 ) then
 			if ( enabled ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has enabled godmode for ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has enabled godmode for ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has disabled godmode for ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has disabled godmode for ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 			end
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )

@@ -2,7 +2,7 @@
 	Goto a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Goto"
 PLUGIN.Description = "Go to a player."
 PLUGIN.Author = "Overv"
@@ -11,17 +11,17 @@ PLUGIN.Usage = "[player]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
-		local pl = evolve:FindPlayer( args, ply )
+		local players = evolve:FindPlayer( args, ply )
 		
-		if ( #pl < 2 ) then			
-			if ( #pl > 0 ) then
-				ply:SetPos( pl[1]:GetPos() + Vector( 0, 0, 128 ) )
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has gone to ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, "." )
+		if ( #players < 2 ) then			
+			if ( #players > 0 ) then
+				ply:SetPos( players[1]:GetPos() + Vector( 0, 0, 128 ) )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has gone to ", evolve.colors.red, players[1]:Nick(), evolve.colors.white, "." )
 			else
 				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 			end
 		else
-			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( players, true ), evolve.colors.white, "?" )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

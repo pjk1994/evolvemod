@@ -2,7 +2,7 @@
 	Teleport a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Teleport"
 PLUGIN.Description = "Teleport a player."
 PLUGIN.Author = "Overv"
@@ -11,16 +11,15 @@ PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
-		local pls = evolve:FindPlayer( args, ply )
-				
-		if ( #pls > 0 ) then
-			local tr = ply:GetEyeTrace()
-			local pos = tr.HitPos
-			for i, pl in ipairs( pls ) do
-				pl:SetPos( pos + i * tr.HitNormal * 128 )
+		local players = evolve:FindPlayer( args, ply )
+		local tr = ply:GetEyeTrace()
+		
+		if ( #players > 0 ) then
+			for i, pl in ipairs( players ) do
+				pl:SetPos( tr.HitPos + i * tr.HitNormal * 128 )
 			end
 			
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, "." )
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end

@@ -2,7 +2,7 @@
 	Set the health of a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Health"
 PLUGIN.Description = "Set the health of a player."
 PLUGIN.Author = "Overv"
@@ -11,17 +11,15 @@ PLUGIN.Usage = "<players> [health]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local hp = 100
-		if ( tonumber( args[ #args ] ) ) then hp = math.Clamp( tonumber( args[ #args ] ), 0, 99999 ) end
+		local players = evolve:FindPlayer( args, ply, true )
+		local hp = math.Clamp( tonumber( args[ #args ] ) or 100, 0, 99999 )
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			pl:SetHealth( hp )
 		end
 		
-		if ( #pls > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the health of ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " to " .. hp .. "." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the health of ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " to " .. hp .. "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
@@ -35,7 +33,7 @@ function PLUGIN:Menu( arg, players )
 		table.insert( players, arg )
 		RunConsoleCommand( "ev", "hp", unpack( players ) )
 	else
-		args = { }
+		args = {}
 		for i = 1, 10 do
 			args[i] = { i * 10 }
 		end

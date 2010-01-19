@@ -2,7 +2,7 @@
 	Run a console command on the server
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "RCON"
 PLUGIN.Description = "Run a console command on the server."
 PLUGIN.Author = "Overv"

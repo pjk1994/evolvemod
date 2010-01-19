@@ -2,7 +2,7 @@
 	Roll the dice
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Roll the Dice"
 PLUGIN.Description = "Roll a dice and see what happens!"
 PLUGIN.Author = "Overv"

@@ -2,14 +2,14 @@
 	Rocket a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Rocket"
 PLUGIN.Description = "Rocket a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rocket"
 PLUGIN.Usage = "[players]"
 
-function evolve:Explode( ply )
+function PLUGIN:Explode( ply )
 	local explosive = ents.Create( "env_explosion" )
 	explosive:SetPos( ply:GetPos() )
 	explosive:SetOwner( ply )
@@ -18,23 +18,24 @@ function evolve:Explode( ply )
 	explosive:Fire( "Explode", 0, 0 )
 	explosive:EmitSound( "ambient/explosions/explode_4.wav", 500, 500 )
 	
+	ply:StopParticles()
 	ply:Kill()
 end
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local victims = evolve:FindPlayer( args, ply )
-		if ( #victims > 0 and !victims[1]:IsValid() ) then victims = { } end
+		local players = evolve:FindPlayer( args, ply )
 		
-		for _, victim in ipairs( victims ) do
-			victim:SetMoveType( MOVETYPE_WALK )
-			victim:SetVelocity( Vector( 0, 0, 4000 ) )
+		for _, pl in ipairs( players ) do
+			pl:SetMoveType( MOVETYPE_WALK )
+			pl:SetVelocity( Vector( 0, 0, 4000 ) )
+			ParticleEffectAttach( "rockettrail", PATTACH_ABSORIGIN_FOLLOW, pl, 0 )
 			
-			timer.Simple( 1, evolve.Explode, evolve, victim )
+			timer.Simple( 1, PLUGIN.Explode, PLUGIN, pl )
 		end
 		
-		if ( #victims > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has rocketed ", evolve.colors.red, evolve:CreatePlayerList( victims ), evolve.colors.white, "." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has rocketed ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end

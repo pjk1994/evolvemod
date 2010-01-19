@@ -2,7 +2,7 @@
 	Display a notification at the top
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Notice"
 PLUGIN.Description = "Pops up a notification for everyone."
 PLUGIN.Author = "Overv"
@@ -11,11 +11,8 @@ PLUGIN.Usage = "<message> [time=10]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local time = 10
-		if ( tonumber( args[ #args ] ) ) then
-			time = math.Clamp( tonumber( args[ #args ] ), 1, 120 )
-			args[ #args ] = nil
-		end
+		local time = tonumber( args[ #args ] ) or 10
+		if ( tonumber( args[ #args ] ) ) then args[ #args ] = nil end
 		local msg = table.concat( args, " " )
 		
 		if ( #msg > 0 ) then
@@ -27,7 +24,7 @@ function PLUGIN:Call( ply, args )
 			for _, pl in ipairs( player.GetAll() ) do
 				if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.blue, ply:Nick(), evolve.colors.white, " has added a notice." ) end
 			end
-			evolve:Notify( evolve.colors.red, msg )
+			evolve:Notify( evolve.colors.white, msg )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

@@ -2,7 +2,7 @@
 	Set the deaths of a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Deaths"
 PLUGIN.Description = "Set the deaths of a player."
 PLUGIN.Author = "Overv"
@@ -11,17 +11,15 @@ PLUGIN.Usage = "<players> [deaths]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local deaths = 0
-		if ( tonumber( args[ #args ] ) ) then deaths = tonumber( args[ #args ] ) end
+		local players = evolve:FindPlayer( args, ply, true )
+		local deaths = tonumber( args[ #args ] ) or 0
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			pl:SetDeaths( deaths )
 		end
 		
-		if ( #pls > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the deaths of ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " to " .. deaths .. "." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the deaths of ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " to " .. deaths .. "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
@@ -35,7 +33,7 @@ function PLUGIN:Menu( arg, players )
 		table.insert( players, arg )
 		RunConsoleCommand( "ev", "deaths", unpack( players ) )
 	else
-		args = { }
+		args = {}
 		for i = 0, 20 do
 			args[i+1] = { i }
 		end

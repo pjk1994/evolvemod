@@ -2,12 +2,11 @@
 	Clean up the decals
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Decals"
 PLUGIN.Description = "Remove all decals from the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "decals"
-PLUGIN.Usage = nil
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then

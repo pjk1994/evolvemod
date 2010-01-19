@@ -2,31 +2,31 @@
 	Send a private message to someone
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "PM"
 PLUGIN.Description = "Send someone a private message."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "pm"
-PLUGIN.Usage = "<player> <message>"
+PLUGIN.Usage = "<playersayer> <message>"
 
 function PLUGIN:Call( ply, args )
-	local pl = evolve:FindPlayer( args[1] )
+	local players = evolve:FindPlayer( args[1] )
 	
-	if ( #pl < 2 or !pl[1] ) then			
-		if ( #pl > 0 ) then
+	if ( #players < 2 or !players[1] ) then			
+		if ( #players > 0 ) then
 			local msg = table.concat( args, " ", 2 )
 			
 			if ( #msg > 0 ) then
-				evolve:Notify( ply, evolve.colors.white, "To ", team.GetColor( pl[1]:Team() ), pl[1]:Nick(), evolve.colors.white, ": " .. msg )
-				evolve:Notify( pl[1], evolve.colors.white, "From ", team.GetColor( pl[1]:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg )
+				evolve:Notify( ply, evolve.colors.white, "To ", team.GetColor( players[1]:Team() ), players[1]:Nick(), evolve.colors.white, ": " .. msg )
+				evolve:Notify( players[1], evolve.colors.white, "From ", team.GetColor( players[1]:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg )
 			else
 				evolve:Notify( ply, evolve.colors.red, "No message specified." )
 			end
 		else
-			evolve:Notify( ply, evolve.colors.red, "No matching player found." )
+			evolve:Notify( ply, evolve.colors.red, "No matching playersayer found." )
 		end
 	else
-		evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
+		evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( players, true ), evolve.colors.white, "?" )
 	end
 end
 

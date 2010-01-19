@@ -2,7 +2,7 @@
 	Kill a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Slay"
 PLUGIN.Description = "Kill a player."
 PLUGIN.Author = "Overv"
@@ -11,15 +11,14 @@ PLUGIN.Usage = "[players]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local victims = evolve:FindPlayer( args, ply )
-		if ( #victims > 0 and !victims[1]:IsValid() ) then victims = { } end
+		local players = evolve:FindPlayer( args, ply )
 		
-		for _, victim in ipairs( victims ) do
-			victim:Kill()
+		for _, pl in ipairs( players ) do
+			pl:Kill()
 		end
 		
-		if ( #victims > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has slayed ", evolve.colors.red, evolve:CreatePlayerList( victims ), evolve.colors.white, "." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has slayed ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end

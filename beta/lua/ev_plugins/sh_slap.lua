@@ -2,7 +2,7 @@
 	Slap a player
 -------------------------------------------------------------------------------------------------------------------------*/
 
-local PLUGIN = { }
+local PLUGIN = {}
 PLUGIN.Title = "Slap"
 PLUGIN.Description = "Slap a player."
 PLUGIN.Author = "Overv"
@@ -11,20 +11,18 @@ PLUGIN.Usage = "[players] [damage]"
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_IsAdmin() ) then
-		local pls = evolve:FindPlayer( args, ply, true )
-		if ( #pls > 0 and !pls[1]:IsValid() ) then pls = { } end
-		local dmg = 10
-		if ( tonumber( args[ #args ] ) ) then dmg = math.abs( tonumber( args[ #args ] ) ) end
+		local players = evolve:FindPlayer( args, ply, true )
+		local dmg = math.abs( tonumber( args[ #args ] ) or 10 )
 		
-		for _, pl in ipairs( pls ) do
+		for _, pl in ipairs( players ) do
 			pl:SetHealth( pl:Health() - dmg )
 			pl:ViewPunch( Angle( -10, 0, 0 ) )
 			
 			if ( pl:Health() < 1 ) then pl:Kill() end
 		end
 		
-		if ( #pls > 0 ) then
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has slapped ", evolve.colors.red, evolve:CreatePlayerList( pls ), evolve.colors.white, " with " .. dmg .. " damage." )
+		if ( #players > 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has slapped ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " with " .. dmg .. " damage." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
 		end
@@ -38,7 +36,7 @@ function PLUGIN:Menu( arg, players )
 		table.insert( players, arg )
 		RunConsoleCommand( "ev", "slap", unpack( players ) )
 	else
-		args = { }
+		args = {}
 		for i = 1, 10 do
 			args[i] = { i * 10 }
 		end

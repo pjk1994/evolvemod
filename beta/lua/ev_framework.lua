@@ -6,14 +6,14 @@
 	Comfortable constants
 -------------------------------------------------------------------------------------------------------------------------*/
 
-evolve.constants = { }
-evolve.colors = { }
-evolve.ranks = { }
+evolve.constants = {}
+evolve.colors = {}
+evolve.ranks = {}
 evolve.constants.notallowed = "You are not allowed to do that!"
 evolve.colors.blue = Color( 98, 176, 255, 255 )
 evolve.colors.red = Color( 255, 62, 62, 255 )
 evolve.colors.white = color_white
-evolve.category = { }
+evolve.category = {}
 evolve.category.administration = 1
 evolve.category.actions = 2
 evolve.category.punishment = 3
@@ -60,7 +60,7 @@ if ( SERVER ) then
 	end
 else
 	function evolve:Notify( ... )
-		args = { }
+		args = {}
 		for _, v in ipairs( arg ) do
 			if ( type( v ) == "string" or type( v ) == "table" ) then table.insert( args, v ) end
 		end
@@ -70,7 +70,7 @@ else
 	
 	usermessage.Hook( "EV_Notification", function( um )
 		local argc = um:ReadShort()
-		local args = { }
+		local args = {}
 		for i = 1, argc / 2, 1 do
 			table.insert( args, Color( um:ReadShort(), um:ReadShort(), um:ReadShort(), um:ReadShort() ) )
 			table.insert( args, um:ReadString() )
@@ -166,7 +166,7 @@ function evolve:FindPlayer( name, def, nonum )
 		matches[1] = def
 	else
 		if ( type( name ) != "table" ) then name = { name } end
-		name2 = table.Copy( name )
+		local name2 = table.Copy( name )
 		if ( nonum ) then
 			if ( #name2 > 1 and tonumber( name2[ #name2 ] ) ) then table.remove( name2, #name2 ) end
 		end
