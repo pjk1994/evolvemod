@@ -261,6 +261,7 @@ function _R.Entity:EV_IsAdmin() if ( !self:IsValid() ) then return true end end
 function _R.Entity:EV_IsSuperAdmin() if ( !self:IsValid() ) then return true end end
 function _R.Entity:EV_IsOwner() if ( !self:IsValid() ) then return true end end
 function _R.Entity:EV_GetRank() if ( !self:IsValid() ) then return "owner" end end
+function _R.Entity:UniqueID() if ( !self:IsValid() ) then return 0 end end
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Player information
