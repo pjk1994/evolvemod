@@ -152,6 +152,8 @@ function evolve:IsNameMatch( ply, str )
 		return true
 	elseif ( str == "!@" and !ply:IsAdmin() ) then
 		return true
+	elseif ( string.match( str, "STEAM_[0-5]:[0-9]:[0-9]+" ) ) then
+		return ply:SteamID() == str
 	elseif ( string.Left( str, 1 ) == "\"" and string.Right( str, 1 ) == "\"" ) then
 		return ( ply:Nick() == string.sub( str, 2, #str - 1 ) )
 	else
