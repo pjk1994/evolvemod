@@ -19,7 +19,7 @@ function PLUGIN:Call( ply, args )
 			if ( #players > 0 ) then
 				for _, ent in ipairs( ents.GetAll() ) do
 					for _, ply in ipairs( players ) do
-						if ( ent:EV_GetOwner() == ply ) then ent:Remove() end
+						if ( ent:EV_GetOwner() == ply:UniqueID() ) then ent:Remove() end
 					end
 				end
 				
