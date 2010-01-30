@@ -145,12 +145,12 @@ function TAB:RebuildPlayerList()
 	for _, entry in ipairs( tempList ) do
 		local ply = entry.Ply
 		local li = self.PlayerList:AddItem( "" )
-		li.Value = ply:Nick()
+		li.Value = ply:SteamID()
 		
 		li.PaintOver = function()
 			if ( !IsValid( ply ) ) then return end
 			
-			draw.SimpleText( ply:GetNWString( "SteamID" ), "DefaultSmall", li:GetWide() - 100, 4, Color( 0, 0, 0, 255 ) )
+			draw.SimpleText( ply:SteamID(), "DefaultSmall", li:GetWide() - 100, 4, Color( 0, 0, 0, 255 ) )
 			draw.SimpleText( evolve:GetRankName( ply:GetNWString( "EV_UserGroup" ) ), "DefaultSmall", li:GetWide() - 200, 4, Color( 0, 0, 0, 255 ) )
 			draw.SimpleText( ply:Nick(), "Default", 24, 3, Color( 0, 0, 0, 255 ) )
 			
@@ -287,10 +287,6 @@ function TAB:Initialize()
 	end )
 	
 	self.Container:SetRight( self.CommandsContainer )
-end
-
-function TAB:PlayerInitialSpawn( ply )
-	ply:SetNWString( "SteamID", ply:SteamID() )
 end
 
 evolve:RegisterMenuTab( TAB )
