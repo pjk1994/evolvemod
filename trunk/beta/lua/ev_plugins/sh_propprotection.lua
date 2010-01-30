@@ -26,7 +26,7 @@ function PLUGIN:CanTool( ply, tr )
 end
 
 function PLUGIN:EntityTakeDamage( ent, inf, attacker, amount, dmg )
-	if ( ( attacker:IsPlayer() and ent:EV_GetOwner() != attacker:UniqueID() ) or attacker:IsAdmin() ) then
+	if ( attacker:IsPlayer() and ( ent:EV_GetOwner() != attacker:UniqueID() or attacker:IsAdmin() ) then
 		dmg:SetDamageForce( Vector( 0, 0, 0 ) )
 		dmg:ScaleDamage( 0 )
 	end
