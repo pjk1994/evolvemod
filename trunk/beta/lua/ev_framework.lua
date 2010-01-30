@@ -333,22 +333,22 @@ end
 	Entity ownership
 -------------------------------------------------------------------------------------------------------------------------*/
 
-hook.Add( "PlayerSpawnedProp", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply end )
-hook.Add( "PlayerSpawnedSENT", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply end )
-hook.Add( "PlayerSpawnedNPC", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply end )
-hook.Add( "PlayerSpawnedVehicle", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply end )
-hook.Add( "PlayerSpawnedEffect", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply end )
-hook.Add( "PlayerSpawnedRagdoll", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply end )
+hook.Add( "PlayerSpawnedProp", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() end )
+hook.Add( "PlayerSpawnedSENT", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() end )
+hook.Add( "PlayerSpawnedNPC", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() end )
+hook.Add( "PlayerSpawnedVehicle", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() end )
+hook.Add( "PlayerSpawnedEffect", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() end )
+hook.Add( "PlayerSpawnedRagdoll", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() end )
 
 evolve.AddCount = _R.Player.AddCount
 function _R.Player:AddCount( type, ent )
-	ent.EV_Owner = self
+	ent.EV_Owner = self:UniqueID()
 	return evolve.AddCount( self, type, ent )
 end
 
 evolve.CleanupAdd = cleanup.Add
 function cleanup.Add( ply, type, ent )
-	if ( ent ) then ent.EV_Owner = ply end
+	if ( ent ) then ent.EV_Owner = ply:UniqueID() end
 	return evolve.CleanupAdd( ply, type, ent )
 end
 
