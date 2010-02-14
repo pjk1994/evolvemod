@@ -8,9 +8,10 @@ PLUGIN.Description = "Spectate a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "spec"
 PLUGIN.Usage = "<player> or nothing to disable"
+PLUGIN.Privileges = { "Spectate" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Spectate" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		
 		if ( #args > 0 ) then

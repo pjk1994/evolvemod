@@ -8,9 +8,10 @@ PLUGIN.Description = "Enable unlimited ammo for a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "uammo"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "Unlimited ammo" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Unlimited ammo" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		

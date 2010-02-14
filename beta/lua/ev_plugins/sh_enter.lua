@@ -8,9 +8,10 @@ PLUGIN.Description = "Make a player enter a vehicle."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "enter"
 PLUGIN.Usage = "[player]"
+PLUGIN.Privileges = { "Enter vehicle" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Enter vehicle" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		local vehicle = ply:GetEyeTrace().Entity
 		

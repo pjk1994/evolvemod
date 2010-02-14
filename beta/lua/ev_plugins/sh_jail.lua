@@ -8,9 +8,10 @@ PLUGIN.Description = "Jail a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "jail"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "Jail" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Jail" ) ) then
 		if ( evolve.jailPos ) then
 			local players = evolve:FindPlayer( args, ply, true )
 			local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0

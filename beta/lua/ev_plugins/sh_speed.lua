@@ -8,9 +8,10 @@ PLUGIN.Description = "Enable speedmode for a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "speed"
 PLUGIN.Usage = "[players] [speed]"
+PLUGIN.Privileges = { "Speed" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Speed" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local speed = math.abs( tonumber( args[ #args ] ) or 250 )
 		

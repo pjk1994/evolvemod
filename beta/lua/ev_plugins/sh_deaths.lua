@@ -8,9 +8,10 @@ PLUGIN.Description = "Set the deaths of a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "deaths"
 PLUGIN.Usage = "<players> [deaths]"
+PLUGIN.Privileges = { "Deaths" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Deaths" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local deaths = tonumber( args[ #args ] ) or 0
 		

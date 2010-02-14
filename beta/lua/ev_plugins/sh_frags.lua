@@ -8,9 +8,10 @@ PLUGIN.Description = "Set the frags of a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "frags"
 PLUGIN.Usage = "<players> [frags]"
+PLUGIN.Privileges = { "Frags" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Frags" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local frags = tonumber( args[ #args ] ) or 0
 		

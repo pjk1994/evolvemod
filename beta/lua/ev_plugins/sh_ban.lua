@@ -8,9 +8,12 @@ PLUGIN.Description = "Ban a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "ban"
 PLUGIN.Usage = "<player> [time=5] [reason]"
+PLUGIN.Privileges = { "Ban", "Permaban" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsSuperAdmin() ) then
+	local time = math.Clamp( tonumber( args[2] ) or 5, 0, 10080 )
+	
+	if ( ( time > 0 and ply:EV_HasPrivilege( "Ban" ) ) or ( time == 0 and ply:EV_HasPrivilege( "Permaban" ) ) ) then
 		local pl = evolve:FindPlayer( args[1] )
 		
 		if ( #pl > 1 ) then
@@ -22,7 +25,7 @@ function PLUGIN:Call( ply, args )
 				if ( v:EV_GetOwner() == pl[1]:UniqueID() ) then v:Remove() end
 			end
 			
-			local time = math.abs( tonumber( args[2] ) or 5 )
+			local time = math.Clamp( tonumber( args[2] ) or 5, 0, 10080 )
 			local reason = table.concat( args, " ", 3 )
 			if ( #reason == 0 ) then reason = "No reason specified" end
 			

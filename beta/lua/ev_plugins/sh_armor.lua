@@ -8,9 +8,10 @@ PLUGIN.Description = "Set the armor of a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "armor"
 PLUGIN.Usage = "<players> [armor]"
+PLUGIN.Privileges = { "Armor" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Armor" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local armor = tonumber( args[ #args ] ) or 100
 		

@@ -8,9 +8,10 @@ PLUGIN.Description = "Mute a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "mute"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "Mute" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Mute" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		

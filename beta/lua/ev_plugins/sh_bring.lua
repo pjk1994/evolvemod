@@ -8,9 +8,10 @@ PLUGIN.Description = "Bring a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "bring"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Bring" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
+	if ( ply:EV_HasPrivilege( "Bring" ) and ply:IsValid() ) then	
 		local players = evolve:FindPlayer( args, ply )
 		
 		for i, pl in ipairs( players ) do

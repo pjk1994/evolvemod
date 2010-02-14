@@ -8,9 +8,10 @@ PLUGIN.Description = "Represent an action."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "me"
 PLUGIN.Usage = "<action>"
+PLUGIN.Privileges = { "Me" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsRespected() ) then
+	if ( ply:EV_HasPrivilege( "Me" ) ) then
 		local action = table.concat( args, " " )
 		
 		if ( #action > 0 ) then

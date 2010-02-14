@@ -8,6 +8,7 @@ PLUGIN.Description = "Execute Lua on the server."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "lua"
 PLUGIN.Usage = "<code>"
+PLUGIN.Privileges = { "Lua" }
 
 local mt, mt2 = {}, {}
 EVERYONE, EVERYTHING = {}, {}
@@ -32,7 +33,7 @@ setmetatable( EVERYONE, mt )
 setmetatable( EVERYTHING, mt2 )
 
 function PLUGIN:Call( ply, args )	
-	if ( ply:EV_IsOwner() and ValidEntity( ply ) ) then
+	if ( ply:EV_HasPrivilege( "Lua" ) and ValidEntity( ply ) ) then
 		local code = table.concat( args, " " )
 		
 		if ( #code > 0 ) then

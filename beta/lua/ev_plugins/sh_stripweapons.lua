@@ -8,9 +8,10 @@ PLUGIN.Description = "Strip a player's weapons."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "strip"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Strip" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Strip" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		
 		for _, pl in ipairs( players ) do

@@ -8,11 +8,12 @@ PLUGIN.Description = "Teleport a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "tp"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Teleport" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() and ply:IsValid() ) then	
+	if ( ply:EV_HasPrivilege( "Teleport" ) and ply:IsValid() ) then	
 		local players = evolve:FindPlayer( args, ply )
-		local tr = ply:GetEyeTrace()
+		local tr = ply:GetEyeTraceNoCursor()
 		
 		if ( #players > 0 ) then
 			for i, pl in ipairs( players ) do

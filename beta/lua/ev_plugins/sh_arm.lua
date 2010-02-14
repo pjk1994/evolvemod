@@ -8,9 +8,10 @@ PLUGIN.Description = "Arm players with the default loadout."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "arm"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Arm" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Arm" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		
 		for _, pl in ipairs( players ) do

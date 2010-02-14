@@ -8,9 +8,10 @@ PLUGIN.Description = "Ignite a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "ignite"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "Ignite" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Ignite" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		

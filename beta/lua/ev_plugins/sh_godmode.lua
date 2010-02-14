@@ -8,9 +8,10 @@ PLUGIN.Description = "Enable godmode for a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "god"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "God" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "God" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		

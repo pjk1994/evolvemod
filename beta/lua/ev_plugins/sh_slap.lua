@@ -8,9 +8,10 @@ PLUGIN.Description = "Slap a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "slap"
 PLUGIN.Usage = "[players] [damage]"
+PLUGIN.Privileges = { "Slap" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Slap" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local dmg = math.abs( tonumber( args[ #args ] ) or 10 )
 		

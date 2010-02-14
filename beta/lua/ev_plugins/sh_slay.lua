@@ -8,13 +8,15 @@ PLUGIN.Description = "Kill a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "slay"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Slay" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Slay" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		
 		for _, pl in ipairs( players ) do
 			pl:Kill()
+			pl:SetFrags( pl:Frags() + 1 )
 		end
 		
 		if ( #players > 0 ) then

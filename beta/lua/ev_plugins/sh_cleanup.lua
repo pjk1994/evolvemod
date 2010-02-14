@@ -7,9 +7,10 @@ PLUGIN.Title = "Cleanup"
 PLUGIN.Description = "Clean up the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "cleanup"
+PLUGIN.Privileges = { "Cleanup" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Cleanup" ) ) then
 		if ( #args == 0 ) then
 			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has cleaned up the map." )
 			game.CleanUpMap()

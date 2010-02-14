@@ -8,9 +8,10 @@ PLUGIN.Description = "Unban a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "unban"
 PLUGIN.Usage = "<steamid|nick>"
+PLUGIN.Privileges = { "Unban" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsSuperAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Unban" ) ) then
 		if ( args[1] ) then
 			local uniqueID
 			

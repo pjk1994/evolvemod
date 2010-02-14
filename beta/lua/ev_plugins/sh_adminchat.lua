@@ -8,9 +8,10 @@ PLUGIN.Description = "Display a message to all online admins."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "a"
 PLUGIN.Usage = "<message>"
+PLUGIN.Privileges = { "Admin chat" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Admin chat" ) ) then
 		if ( #args == 0 ) then return end
 		local msg = table.concat( args, " " )
 		

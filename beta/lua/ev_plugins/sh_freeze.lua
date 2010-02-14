@@ -8,9 +8,10 @@ PLUGIN.Description = "Freeze a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "freeze"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "Freeze" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Freeze" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		
