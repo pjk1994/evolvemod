@@ -369,17 +369,19 @@ function evolve:Rank( ply )
 		usergroup = rank
 	else
 		// COMPATIBILITY
-		for _, ranks in ipairs( evolve.compatibilityRanks ) do
-			if ( ranks.steamID == ply:SteamID() ) then
-				rank = ranks.rank
-				
-				ply:SetNWString( "EV_UserGroup", rank )
-				usergroup = rank
-				
-				ply:SetProperty( "Rank", rank )
-				evolve:CommitProperties()
-				
-				break
+		if ( evolve.compatibilityRanks ) then
+			for _, ranks in ipairs( evolve.compatibilityRanks ) do
+				if ( ranks.steamID == ply:SteamID() ) then
+					rank = ranks.rank
+					
+					ply:SetNWString( "EV_UserGroup", rank )
+					usergroup = rank
+					
+					ply:SetProperty( "Rank", rank )
+					evolve:CommitProperties()
+					
+					break
+				end
 			end
 		end
 		// COMPATIBILITY
