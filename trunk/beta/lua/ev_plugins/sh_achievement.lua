@@ -14,20 +14,18 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "Achievement" ) ) then
 		local players = evolve:FindPlayer( args[1] )
 		
-		if ( #players < 2 or !players[1] ) then			
-			if ( #players > 0 ) then
-				local achievement = table.concat( args, " ", 2 )
-				
-				if ( #achievement > 0 ) then
-					evolve:Notify( team.GetColor( players[1]:Team() ), players[1]:Nick(), color_white, " earned the achievement ", Color( 255, 201, 0, 255 ), achievement )
-				else
-					evolve:Notify( ply, evolve.colors.red, "No achievement specified." )
+		if ( players[1] ) then			
+			local achievement = table.concat( args, " ", 2 )
+			
+			if ( #achievement > 0 ) then
+				for _, pl in ipairs( players ) do
+					evolve:Notify( team.GetColor( pl:Team() ), pl:Nick(), color_white, " earned the achievement ", Color( 255, 201, 0, 255 ), achievement )
 				end
 			else
-				evolve:Notify( ply, evolve.colors.red, "No matching player found." )
+				evolve:Notify( ply, evolve.colors.red, "No achievement specified." )
 			end
 		else
-			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( players, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.red, "No matching player found." )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
