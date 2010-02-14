@@ -8,9 +8,10 @@ PLUGIN.Description = "Kick a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "kick"
 PLUGIN.Usage = "<player> [reason]"
+PLUGIN.Privileges = { "Kick" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Kick" ) ) then
 		local pl = evolve:FindPlayer( args[1] )
 		
 		if ( #pl > 1 ) then

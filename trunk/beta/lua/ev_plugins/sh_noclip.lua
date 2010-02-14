@@ -8,9 +8,10 @@ PLUGIN.Description = "Enable noclip for a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "noclip"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "Noclip", "Noclip access" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Noclip" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		
@@ -39,6 +40,10 @@ function PLUGIN:Menu( arg, players )
 	else
 		return "Noclip", evolve.category.actions, { { "Enable", 1 }, { "Disable", 0 } }
 	end
+end
+
+function PLUGIN:PlayerNoClip( ply )
+	if ( SERVER and !ply:EV_HasPrivilege( "Noclip access" ) ) then return false end
 end
 
 evolve:RegisterPlugin( PLUGIN )

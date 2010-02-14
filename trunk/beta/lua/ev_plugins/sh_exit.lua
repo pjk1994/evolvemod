@@ -8,9 +8,10 @@ PLUGIN.Description = "Make a player exit a vehicle."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "exit"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Exit vehicle" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Exit vehicle" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		
 		for k, v in pairs( players ) do

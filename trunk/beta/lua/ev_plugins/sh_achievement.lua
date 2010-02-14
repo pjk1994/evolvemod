@@ -1,28 +1,27 @@
 /*-------------------------------------------------------------------------------------------------------------------------
-	Send a private message to someone
+	Fake an achievement
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local PLUGIN = {}
-PLUGIN.Title = "PM"
-PLUGIN.Description = "Send someone a private message."
+PLUGIN.Title = "Achievement"
+PLUGIN.Description = "Fake someone earning an achievement."
 PLUGIN.Author = "Overv"
-PLUGIN.ChatCommand = "pm"
-PLUGIN.Usage = "<playersayer> <message>"
-PLUGIN.Privileges = { "Private messages" }
+PLUGIN.ChatCommand = "ach"
+PLUGIN.Usage = "<player> <achievement>"
+PLUGIN.Privileges = { "Achievement" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_HasPrivilege( "Private messages" ) ) then
+	if ( ply:EV_HasPrivilege( "Achievement" ) ) then
 		local players = evolve:FindPlayer( args[1] )
 		
 		if ( #players < 2 or !players[1] ) then			
 			if ( #players > 0 ) then
-				local msg = table.concat( args, " ", 2 )
+				local achievement = table.concat( args, " ", 2 )
 				
-				if ( #msg > 0 ) then
-					evolve:Notify( ply, evolve.colors.white, "To ", team.GetColor( players[1]:Team() ), players[1]:Nick(), evolve.colors.white, ": " .. msg )
-					evolve:Notify( players[1], evolve.colors.white, "From ", team.GetColor( players[1]:Team() ), ply:Nick(), evolve.colors.white, ": " .. msg )
+				if ( #achievement > 0 ) then
+					evolve:Notify( team.GetColor( players[1]:Team() ), players[1]:Nick(), color_white, " earned the achievement ", Color( 255, 201, 0, 255 ), achievement )
 				else
-					evolve:Notify( ply, evolve.colors.red, "No message specified." )
+					evolve:Notify( ply, evolve.colors.red, "No achievement specified." )
 				end
 			else
 				evolve:Notify( ply, evolve.colors.red, "No matching player found." )

@@ -8,9 +8,10 @@ PLUGIN.Description = "Imitate a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "im"
 PLUGIN.Usage = "<player> <message>"
+PLUGIN.Privileges = { "Imitate" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then	
+	if ( ply:EV_HasPrivilege( "Imitate" ) ) then	
 		local players = evolve:FindPlayer( args[1] )
 		local msg = table.concat( args, " ", 2 )
 		

@@ -8,9 +8,10 @@ PLUGIN.Description = "Set the health of a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "hp"
 PLUGIN.Usage = "<players> [health]"
+PLUGIN.Privileges = { "Health" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Health" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local hp = math.Clamp( tonumber( args[ #args ] ) or 100, 0, 99999 )
 		

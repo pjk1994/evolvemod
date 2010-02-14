@@ -23,9 +23,4 @@ Just bind a key to +ev_menu. Note that this will likely change in the future, so
 
 == Feature suggestions? Bugs found? ==
 
-Bug reporting: 		http://moderator.appspot.com/#15/e=10447d&t=103c8a
-Feature suggesting: 	http://moderator.appspot.com/#15/e=10447d&t=10447e
-
-== About ==
-
-Overv - 2009 - 2010 - Revision 53
+http://code.google.com/p/evolvemod/issues/list

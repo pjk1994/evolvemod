@@ -8,9 +8,10 @@ PLUGIN.Description = "Give a weapon to a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "give"
 PLUGIN.Usage = "<players> <weapon>"
+PLUGIN.Privileges = { "Give weapon" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Give weapon" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		local wep = args[ #args ]
 		

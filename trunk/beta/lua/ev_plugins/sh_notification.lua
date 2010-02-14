@@ -8,9 +8,10 @@ PLUGIN.Description = "Pops up a notification for everyone."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "notice"
 PLUGIN.Usage = "<message> [time=10]"
+PLUGIN.Privileges = { "Notice" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Notice" ) ) then
 		local time = tonumber( args[ #args ] ) or 10
 		if ( tonumber( args[ #args ] ) ) then args[ #args ] = nil end
 		local msg = table.concat( args, " " )

@@ -12,9 +12,10 @@ PLUGIN.AllowedCommands = {
 	"sbox_",
 	"g_"
 }
+PLUGIN.Privileges = { "Convar changing" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsSuperAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Convar changing" ) ) then
 		if ( tonumber( args[ 2 ] ) ) then
 			if ( !GetConVar( args[ 1 ] ) ) then
 				evolve:Notify( ply, evolve.colors.red, "Unknown convar!" )

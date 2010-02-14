@@ -8,9 +8,10 @@ PLUGIN.Description = "Disable limits for a player."
 PLUGIN.Author = "Overv and Divran"
 PLUGIN.ChatCommand = "nolimits"
 PLUGIN.Usage = "[players] [1/0]"
+PLUGIN.Privileges = { "No limits", "Limits disabled" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "No limits" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		
@@ -35,7 +36,7 @@ end
 function PLUGIN.CheckLimit( ply, limit )
 	local count = server_settings.Int( "sbox_max" .. limit, -1 )
 	
-	if ( ply.EV_NoLimits ) then
+	if ( ply.EV_NoLimits or ply:EV_HasPrivilege( "Limits disabled" ) ) then
 		return true
 	elseif ( ply:GetCount( limit ) < count or count == -1 ) then 
 		return true

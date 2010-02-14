@@ -7,10 +7,10 @@ PLUGIN.Title = "Reload"
 PLUGIN.Description = "Reload the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "reload"
-PLUGIN.Usage = nil
+PLUGIN.Privileges = { "Map reload" }
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Map reload" ) ) then
 		evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has reloaded the map." )
 		RunConsoleCommand( "changegamemode", game.GetMap(), GAMEMODE.FolderName )
 	else

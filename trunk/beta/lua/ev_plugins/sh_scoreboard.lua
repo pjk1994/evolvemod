@@ -42,7 +42,7 @@ if ( CLIENT ) then
 end
 
 function PLUGIN:ScoreboardShow()
-	if ( GAMEMODE.Title == "Sandbox" ) then
+	if ( GAMEMODE.Name == "Sandbox" ) then
 		self.DrawScoreboard = true
 		return true
 	end

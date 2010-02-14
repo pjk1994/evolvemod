@@ -9,7 +9,7 @@
 evolve.constants = {}
 evolve.colors = {}
 evolve.ranks = {}
-evolve.constants.notallowed = "You are not allowed to do that!"
+evolve.constants.notallowed = "You are not allowed to do that."
 evolve.colors.blue = Color( 98, 176, 255, 255 )
 evolve.colors.red = Color( 255, 62, 62, 255 )
 evolve.colors.white = color_white
@@ -18,11 +18,6 @@ evolve.category.administration = 1
 evolve.category.actions = 2
 evolve.category.punishment = 3
 evolve.category.teleportation = 4
-evolve.ranks.guest = 0
-evolve.ranks.respected = 1
-evolve.ranks.admin = 2
-evolve.ranks.superadmin = 3
-evolve.ranks.owner = 4
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Messages and notifications
@@ -88,6 +83,10 @@ function evolve:BoolToInt( bool )
 	if ( bool ) then return 1 else return 0 end
 end
 
+function evolve:Pack( ... )
+	return arg
+end
+
 /*-------------------------------------------------------------------------------------------------------------------------
 	Plugin management
 -------------------------------------------------------------------------------------------------------------------------*/
@@ -109,31 +108,21 @@ function evolve:LoadPlugins()
 end
 
 function evolve:RegisterPlugin( plugin )
-	table.insert( self.plugins, plugin )
+	table.insert( evolve.plugins, plugin )
 end
 
 if ( !evolve.HookCall ) then evolve.HookCall = hook.Call end
 hook.Call = function( name, gm, ... )
 	for _, plugin in ipairs( evolve.plugins ) do
-		if ( plugin[ name ] ) then
-			res, ret = pcall( plugin[name], plugin, ... )
-			if ( res and ret != nil ) then
-				return ret
-			elseif ( !res ) then
+		if ( plugin[ name ] ) then			
+			local retValues = evolve:Pack( pcall( plugin[name], plugin, ... ) )
+			
+			if ( retValues[1] and retValues[2] != nil ) then
+				table.remove( retValues, 1 )
+				return unpack( retValues )
+			elseif ( !retValues[1] ) then
 				evolve:Notify( evolve.colors.red, "Hook '" .. name .. "' in plugin '" .. plugin.Title .. "' failed with error:" )
-				evolve:Notify( evolve.colors.red, ret )
-			end
-		end
-	end
-	
-	for _, tab in ipairs( evolve.menutabs ) do
-		if ( name != "Initialize" and tab[ name ] ) then
-			res, ret = pcall( tab[name], tab, ... )
-			if ( res and ret != nil ) then
-				return ret
-			elseif ( !res ) then
-				evolve:Notify( evolve.colors.red, "Hook '" .. name .. "' in tab '" .. tab.Title .. "' failed with error:" )
-				evolve:Notify( evolve.colors.red, ret )
+				evolve:Notify( evolve.colors.red, retValues[2] )
 			end
 		end
 	end
@@ -175,7 +164,7 @@ function evolve:FindPlayer( name, def, nonum )
 		
 		for _, ply in ipairs( player.GetAll() ) do
 			for _, pm in ipairs( name2 ) do
-				if ( self:IsNameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
+				if ( evolve:IsNameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
 			end
 		end
 	end
@@ -205,22 +194,6 @@ end
 	Ranks
 -------------------------------------------------------------------------------------------------------------------------*/
 
-function evolve:GetRankName( rankname )
-	if ( rankname == "owner" ) then
-		return "Owner", "an"
-	elseif ( rankname == "superadmin" ) then
-		return "Super Admin", "a"
-	elseif ( rankname == "admin" ) then
-		return "Admin", "an"
-	elseif ( rankname == "respected" ) then
-		return "Respected", "a"
-	elseif ( rankname == "guest" ) then
-		return "Guest", "a"
-	else
-		return "invalid"
-	end
-end
-
 function _R.Player:EV_IsRespected()
 	return self:GetNWString( "EV_UserGroup" ) == "respected" or self:EV_IsAdmin()
 end
@@ -242,15 +215,7 @@ function _R.Player:EV_IsOwner()
 end
 
 function _R.Player:EV_IsRank( rank )
-	return ( rank == evolve.ranks.guest or ( rank == evolve.ranks.admin and self:EV_IsAdmin() ) or ( rank == evolve.ranks.superadmin and self:EV_IsSuperAdmin() ) or ( rank == evolve.ranks.owner and self:EV_IsOwner() ) )
-end
-
-function _R.Player:EV_GetRank()
-	if ( self:EV_IsOwner() ) then return "owner"
-	elseif ( self:EV_IsSuperAdmin() ) then return "superadmin"
-	elseif ( self:EV_IsAdmin() ) then return "admin"
-	elseif ( self:EV_IsRespected() ) then return "respected" end
-	return "guest"
+	return self:GetNWString( "EV_UserGroup" ) == rank
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------
@@ -357,3 +322,75 @@ end
 function _R.Entity:EV_GetOwner()
 	return self.EV_Owner
 end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Rank management
+-------------------------------------------------------------------------------------------------------------------------*/
+
+// COMPATIBILITY
+evolve.compatibilityRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
+// COMPATIBILITY
+
+function _R.Player:EV_HasPrivilege( priv )
+	return self:GetNWString( "EV_UserGroup" ) == "owner" or table.HasValue( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Privileges, priv )
+end
+
+function _R.Entity:EV_HasPrivilege( priv )
+	if ( self == NULL ) then return true end
+end
+
+function _R.Player:EV_SetRank( rank )
+	self:SetProperty( "Rank", rank )
+	evolve:CommitProperties()
+	
+	self:SetNWString( "EV_UserGroup", rank )
+	
+	evolve:RankGroup( self, rank )
+end
+
+function _R.Player:EV_GetRank()
+	return self:GetNWString( "EV_UserGroup", "guest" )
+end
+
+function evolve:RankGroup( ply, rank )
+	ply:SetUserGroup( evolve.ranks[ rank ].UserGroup )
+end
+
+function evolve:Rank( ply )
+	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_Owner", "owner" ) return end
+	
+	local usergroup = ply:GetNWString( "UserGroup", "guest" )
+	if ( usergroup == "user" ) then usergroup = "guest" end
+	ply:SetNWString( "EV_UserGroup", usergroup )
+	
+	local rank = ply:GetProperty( "Rank" )
+	if ( rank and evolve.ranks[ rank ] ) then
+		ply:SetNWString( "EV_UserGroup", rank )
+		usergroup = rank
+	else
+		// COMPATIBILITY
+		for _, ranks in ipairs( evolve.compatibilityRanks ) do
+			if ( ranks.steamID == ply:SteamID() ) then
+				rank = ranks.rank
+				
+				ply:SetNWString( "EV_UserGroup", rank )
+				usergroup = rank
+				
+				ply:SetProperty( "Rank", rank )
+				evolve:CommitProperties()
+				
+				break
+			end
+		end
+		// COMPATIBILITY
+	end
+	
+	evolve:RankGroup( ply, usergroup )
+end
+
+hook.Add( "PlayerSpawn", "EV_RankHook", function( ply )
+	if ( !ply.EV_Ranked ) then
+		evolve:Rank( ply )
+		ply.EV_Ranked = true
+	end
+end )

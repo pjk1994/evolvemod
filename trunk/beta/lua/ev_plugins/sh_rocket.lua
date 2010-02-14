@@ -8,6 +8,7 @@ PLUGIN.Description = "Rocket a player."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rocket"
 PLUGIN.Usage = "[players]"
+PLUGIN.Privileges = { "Rocket" }
 
 function PLUGIN:Explode( ply )
 	local explosive = ents.Create( "env_explosion" )
@@ -23,7 +24,7 @@ function PLUGIN:Explode( ply )
 end
 
 function PLUGIN:Call( ply, args )
-	if ( ply:EV_IsAdmin() ) then
+	if ( ply:EV_HasPrivilege( "Rocket" ) ) then
 		local players = evolve:FindPlayer( args, ply )
 		
 		for _, pl in ipairs( players ) do

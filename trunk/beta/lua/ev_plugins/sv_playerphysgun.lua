@@ -6,16 +6,17 @@ local PLUGIN = {}
 PLUGIN.Title = "Physgun Players"
 PLUGIN.Description = "Physgun a player."
 PLUGIN.Author = "Overv"
+PLUGIN.Privileges = { "Physgun players" }
 
 function PLUGIN:PhysgunPickup( ply, pl )
-	if ply:EV_IsAdmin() and pl:IsPlayer() then
+	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() ) then
 		pl.EV_PickedUp = true
 		return true
 	end
 end
 
 function PLUGIN:PhysgunDrop( ply, pl )
-	if ply:EV_IsAdmin() and pl:IsPlayer() then
+	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() ) then
 		pl.EV_PickedUp = false
 		return true
 	end
