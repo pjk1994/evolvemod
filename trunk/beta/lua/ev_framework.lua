@@ -332,7 +332,11 @@ evolve.compatibilityRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
 // COMPATIBILITY
 
 function _R.Player:EV_HasPrivilege( priv )
-	return self:GetNWString( "EV_UserGroup" ) == "owner" or table.HasValue( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Privileges, priv )
+	if ( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ] ) then
+		return self:GetNWString( "EV_UserGroup" ) == "owner" or table.HasValue( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Privileges, priv )
+	else
+		return false
+	end
 end
 
 function _R.Entity:EV_HasPrivilege( priv )
