@@ -140,7 +140,7 @@ end
 function PLUGIN:DrawPlayers()
 	local playerInfo = {}
 	for _, v in pairs( player.GetAll() ) do
-		table.insert( playerInfo, { Nick = v:Nick(), Usergroup = v:GetNWString( "EV_Usergroup" ), Frags = v:Frags(), Deaths = v:Deaths(), JoinTime = v.EV_JoinTime, Ping = v:Ping() } )
+		table.insert( playerInfo, { Nick = v:Nick(), Usergroup = v:GetNWString( "EV_Usergroup", "guest" ), Frags = v:Frags(), Deaths = v:Deaths(), JoinTime = v.EV_JoinTime, Ping = v:Ping() } )
 	end
 	table.SortByMember( playerInfo, "Frags" )
 	

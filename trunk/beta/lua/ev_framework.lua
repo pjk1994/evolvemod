@@ -361,7 +361,7 @@ function evolve:RankGroup( ply, rank )
 end
 
 function evolve:Rank( ply )
-	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_Owner", "owner" ) return end
+	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
 	
 	local usergroup = ply:GetNWString( "UserGroup", "guest" )
 	if ( usergroup == "user" ) then usergroup = "guest" end
