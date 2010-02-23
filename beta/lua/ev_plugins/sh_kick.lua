@@ -24,11 +24,21 @@ function PLUGIN:Call( ply, args )
 			end
 			
 			if ( #reason == 0 || reason == "No reason" ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, "." )
-				pl[1]:Kick( "No reason specified." )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, pl[1]:Nick(), evolve.colors.white, "." )
+				
+				if ( gatekeeper ) then
+					gatekeeper.Drop( pl[1]:UserID(), "Kicked without a reason." )
+				else
+					pl[1]:Kick( "No reason specified." )
+				end
 			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, evolve:CreatePlayerList( pl ), evolve.colors.white, " with the reason \"" .. reason .."\"." )
-				pl[1]:Kick( reason )
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has kicked ", evolve.colors.red, pl[1]:Nick(), evolve.colors.white, " with the reason \"" .. reason .."\"." )
+				
+				if ( gatekeeper ) then
+					gatekeeper.Drop( pl[1]:UserID(), "Kicked: " .. reason )
+				else
+					pl[1]:Kick( reason )
+				end
 			end
 		else
 			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
