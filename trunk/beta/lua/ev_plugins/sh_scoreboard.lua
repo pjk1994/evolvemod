@@ -42,7 +42,7 @@ if ( CLIENT ) then
 end
 
 function PLUGIN:ScoreboardShow()
-	if ( GAMEMODE.Name == "Sandbox" ) then
+	if ( GAMEMODE.Name == "Sandbox" and evolve.installed ) then
 		self.DrawScoreboard = true
 		return true
 	end

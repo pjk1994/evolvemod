@@ -36,10 +36,20 @@ function PLUGIN:Call( ply, args )
 			
 			if ( time == 0 ) then
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, pl[1]:Nick(), evolve.colors.white, " permanently (" .. reason .. ")." )
-				pl[1]:Kick( "Permanently banned (" .. reason .. ")" )
+				
+				if ( gatekeeper ) then
+					gatekeeper.Drop( pl[1]:UserID(), "Permanently banned (" .. reason .. ")" )
+				else
+					pl[1]:Kick( "Permanently banned (" .. reason .. ")" )
+				end
 			else
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, pl[1]:Nick(), evolve.colors.white, " for " .. time .. " minutes (" .. reason .. ")." )
-				pl[1]:Kick( "Banned for " .. time .. " minutes (" .. reason .. ")" )
+				
+				if ( gatekeeper ) then
+					gatekeeper.Drop( pl[1]:UserID(), "Banned for " .. time .. " minutes (" .. reason .. ")" )
+				else
+					pl[1]:Kick( "Banned for " .. time .. " minutes (" .. reason .. ")" )
+				end
 			end
 		end
 	else

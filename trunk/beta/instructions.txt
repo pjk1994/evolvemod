@@ -21,6 +21,10 @@ The following ranks are available: guest, respected, admin, superadmin and owner
 
 Just bind a key to +ev_menu. Note that this will likely change in the future, so keep watching this file!
 
+== HOW TO FIX THE KICK/BAN CRASHES UNTIL IT IS FIXED IN GMOD ITSELF ==
+
+Copy gmsv_gatekeeper.dll to lua/includes/modules on your server and the crashes will be gone.
+
 == Feature suggestions? Bugs found? ==
 
 http://code.google.com/p/evolvemod/issues/list
