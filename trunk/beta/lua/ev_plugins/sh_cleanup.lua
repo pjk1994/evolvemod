@@ -7,6 +7,7 @@ PLUGIN.Title = "Cleanup"
 PLUGIN.Description = "Clean up the map."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "cleanup"
+PLUGIN.Usage = "[player]"
 PLUGIN.Privileges = { "Cleanup" }
 
 function PLUGIN:Call( ply, args )

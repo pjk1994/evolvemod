@@ -10,6 +10,7 @@ evolve.constants = {}
 evolve.colors = {}
 evolve.ranks = {}
 evolve.constants.notallowed = "You are not allowed to do that."
+evolve.admins = 1
 evolve.colors.blue = Color( 98, 176, 255, 255 )
 evolve.colors.red = Color( 255, 62, 62, 255 )
 evolve.colors.white = color_white
@@ -31,6 +32,16 @@ if ( SERVER ) then
 	function evolve:Notify( ... )
 		local ply = nil
 		if ( type( arg[1] ) == "Player" or arg[1] == NULL ) then ply = arg[1] end
+		if ( arg[1] == evolve.admins ) then
+			for _, pl in ipairs( player.GetAll() ) do
+				if ( pl:IsAdmin() ) then
+					table.remove( arg, 1 )
+					evolve:Notify( pl, unpack( arg ) )
+				end
+			end
+			return
+		end
+		
 		if ( ply != NULL ) then
 			umsg.Start( "EV_Notification", ply )
 				umsg.Short( #arg )
@@ -83,10 +94,6 @@ function evolve:BoolToInt( bool )
 	if ( bool ) then return 1 else return 0 end
 end
 
-function evolve:Pack( ... )
-	return arg
-end
-
 /*-------------------------------------------------------------------------------------------------------------------------
 	Plugin management
 -------------------------------------------------------------------------------------------------------------------------*/
@@ -115,7 +122,7 @@ if ( !evolve.HookCall ) then evolve.HookCall = hook.Call end
 hook.Call = function( name, gm, ... )
 	for _, plugin in ipairs( evolve.plugins ) do
 		if ( plugin[ name ] ) then			
-			local retValues = evolve:Pack( pcall( plugin[name], plugin, ... ) )
+			local retValues = { pcall( plugin[name], plugin, ... ) }
 			
 			if ( retValues[1] and retValues[2] != nil ) then
 				table.remove( retValues, 1 )
