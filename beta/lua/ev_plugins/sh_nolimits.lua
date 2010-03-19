@@ -36,7 +36,7 @@ end
 function PLUGIN.CheckLimit( ply, limit )
 	local count = server_settings.Int( "sbox_max" .. limit, -1 )
 	
-	if ( ply.EV_NoLimits or ply:EV_HasPrivilege( "Limits disabled" ) ) then
+	if ( ply.EV_NoLimits ) then
 		return true
 	elseif ( ply:GetCount( limit ) < count or count == -1 ) then 
 		return true
