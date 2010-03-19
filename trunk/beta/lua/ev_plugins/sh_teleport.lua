@@ -16,8 +16,9 @@ function PLUGIN:Call( ply, args )
 		local tr = ply:GetEyeTraceNoCursor()
 		
 		if ( #players > 0 ) then
-			for i, pl in ipairs( players ) do
-				pl:SetPos( tr.HitPos + i * tr.HitNormal * 128 )
+			for i, pl in ipairs( players ) do				
+				pl:SetPos( tr.HitPos + ( i - 0.8 ) * tr.HitNormal * 128 )
+				pl:SetLocalVelocity( Vector( 0, 0, 0 ) )
 			end
 			
 			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has teleported ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
