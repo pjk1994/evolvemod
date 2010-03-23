@@ -16,7 +16,9 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #players < 2 ) then			
 			if ( #players > 0 ) then
+				if ( ply:InVehicle() ) then ply:ExitVehicle() end
 				ply:SetPos( players[1]:GetPos() + Vector( 0, 0, 128 ) )
+				
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has gone to ", evolve.colors.red, players[1]:Nick(), evolve.colors.white, "." )
 			else
 				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
