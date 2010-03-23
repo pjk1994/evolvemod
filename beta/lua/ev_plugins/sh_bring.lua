@@ -15,6 +15,7 @@ function PLUGIN:Call( ply, args )
 		local players = evolve:FindPlayer( args, ply )
 		
 		for i, pl in ipairs( players ) do
+			if ( pl:InVehicle() ) then pl:ExitVehicle() end
 			pl:SetPos( ply:GetPos() + Vector( 0, 0, i * 128 ) )
 		end
 		
