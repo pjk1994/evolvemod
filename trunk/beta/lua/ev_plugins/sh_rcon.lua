@@ -14,8 +14,6 @@ function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "RCON" ) ) then		
 		if ( #args > 0 ) then
 			RunConsoleCommand( unpack( args ) )
-			
-			evolve:Notify( evolve.admins, evolve.colors.blue, ply:Nick(), evolve.colors.white, " executed ", evolve.colors.red, table.concat( args, " " ), evolve.colors.white, "." )
 		else
 			evolve:Notify( ply, evolve.colors.red, "No command specified." )
 		end

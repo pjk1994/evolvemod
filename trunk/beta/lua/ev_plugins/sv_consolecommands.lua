@@ -18,6 +18,8 @@ function PLUGIN:GetArguments( allargs )
 end
 
 function PLUGIN:CCommand( ply, com, cargs )
+	if ( #cargs == 0 ) then return end
+	
 	local command = cargs[1]
 	local args = self:GetArguments( cargs )
 	
