@@ -30,12 +30,7 @@ function PLUGIN:Call( ply, args )
 end
 
 function PLUGIN:Menu( arg, players )
-	if ( arg ) then
-		table.insert( players, arg )
-		RunConsoleCommand( "ev", "speed", unpack( players ) )
-	else
-		return "Speed", evolve.category.actions, { { "Default", 250 }, { "Double", 500 } }
-	end
+	return "Speed", evolve.category.actions, { { "Default", 250 }, { "Double", 500 } }
 end
 
 evolve:RegisterPlugin( PLUGIN )
