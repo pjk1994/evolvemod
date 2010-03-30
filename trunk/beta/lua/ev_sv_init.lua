@@ -9,7 +9,6 @@ print( "=====================================================\n" )
 
 // Load plugins
 evolve:LoadPlugins()
-evolve:LoadMenuTabs()
 
 // Tell the clients Evolve is installed on the server
 hook.Add( "PlayerInitialSpawn", "EvolveInit", function( ply )

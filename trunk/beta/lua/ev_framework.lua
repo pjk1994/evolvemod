@@ -118,6 +118,12 @@ function evolve:RegisterPlugin( plugin )
 	table.insert( evolve.plugins, plugin )
 end
 
+function evolve:FindPlugin( name )
+	for _, plugin in ipairs( evolve.plugins ) do
+		if ( plugin.Title == name ) then return plugin end
+	end
+end
+
 if ( !evolve.HookCall ) then evolve.HookCall = hook.Call end
 hook.Call = function( name, gm, ... )
 	for _, plugin in ipairs( evolve.plugins ) do

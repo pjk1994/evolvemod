@@ -35,10 +35,10 @@ function PLUGIN:Menu( arg, players )
 		RunConsoleCommand( "ev", "deaths", unpack( players ) )
 	else
 		args = {}
-		for i = 0, 20 do
-			args[i+1] = { i }
+		for i = 1, 20 do
+			args[i+1] = i
 		end
-		return "Deaths", evolve.category.actions, args
+		return "Deaths", evolve.category.actions, args, "Amount of deaths"
 	end
 end
 

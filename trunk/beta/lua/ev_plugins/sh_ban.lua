@@ -88,7 +88,7 @@ function PLUGIN:Menu( arg, players )
 			{ "One month", "43200" },
 			{ "One year", "525600" },
 			{ "Permanently", "0" }
-		}
+		}, "Time"
 	end
 end
 
