@@ -277,6 +277,8 @@ function _R.Player:SetProperty( id, value )
 end
 
 function evolve:UniqueIDByProperty( property, value, exact )
+	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
+	
 	for k, v in pairs( evolve.PlayerInfo ) do
 		if ( v[ property ] == value ) then
 			return k
