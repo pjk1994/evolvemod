@@ -49,7 +49,10 @@ function PLUGIN:ScoreboardShow()
 end
 
 function PLUGIN:ScoreboardHide()
-	self.DrawScoreboard = false
+	if ( self.DrawScoreboard ) then
+		self.DrawScoreboard = false
+		return true
+	end
 end
 
 function PLUGIN:DrawTexturedRect( tex, x, y, w, h )
