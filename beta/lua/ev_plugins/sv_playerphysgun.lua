@@ -10,21 +10,15 @@ PLUGIN.Privileges = { "Physgun players" }
 
 function PLUGIN:PhysgunPickup( ply, pl )
 	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() ) then
-		pl.EV_PickedUp = true
+		pl:SetMoveType( MOVETYPE_NOCLIP )
 		return true
 	end
 end
 
 function PLUGIN:PhysgunDrop( ply, pl )
-	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() ) then
-		pl.EV_PickedUp = false
+	if ( pl:IsPlayer() ) then
+		pl:SetMoveType( MOVETYPE_WALK )
 		return true
-	end
-end
-
-function PLUGIN:EntityTakeDamage( ent, inflictor, attacker, dmg, dmginfo )
-	if ent.EV_PickedUp and dmginfo:IsFallDamage() then
-		dmginfo:ScaleDamage( 0 )
 	end
 end
 
