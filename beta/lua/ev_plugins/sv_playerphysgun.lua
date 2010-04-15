@@ -10,6 +10,7 @@ PLUGIN.Privileges = { "Physgun players" }
 
 function PLUGIN:PhysgunPickup( ply, pl )
 	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() ) then
+		pl.EV_PickedUp = true
 		pl:SetMoveType( MOVETYPE_NOCLIP )
 		return true
 	end
@@ -17,9 +18,14 @@ end
 
 function PLUGIN:PhysgunDrop( ply, pl )
 	if ( pl:IsPlayer() ) then
-		pl:SetMoveType( MOVETYPE_WALK )
+		pl.EV_PickedUp = false
+		pl:SetMoveType( MOVETYPE_NOCLIP )
 		return true
 	end
+end
+
+function PLUGIN:PlayerNoclip( ply )
+	if ( pl.EV_PickedUp ) then return false end
 end
 
 evolve:RegisterPlugin( PLUGIN )

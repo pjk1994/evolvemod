@@ -216,7 +216,8 @@ function PANEL:PopulateSubmenu( plugin, submenu, title )
 	
 	local alt = true
 	for _, value in pairs( submenu ) do
-		if ( type( value ) != "table" ) then value = { value, value } end
+		if ( type( value ) != "table" ) then value = { value, value }
+		elseif ( #value == 1 ) then value = { value[1], value[1] } end
 		
 		local button = vgui.Create( "ToolMenuButton" )
 		button:SetText( value[1] )
