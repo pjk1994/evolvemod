@@ -28,7 +28,7 @@ evolve.ranks.admin.Privileges = {
 	"Enter vehicle", "Exit vehicle", "Explode", "Extinguish", "Frags", "Freeze", "Gag", "Ghost", "Give weapon", "God", "Goto", "Health", "Ignite", "Imitate",
 	"Jail", "Kick", "Me", "Mute", "Noclip", "Noclip access", "No limits", "Notice", "Private messages", "Evade prop protection", "Ragdoll",
 	"Map reload", "Respawn", "Rocket", "Roll the Dice", "Slap", "Slay", "Spectate", "Speed", "Strip", "Teleport", "The time", "Unban", "Menu",
-	"Unlimited ammo", "Physgun players", "Ratings visible"
+	"Unlimited ammo", "Physgun players", "Ratings visible", "Player menu"
 }
 
 evolve.ranks.superadmin = {}
@@ -40,7 +40,7 @@ evolve.ranks.superadmin.Privileges = {
 	"Enter vehicle", "Exit vehicle", "Explode", "Extinguish", "Frags", "Freeze", "Gag", "Ghost", "Give weapon", "God", "Goto", "Health", "Ignite", "Imitate",
 	"Jail", "Kick", "Me", "Mute", "Noclip", "Noclip access", "No limits", "Notice", "Private messages", "Evade prop protection", "Ragdoll",
 	"Map reload", "Respawn", "Rocket", "Roll the Dice", "Slap", "Slay", "Spectate", "Speed", "Strip", "Teleport", "The time", "Unban", "Menu",
-	"Unlimited ammo", "Physgun players", "Ratings visible"
+	"Unlimited ammo", "Physgun players", "Ratings visible", "Player menu", "Sandbox menu"
 }
 
 evolve.ranks.owner = {}

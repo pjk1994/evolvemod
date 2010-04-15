@@ -18,6 +18,18 @@ function evolve:RegisterTab( tab )
 	table.insert( MENU.Tabs, tab )
 end
 
+function MENU:GetActiveTab()
+	for _, sheet in ipairs( self.TabContainer.Items ) do
+		if ( sheet.Tab == self.TabContainer:GetActiveTab() ) then
+			return sheet.Panel.Tab
+		end
+	end
+end
+
+function MENU:TabSelected( tab )
+	tab:Update()
+end
+
 function MENU:Initialize()
 	self.Panel = vgui.Create( "DFrame" )
 	self.Panel:SetSize( 250, 450 )
@@ -37,6 +49,22 @@ function MENU:Initialize()
 	
 	self.Panel:MakePopup()
 	self.Panel:SetKeyboardInputEnabled( false )
+	
+	timer.Create( "EV_MenuThink", 1/60, 0, function() MENU:Think() end )
+end
+
+function MENU:Think()
+	local activeTab = self:GetActiveTab()
+	
+	if ( self.ActiveTab != activeTab ) then
+		self.ActiveTab = activeTab
+		self:TabSelected( activeTab )
+	end
+	
+	local w = self.TabContainer:GetWide() + ( ( activeTab.Width or 250 ) + 10 - self.TabContainer:GetWide() ) / 5
+	if ( math.abs( w - activeTab.Width ) < 5 ) then w = activeTab.Width end
+	self.Panel:SetWide( w )
+	self.TabContainer:SetWide( w )
 end
 
 function MENU:Show()

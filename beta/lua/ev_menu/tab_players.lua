@@ -10,12 +10,13 @@ TAB.Description = "Manage players on the server."
 TAB.Icon = "gui/silkicons/user"
 TAB.Author = "Overv"
 TAB.Privileges = { "Player menu" }
+TAB.Width = 240
 
 function TAB:Initialize( pnl )
 	// Create the player list
 	self.PlayerList = vgui.Create( "EvolvePlayerList", pnl )
 	self.PlayerList:SetPos( 0, 0 )
-	self.PlayerList:SetSize( pnl:GetParent():GetWide() - 10, pnl:GetParent():GetTall() - 58 )
+	self.PlayerList:SetSize( self.Width, pnl:GetParent():GetTall() - 58 )
 	self.PlayerList:SetMultiple( true )
 	
 	// Create the plugin buttons	
@@ -30,7 +31,7 @@ function TAB:Initialize( pnl )
 		
 		self.PluginList:OpenPluginMenu( evolve:FindPlugin( "Kick" ) )
 		
-		self.PlayerList:MoveTo( -pnl:GetParent():GetWide(), 0, 0.1 )
+		self.PlayerList:MoveTo( -self.Width, 0, 0.1 )
 		self.PluginList:MoveTo( 0, 0, 0.1 )
 		self.ButPlugins:SetButtonText( "Players" )
 	end
@@ -46,25 +47,25 @@ function TAB:Initialize( pnl )
 		
 		self.PluginList:OpenPluginMenu( evolve:FindPlugin( "Ban" ) )
 		
-		self.PlayerList:MoveTo( -pnl:GetParent():GetWide(), 0, 0.1 )
+		self.PlayerList:MoveTo( -self.Width, 0, 0.1 )
 		self.PluginList:MoveTo( 0, 0, 0.1 )
 		self.ButPlugins:SetButtonText( "Players" )
 	end
 	
 	self.ButPlugins = vgui.Create( "EvolveButton", pnl )
 	self.ButPlugins:SetPos( self.ButKick:GetWide() + self.ButPlugins:GetWide() + 10, pnl:GetParent():GetTall() - 53 )
-	self.ButPlugins:SetSize( pnl:GetParent():GetWide() - 20 - self.ButKick:GetWide() - self.ButPlugins:GetWide(), 22 )
+	self.ButPlugins:SetSize( self.Width - 10 - self.ButKick:GetWide() - self.ButPlugins:GetWide(), 22 )
 	self.ButPlugins:SetButtonText( "Plugins" )
 	self.ButPlugins:SetNotHighlightedColor( 50 )
 	self.ButPlugins:SetHighlightedColor( 90 )
 	self.ButPlugins.DoClick = function()
 		if ( self.ButPlugins:GetButtonText() == "Plugins" ) then
-			self.PlayerList:MoveTo( -pnl:GetParent():GetWide(), 0, 0.1 )
+			self.PlayerList:MoveTo( -self.Width, 0, 0.1 )
 			self.PluginList:MoveTo( 0, 0, 0.1 )
 			self.ButPlugins:SetButtonText( "Players" )
 		else
 			self.PlayerList:MoveTo( 0, 0, 0.1 )
-			self.PluginList:MoveTo( pnl:GetParent():GetWide(), 0, 0.1 )
+			self.PluginList:MoveTo( self.Width, 0, 0.1 )
 			self.PluginList:Reset()
 			self.ButPlugins:SetButtonText( "Plugins" )
 		end
@@ -72,8 +73,8 @@ function TAB:Initialize( pnl )
 	
 	// Create the plugin list
 	self.PluginList = vgui.Create( "EvolvePluginList", pnl )
-	self.PluginList:SetPos( pnl:GetParent():GetWide(), 0 )
-	self.PluginList:SetSize( pnl:GetParent():GetWide() - 10, pnl:GetParent():GetTall() - 58 )
+	self.PluginList:SetPos( self.Width, 0 )
+	self.PluginList:SetSize( self.Width, pnl:GetParent():GetTall() - 58 )
 	self.PluginList:CreatePluginsPage()
 end
 
@@ -82,7 +83,7 @@ function TAB:Update()
 	
 	if ( self.ButPlugins:GetButtonText() != "Plugins" ) then
 		self.PlayerList:SetPos( 0, 0 )
-		self.PluginList:SetPos( self.Panel:GetParent():GetWide(), 0 )
+		self.PluginList:SetPos( self.Width, 0 )
 		self.PluginList:Reset()
 		self.ButPlugins:SetButtonText( "Plugins" )
 	end

@@ -101,22 +101,29 @@ function PANEL:GetSelectedPlayers()
 end
 
 function PANEL:Populate()
-	for _, pl in ipairs( player.GetAll() ) do
-		local found = false
-		for _, item in pairs( self:GetItems() ) do
-			if ( item.Player == pl ) then
-				found = true
-				break
-			end
-		end
-		
-		if ( !found ) then
-			self:AddPlayer( pl )
+	local selectedPlayers = {}
+	if ( #self:GetSelectedItems() > 0 ) then
+		for _, item in ipairs( self:GetSelectedItems() ) do
+			if ( IsValid( item.Player ) ) then table.insert( selectedPlayers, item.Player ) end
 		end
 	end
 	
-	//self:Rebuild()
-	if ( #self:GetSelectedItems() == 0 ) then self:SelectFirstItem() end
+	self:Clear()
+	
+	local players = {}
+	for _, pl in ipairs( player.GetAll() ) do table.insert( players, { Name = pl:Nick(), Ply = pl } ) end
+	table.SortByMember( players, "Name", function( a, b ) return a > b end )
+	
+	for _, pl in ipairs( players ) do
+		local item = self:AddPlayer( pl.Ply )
+		if ( table.HasValue( selectedPlayers, pl.Ply ) ) then
+			self:SelectItem( item )
+		end
+	end
+	
+	if ( #self:GetSelectedItems() == 0 ) then
+		self:SelectFirstItem()
+	end
 end
 
 derma.DefineControl( "EvolvePlayerList", "Stylish player list", PANEL, "DComboBox" )
