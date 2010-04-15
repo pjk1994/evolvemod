@@ -10,7 +10,8 @@ PLUGIN.ChatCommand = "convar"
 PLUGIN.Usage = "<limit, e.g. sbox_maxthrusters or ai_disabled> <value>"
 PLUGIN.AllowedCommands = {
 	"sbox_",
-	"g_"
+	"g_",
+	"mp_"
 }
 PLUGIN.Privileges = { "Convar changing" }
 
