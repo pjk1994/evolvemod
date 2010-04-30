@@ -30,7 +30,9 @@ end
 
 if ( SERVER ) then
 	function evolve:Notify( ... )
-		local ply = nil
+		local ply
+		local arg = { ... }
+		
 		if ( type( arg[1] ) == "Player" or arg[1] == NULL ) then ply = arg[1] end
 		if ( arg[1] == evolve.admins ) then
 			for _, pl in ipairs( player.GetAll() ) do
@@ -66,6 +68,8 @@ if ( SERVER ) then
 	end
 else
 	function evolve:Notify( ... )
+		local arg = { ... }
+		
 		args = {}
 		for _, v in ipairs( arg ) do
 			if ( type( v ) == "string" or type( v ) == "table" ) then table.insert( args, v ) end
@@ -126,6 +130,8 @@ end
 
 if ( !evolve.HookCall ) then evolve.HookCall = hook.Call end
 hook.Call = function( name, gm, ... )
+	local arg = { ... }
+	
 	for _, plugin in ipairs( evolve.plugins ) do
 		if ( plugin[ name ] ) then			
 			local retValues = { pcall( plugin[name], plugin, ... ) }
