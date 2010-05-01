@@ -9,6 +9,7 @@
 evolve.constants = {}
 evolve.colors = {}
 evolve.ranks = {}
+evolve.privileges = {}
 evolve.constants.notallowed = "You are not allowed to do that."
 evolve.admins = 1
 evolve.colors.blue = Color( 98, 176, 255, 255 )
@@ -98,6 +99,13 @@ function evolve:BoolToInt( bool )
 	if ( bool ) then return 1 else return 0 end
 end
 
+function evolve:KeyByValue( tbl, value, iterator )
+	iterator = iterator or pairs
+	for k, v in iterator( tbl ) do
+		if ( value == v ) then return k end
+	end
+end
+
 /*-------------------------------------------------------------------------------------------------------------------------
 	Plugin management
 -------------------------------------------------------------------------------------------------------------------------*/
@@ -120,6 +128,7 @@ end
 
 function evolve:RegisterPlugin( plugin )
 	table.insert( evolve.plugins, plugin )
+	if ( plugin.Privileges ) then table.Add( evolve.privileges, plugin.Privileges ) end
 end
 
 function evolve:FindPlugin( name )
@@ -392,6 +401,8 @@ end
 function evolve:Rank( ply )
 	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
 	
+	self:TransferRanks( ply )
+	
 	local usergroup = ply:GetNWString( "UserGroup", "guest" )
 	if ( usergroup == "user" ) then usergroup = "guest" end
 	ply:SetNWString( "EV_UserGroup", usergroup )
@@ -427,5 +438,61 @@ hook.Add( "PlayerSpawn", "EV_RankHook", function( ply )
 	if ( !ply.EV_Ranked ) then
 		evolve:Rank( ply )
 		ply.EV_Ranked = true
+	end
+end )
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Rank synchronization
+-------------------------------------------------------------------------------------------------------------------------*/
+
+function evolve:TransferRanks( ply )
+	for id, privilege in ipairs( evolve.privileges ) do
+		umsg.Start( "EV_Privilege", ply )
+			umsg.Short( id )
+			umsg.String( privilege )
+		umsg.End()
+	end
+	
+	for id, data in pairs( evolve.ranks ) do
+		umsg.Start( "EV_Rank", ply )
+			umsg.String( id )
+			umsg.String( data.Title )
+			umsg.String( data.Icon )
+			umsg.String( data.UserGroup )
+			umsg.Short( data.Immunity )
+		umsg.End()
+		
+		umsg.Start( "EV_RankPrivileges", ply )
+			umsg.String( id )
+			umsg.Short( #( data.Privileges or {} ) )
+			
+			for _, privilege in ipairs( data.Privileges or {} ) do
+				umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
+			end
+		umsg.End()
+	end
+end
+
+usermessage.Hook( "EV_Rank", function( um )
+	local id = um:ReadString()
+	evolve.ranks[id] = {
+		Title = um:ReadString(),
+		Icon = um:ReadString(),
+		UserGroup = um:ReadString(),
+		Immunity = um:ReadShort(),
+		Privileges = {},
+	}
+end )
+
+usermessage.Hook( "EV_Privilege", function( um )
+	evolve.privileges[ um:ReadShort() ] = um:ReadString()
+end )
+
+usermessage.Hook( "EV_RankPrivileges", function( um )
+	local rank = um:ReadString()
+	local privilegeCount = um:ReadShort()
+	
+	for i = 1, privilegeCount do
+		table.insert( evolve.ranks[ rank ].Privileges, evolve.privileges[ um:ReadShort() ] )
 	end
 end )

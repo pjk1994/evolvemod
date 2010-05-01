@@ -48,6 +48,10 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
+function PLUGIN:PlayerSpawn( ply )
+	if ( ply.EV_Jailed ) then ply:SetPos( evolve.jailPos ) end
+end
+
 function PLUGIN:CanPlayerSuicide( ply )
 	if ( ply.EV_Jailed ) then return false end
 end
