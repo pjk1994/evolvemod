@@ -354,7 +354,7 @@ function _R.Entity:EV_GetOwner()
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------
-	Rank management
+	Ranks
 -------------------------------------------------------------------------------------------------------------------------*/
 
 // COMPATIBILITY
@@ -401,6 +401,7 @@ end
 function evolve:Rank( ply )
 	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
 	
+	self:TransferPrivileges( ply )
 	self:TransferRanks( ply )
 	
 	local usergroup = ply:GetNWString( "UserGroup", "guest" )
@@ -442,36 +443,65 @@ hook.Add( "PlayerSpawn", "EV_RankHook", function( ply )
 end )
 
 /*-------------------------------------------------------------------------------------------------------------------------
-	Rank synchronization
+	Rank management
 -------------------------------------------------------------------------------------------------------------------------*/
 
-function evolve:TransferRanks( ply )
+function evolve:SaveRanks()
+	file.Write( "ev_userranks.txt", glon.encode( evolve.ranks ) )
+end
+
+function evolve:LoadRanks()
+	if ( file.Exists( "ev_userranks.txt" ) ) then
+		evolve.ranks = glon.decode( file.Read( "ev_userranks.txt" ) )
+	else
+		include( "ev_defaultranks.lua" )
+		evolve:SaveRanks()
+	end
+end
+
+if ( SERVER ) then evolve:LoadRanks() end
+
+function evolve:SyncRanks()
+	for _, pl in ipairs( player.GetAll() ) do evolve:TransferRanks( pl ) end
+end
+
+function evolve:TransferPrivileges( ply )
 	for id, privilege in ipairs( evolve.privileges ) do
 		umsg.Start( "EV_Privilege", ply )
 			umsg.Short( id )
 			umsg.String( privilege )
 		umsg.End()
 	end
-	
-	for id, data in pairs( evolve.ranks ) do
-		umsg.Start( "EV_Rank", ply )
-			umsg.String( id )
-			umsg.String( data.Title )
-			umsg.String( data.Icon )
-			umsg.String( data.UserGroup )
-			umsg.Short( data.Immunity )
-		umsg.End()
-		
-		umsg.Start( "EV_RankPrivileges", ply )
-			umsg.String( id )
-			umsg.Short( #( data.Privileges or {} ) )
-			
-			for _, privilege in ipairs( data.Privileges or {} ) do
-				umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
-			end
-		umsg.End()
-	end
 end
+
+function evolve:TransferRanks( ply )
+	umsg.Start( "EV_ResetRanks" ) umsg.End()
+	
+	timer.Simple( 0.1, function()
+		for id, data in pairs( evolve.ranks ) do
+			umsg.Start( "EV_Rank", ply )
+				umsg.String( id )
+				umsg.String( data.Title )
+				umsg.String( data.Icon )
+				umsg.String( data.UserGroup )
+				umsg.Short( data.Immunity )
+			umsg.End()
+			
+			umsg.Start( "EV_RankPrivileges", ply )
+				umsg.String( id )
+				umsg.Short( #( data.Privileges or {} ) )
+				
+				for _, privilege in ipairs( data.Privileges or {} ) do
+					umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
+				end
+			umsg.End()
+		end
+	end )
+end
+
+usermessage.Hook( "EV_ResetRanks", function()
+	evolve.ranks = {}
+end )
 
 usermessage.Hook( "EV_Rank", function( um )
 	local id = um:ReadString()
@@ -482,6 +512,8 @@ usermessage.Hook( "EV_Rank", function( um )
 		Immunity = um:ReadShort(),
 		Privileges = {},
 	}
+	
+	evolve.ranks[id].IconTexture = surface.GetTextureID( "gui/silkicons/" .. evolve.ranks[id].Icon )
 end )
 
 usermessage.Hook( "EV_Privilege", function( um )

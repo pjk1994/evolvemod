@@ -31,11 +31,6 @@ if ( CLIENT ) then
 	PLUGIN.TexDeaths = surface.GetTextureID( "gui/scoreboard_skull" )
 	PLUGIN.TexPlaytime = surface.GetTextureID( "gui/scoreboard_playtime" )
 	
-	PLUGIN.TexOwner = surface.GetTextureID( "gui/silkicons/key" )
-	PLUGIN.TexSuperAdmin = surface.GetTextureID( "gui/silkicons/shield_add" )
-	PLUGIN.TexAdmin = surface.GetTextureID( "gui/silkicons/shield" )
-	PLUGIN.TexRespected = surface.GetTextureID( "gui/silkicons/user_add" )
-	PLUGIN.TexGuest = surface.GetTextureID( "gui/silkicons/user" )
 	PLUGIN.Width = 687
 	
 	surface.CreateFont( "coolvetica", 22, 400, true, false, "EvolveScoreboardHeader" )
@@ -147,11 +142,10 @@ function PLUGIN:DrawPlayers()
 	end
 	table.SortByMember( playerInfo, "Frags" )
 	
-	local y = self:DrawUsergroup( playerInfo, "owner", "Owners", self.TexOwner, self.Y + 155 )
-	y = self:DrawUsergroup( playerInfo, "superadmin", "Super Admins", self.TexSuperAdmin, y )
-	y = self:DrawUsergroup( playerInfo, "admin", "Admins", self.TexAdmin, y )
-	y = self:DrawUsergroup( playerInfo, "respected", "Respected", self.TexRespected, y )
-	y = self:DrawUsergroup( playerInfo, "guest", "Guests", self.TexGuest, y )
+	local y = self.Y + 155
+	for id, rank in pairs( evolve.ranks ) do
+		y = self:DrawUsergroup( playerInfo, id, rank.Title .. "s", rank.IconTexture, y )
+	end
 	
 	return y
 end
