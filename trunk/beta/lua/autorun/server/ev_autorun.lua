@@ -13,7 +13,6 @@ require( "gatekeeper" )
 AddCSLuaFile( "autorun/client/ev_autorun.lua" )
 AddCSLuaFile( "ev_framework.lua" )
 AddCSLuaFile( "ev_cl_init.lua" )
-AddCSLuaFile( "ev_ranks.lua" )
 AddCSLuaFile( "ev_menu/cl_menu.lua" )
 
 // Load serverside files
