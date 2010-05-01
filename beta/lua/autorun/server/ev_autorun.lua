@@ -18,5 +18,4 @@ AddCSLuaFile( "ev_menu/cl_menu.lua" )
 // Load serverside files
 include( "ev_framework.lua" )
 include( "ev_sv_init.lua" )
-include( "ev_ranks.lua" )
 include( "ev_menu/sv_menu.lua" )

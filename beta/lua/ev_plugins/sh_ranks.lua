@@ -22,7 +22,7 @@ function PLUGIN:Call( ply, args )
 				else					
 					if ( evolve.ranks[ args[2] ] ) then
 						pl:EV_SetRank( args[2] )
-						evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has made ", evolve.colors.red, pl:Nick() .. " ", evolve.colors.white, evolve.ranks[ args[2] ].Title .. "." )
+						evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the rank of ", evolve.colors.red, pl:Nick(), evolve.colors.white, " to " .. evolve.ranks[ args[2] ].Title .. "." )
 					else
 						evolve:Notify( ply, evolve.colors.red, "Unknown rank specified." )
 					end
