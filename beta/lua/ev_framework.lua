@@ -475,7 +475,7 @@ function evolve:TransferPrivileges( ply )
 end
 
 function evolve:TransferRanks( ply )
-	umsg.Start( "EV_ResetRanks" ) umsg.End()
+	umsg.Start( "EV_ResetRanks", ply ) umsg.End()
 	
 	timer.Simple( 0.1, function()
 		for id, data in pairs( evolve.ranks ) do
