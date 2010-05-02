@@ -62,7 +62,7 @@ function MENU:Think()
 	end
 	
 	local w = self.TabContainer:GetWide() + ( ( activeTab.Width or 250 ) + 10 - self.TabContainer:GetWide() ) / 5
-	if ( math.abs( w - activeTab.Width ) < 5 ) then w = activeTab.Width end
+	if ( math.abs( w - activeTab.Width ) < 5 ) then w = activeTab.Width + 10 end
 	self.Panel:SetWide( w )
 	self.TabContainer:SetWide( w )
 end

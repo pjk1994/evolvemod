@@ -97,7 +97,7 @@ function TAB:Initialize( pnl )
 	
 	self.Settings = vgui.Create( "DPanelList", pnl )
 	self.Settings:SetPos( self.Width - 165, 2 )
-	self.Settings:SetSize( 155, pnl:GetParent():GetTall() - 33 )
+	self.Settings:SetSize( 165, pnl:GetParent():GetTall() - 33 )
 	self.Settings:SetSpacing( 9 )
 	self.Settings:SetPadding( 10 )
 	self.Settings:EnableHorizontal( true )
