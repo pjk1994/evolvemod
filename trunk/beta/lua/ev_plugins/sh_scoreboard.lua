@@ -143,8 +143,15 @@ function PLUGIN:DrawPlayers()
 	table.SortByMember( playerInfo, "Frags" )
 	
 	local y = self.Y + 155
+	
+	local sortedRanks = {}
 	for id, rank in pairs( evolve.ranks ) do
-		y = self:DrawUsergroup( playerInfo, id, rank.Title .. "s", rank.IconTexture, y )
+		table.insert( sortedRanks, { ID = id, Title = rank.Title, Immunity = rank.Immunity, Icon = rank.IconTexture } )
+	end
+	table.SortByMember( sortedRanks, "Immunity" )
+	
+	for _, rank in ipairs( sortedRanks ) do
+		y = self:DrawUsergroup( playerInfo, rank.ID, rank.Title .. "s", rank.Icon, y )
 	end
 	
 	return y
