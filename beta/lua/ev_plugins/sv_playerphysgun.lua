@@ -19,7 +19,7 @@ end
 function PLUGIN:PhysgunDrop( ply, pl )
 	if ( pl:IsPlayer() ) then
 		pl.EV_PickedUp = false
-		pl:SetMoveType( MOVETYPE_NOCLIP )
+		pl:SetMoveType( MOVETYPE_WALK )
 		return true
 	end
 end

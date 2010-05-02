@@ -517,7 +517,10 @@ usermessage.Hook( "EV_Rank", function( um )
 end )
 
 usermessage.Hook( "EV_Privilege", function( um )
-	evolve.privileges[ um:ReadShort() ] = um:ReadString()
+	local id = um:ReadShort()
+	local name = um:ReadString()
+	
+	evolve.privileges[ id ] = name
 end )
 
 usermessage.Hook( "EV_RankPrivileges", function( um )
