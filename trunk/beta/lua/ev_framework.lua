@@ -504,7 +504,8 @@ usermessage.Hook( "EV_ResetRanks", function()
 end )
 
 usermessage.Hook( "EV_Rank", function( um )
-	local id = um:ReadString()
+	local id = string.lower( um:ReadString() )
+	
 	evolve.ranks[id] = {
 		Title = um:ReadString(),
 		Icon = um:ReadString(),
