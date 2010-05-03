@@ -78,16 +78,20 @@ else
 					teamColor.a = math.Clamp( alpha * 2, 0, 255 )
 					draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, teamColor, 0 )
 				end
-				
 			end
 		end
 	end
 
 	function PLUGIN:StartChat()
+		self.ChatboxOpen = true
 		RunConsoleCommand( "EV_SetChatState", 1 )
 	end
+	
 	function PLUGIN:FinishChat()
-		RunConsoleCommand( "EV_SetChatState", 0 )
+		if ( self.ChatboxOpen ) then
+			RunConsoleCommand( "EV_SetChatState", 0 )
+			self.ChatboxOpen = false
+		end
 	end
 end
 
