@@ -18,7 +18,7 @@ evolve.ranks.respected.Icon = "user_add"
 evolve.ranks.respected.UserGroup = "guest"
 evolve.ranks.respected.Immunity = 1
 evolve.ranks.respected.Privileges = {
-	"Noclip access", "The time", "Ratings visible", "Me", "Roll the Dice"
+	"Noclip access", "The time", "Ratings visible", "Me", "Roll the Dice", "Private messages"
 }
 
 evolve.ranks.admin = {}

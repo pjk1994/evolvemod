@@ -81,16 +81,16 @@ function PLUGIN:DrawInfoBar()
 	
 	// Content
 	local x = self.X + 24
-	draw.SimpleText( "Currently playing in the map ", "Default", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	x = x + self:QuickTextSize( "Default", "Currently playing in the map " )
-	draw.SimpleText( game.GetMap(), "DefaultBold", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	x = x + self:QuickTextSize( "DefaultBold", game.GetMap() )
-	draw.SimpleText( " with the gamemode ", "Default", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	x = x + self:QuickTextSize( "Default", " with the gamemode " )
+	draw.SimpleText( "Currently playing ", "Default", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	x = x + self:QuickTextSize( "Default", "Currently playing " )
 	draw.SimpleText( GAMEMODE.Name, "DefaultBold", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 	x = x + self:QuickTextSize( "DefaultBold", GAMEMODE.Name )
-	draw.SimpleText( " with ", "Default", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	x = x + self:QuickTextSize( "Default", " with " )
+	draw.SimpleText( " on the map ", "Default", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	x = x + self:QuickTextSize( "Default", " on the map " )
+	draw.SimpleText( game.GetMap(), "DefaultBold", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	x = x + self:QuickTextSize( "DefaultBold", game.GetMap() )
+	draw.SimpleText( ", with ", "Default", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	x = x + self:QuickTextSize( "Default", ", with " )
 	draw.SimpleText( #player.GetAll(), "DefaultBold", x, self.Y + 117, Color( 0, 0, 0, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 	x = x + self:QuickTextSize( "DefaultBold", #player.GetAll() )
 	local s = ""
@@ -151,7 +151,11 @@ function PLUGIN:DrawPlayers()
 	table.SortByMember( sortedRanks, "Immunity" )
 	
 	for _, rank in ipairs( sortedRanks ) do
-		y = self:DrawUsergroup( playerInfo, rank.ID, rank.Title .. "s", rank.Icon, y )
+		if( string.Right( rank.Title, 2 ) != "ed" ) then
+			y = self:DrawUsergroup( playerInfo, rank.ID, rank.Title .. "s", rank.Icon, y )
+		else
+			y = self:DrawUsergroup( playerInfo, rank.ID, rank.Title, rank.Icon, y )
+		end
 	end
 	
 	return y

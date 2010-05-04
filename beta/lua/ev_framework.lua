@@ -402,7 +402,7 @@ function evolve:Rank( ply )
 	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
 	
 	self:TransferPrivileges( ply )
-	self:TransferRanks( ply )
+	self:TransferRanks( ply, true )
 	
 	local usergroup = ply:GetNWString( "UserGroup", "guest" )
 	if ( usergroup == "user" ) then usergroup = "guest" end
@@ -474,10 +474,10 @@ function evolve:TransferPrivileges( ply )
 	end
 end
 
-function evolve:TransferRanks( ply )
-	umsg.Start( "EV_ResetRanks", ply ) umsg.End()
+function evolve:TransferRanks( ply, noreset )
+	if ( !noreset ) then umsg.Start( "EV_ResetRanks", ply ) umsg.End() end
 	
-	timer.Simple( 0.1, function()
+	timer.Simple( 1, function()
 		for id, data in pairs( evolve.ranks ) do
 			umsg.Start( "EV_Rank", ply )
 				umsg.String( id )
