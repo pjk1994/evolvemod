@@ -128,7 +128,7 @@ end
 
 function evolve:RegisterPlugin( plugin )
 	table.insert( evolve.plugins, plugin )
-	if ( plugin.Privileges ) then table.Add( evolve.privileges, plugin.Privileges ) end
+	if ( plugin.Privileges ) then table.Add( evolve.privileges, plugin.Privileges ) table.sort( evolve.privileges ) end
 end
 
 function evolve:FindPlugin( name )
@@ -402,7 +402,7 @@ function evolve:Rank( ply )
 	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
 	
 	self:TransferPrivileges( ply )
-	self:TransferRanks( ply, true )
+	self:TransferRanks( ply )
 	
 	local usergroup = ply:GetNWString( "UserGroup", "guest" )
 	if ( usergroup == "user" ) then usergroup = "guest" end
@@ -474,37 +474,41 @@ function evolve:TransferPrivileges( ply )
 	end
 end
 
-function evolve:TransferRanks( ply, noreset )
-	if ( !noreset ) then umsg.Start( "EV_ResetRanks", ply ) umsg.End() end
-	
-	timer.Simple( 1, function()
-		for id, data in pairs( evolve.ranks ) do
-			umsg.Start( "EV_Rank", ply )
-				umsg.String( id )
-				umsg.String( data.Title )
-				umsg.String( data.Icon )
-				umsg.String( data.UserGroup )
-				umsg.Short( data.Immunity )
-			umsg.End()
+function evolve:TransferRanks( ply )
+	for id, data in pairs( evolve.ranks ) do
+		local color = data.Color
+		
+		umsg.Start( "EV_Rank", ply )
+			umsg.String( id )
+			umsg.String( data.Title )
+			umsg.String( data.Icon )
+			umsg.String( data.UserGroup )
+			umsg.Short( data.Immunity )
 			
-			umsg.Start( "EV_RankPrivileges", ply )
-				umsg.String( id )
-				umsg.Short( #( data.Privileges or {} ) )
-				
-				for _, privilege in ipairs( data.Privileges or {} ) do
-					umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
-				end
-			umsg.End()
-		end
-	end )
+			if ( color ) then
+				umsg.Bool( true )
+				umsg.Short( color.r )
+				umsg.Short( color.g )
+				umsg.Short( color.b )
+			else
+				umsg.Bool( false )
+			end
+		umsg.End()
+		
+		umsg.Start( "EV_RankPrivileges", ply )
+			umsg.String( id )
+			umsg.Short( #( data.Privileges or {} ) )
+			
+			for _, privilege in ipairs( data.Privileges or {} ) do
+				umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
+			end
+		umsg.End()
+	end
 end
-
-usermessage.Hook( "EV_ResetRanks", function()
-	evolve.ranks = {}
-end )
 
 usermessage.Hook( "EV_Rank", function( um )
 	local id = string.lower( um:ReadString() )
+	if ( #id == 0 ) then id = "owner" end // don't ask
 	
 	evolve.ranks[id] = {
 		Title = um:ReadString(),
@@ -513,6 +517,10 @@ usermessage.Hook( "EV_Rank", function( um )
 		Immunity = um:ReadShort(),
 		Privileges = {},
 	}
+	
+	if ( um:ReadBool() ) then
+		evolve.ranks[id].Color = Color( um:ReadShort(), um:ReadShort(), um:ReadShort() )
+	end
 	
 	evolve.ranks[id].IconTexture = surface.GetTextureID( "gui/silkicons/" .. evolve.ranks[id].Icon )
 end )
@@ -531,4 +539,36 @@ usermessage.Hook( "EV_RankPrivileges", function( um )
 	for i = 1, privilegeCount do
 		table.insert( evolve.ranks[ rank ].Privileges, evolve.privileges[ um:ReadShort() ] )
 	end
+end )
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Chat rank colors
+-------------------------------------------------------------------------------------------------------------------------*/
+
+hook.Add( "OnPlayerChat", "EV_TeamColors", function( ply, txt, teamchat, dead )
+	local tab = {}
+ 
+	if ( dead ) then
+		table.insert( tab, Color( 255, 30, 40 ) )
+		table.insert( tab, "*DEAD* " )
+	end
+ 
+	if ( teamchat ) then
+		table.insert( tab, Color( 30, 160, 40 ) )
+		table.insert( tab, "(TEAM) " )
+	end
+ 
+	if ( IsValid( ply ) ) then
+		table.insert( tab, evolve.ranks[ ply:EV_GetRank() ].Color or team.GetColor( ply:Team() ) )
+		table.insert( tab, ply:Nick() )
+	else
+		table.insert( tab, "Console" )
+	end
+ 
+	table.insert( tab, Color( 255, 255, 255 ) )
+	table.insert( tab, ": " .. txt )
+ 
+	chat.AddText( unpack( tab ) )
+ 
+	return true
 end )

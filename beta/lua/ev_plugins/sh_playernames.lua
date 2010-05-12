@@ -24,10 +24,6 @@ if ( SERVER ) then
 	end )
 else
 	PLUGIN.iconUser = surface.GetTextureID( "gui/silkicons/user" )
-	PLUGIN.iconRespected = surface.GetTextureID( "gui/silkicons/user_add" )
-	PLUGIN.iconAdmin = surface.GetTextureID( "gui/silkicons/shield" )
-	PLUGIN.iconSuperAdmin = surface.GetTextureID( "gui/silkicons/shield_add" )
-	PLUGIN.iconOwner = surface.GetTextureID( "gui/silkicons/key" )
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 
 	function PLUGIN:HUDPaint()
@@ -58,20 +54,17 @@ else
 					surface.SetDrawColor( 0, 0, 0, alpha )
 					surface.DrawRect( drawPos.x, drawPos.y, w, h )
 					
-					surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
 					if ( pl:GetNWBool( "EV_Chatting", false ) ) then
 						surface.SetTexture( self.iconChat )
-					elseif ( pl:EV_IsOwner() ) then
-						surface.SetTexture( self.iconOwner )
-					elseif ( pl:EV_IsSuperAdmin() ) then
-						surface.SetTexture( self.iconSuperAdmin )
-					elseif ( pl:EV_IsAdmin() ) then
-						surface.SetTexture( self.iconAdmin )
-					elseif ( pl:EV_IsRespected() ) then
-						surface.SetTexture( self.iconRespected)
 					else
-						surface.SetTexture( self.iconUser )
+						if ( evolve.ranks[ pl:EV_GetRank() ] ) then
+							surface.SetTexture( evolve.ranks[ pl:EV_GetRank() ].IconTexture )
+						else
+							surface.SetTexture( self.iconUser )
+						end
 					end
+					
+					surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
 					surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
 					
 					local teamColor = team.GetColor( pl:Team() )

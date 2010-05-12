@@ -11,5 +11,5 @@ end
 table.insert( evolve.privileges, "Menu" )
 
 function evolve:RegisterTab( tab )
-	table.add( evolve.privileges, tab.Privileges or {} )
+	table.Add( evolve.privileges, tab.Privileges or {} )
 end

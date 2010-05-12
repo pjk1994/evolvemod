@@ -8,7 +8,7 @@ PLUGIN.Description = "Run a console command on someone."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "cexec"
 PLUGIN.Usage = "<player> <command> [args]"
-PLUGIN.Privileges = { "Private messages" }
+PLUGIN.Privileges = { "Client Exec" }
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "Client Exec" ) ) then
