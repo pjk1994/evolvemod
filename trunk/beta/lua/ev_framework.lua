@@ -459,6 +459,22 @@ function evolve:LoadRanks()
 	end
 end
 
+function evolve:RemoveRank( rank )
+	evolve.ranks[ rank ] = nil
+	
+	umsg.Start( "EV_RemoveRank" )
+		umsg.String( rank )
+	umsg.End()
+	
+	for _, pl in ipairs( player.GetAll() ) do
+		if ( pl:EV_GetRank() == rank ) then
+			pl:EV_SetRank( "guest" )
+		end
+	end
+	
+	evolve:SaveRanks()
+end
+
 if ( SERVER ) then evolve:LoadRanks() end
 
 function evolve:SyncRanks()
@@ -538,6 +554,10 @@ usermessage.Hook( "EV_RankPrivileges", function( um )
 	for i = 1, privilegeCount do
 		table.insert( evolve.ranks[ rank ].Privileges, evolve.privileges[ um:ReadShort() ] )
 	end
+end )
+
+usermessage.Hook( "EV_RemoveRank", function( um )
+	evolve.ranks[ um:ReadString() ] = nil
 end )
 
 /*-------------------------------------------------------------------------------------------------------------------------
