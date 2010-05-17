@@ -3,7 +3,7 @@
 -------------------------------------------------------------------------------------------------------------------------*/
 
 local TAB = {}
-TAB.Title = "Ranks (Beta)"
+TAB.Title = "Ranks"
 TAB.Description = "Manage ranks."
 TAB.Icon = "gui/silkicons/group"
 TAB.Author = "Overv"
@@ -136,7 +136,9 @@ function TAB:Initialize( pnl )
 	self.RemoveButton:SetSize( 60, 22 )
 	self.RemoveButton:SetButtonText( "Remove" )
 	self.RemoveButton.DoClick = function()
-		Derma_Message( "Unfortunately this feature is not available yet!", "Feature unavailable", "Ok" )
+		local id = self.RankList:GetSelectedItems()[1].Rank
+		local rank = evolve.ranks[ id ].Title
+		Derma_Query( "Are you sure you want to remove the rank " .. rank .. "?", "Removing rank " .. rank, "Yes", function() RunConsoleCommand( "ev", "removerank", id ) end, "No", function() end )
 	end
 	
 	// Rename button
