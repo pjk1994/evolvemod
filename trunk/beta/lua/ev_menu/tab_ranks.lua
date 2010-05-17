@@ -79,7 +79,7 @@ function TAB:Initialize( pnl )
 	self.ColorCircle.OnMouseReleased = function( mcode )
 		self.ColorCircle.OldRelease( mcode )
 		local color = self.ColorCircle:GetRGB()
-		RunConsoleCommand( "ev", "setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), self.Usergroup.Selected, color.r, color.g, color.b )
+		RunConsoleCommand( "ev_setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), self.Usergroup.Selected, color.r, color.g, color.b )
 	end
 	self.ColorCircle:SetColor( color_white )
 	
@@ -98,7 +98,7 @@ function TAB:Initialize( pnl )
 			local rank = self.RankList:GetSelectedItems()[1].Rank
 			if ( evolve.ranks[ rank ].Immunity != self.Immunity:GetValue() ) then
 				local color = self.ColorCircle:GetRGB()
-				RunConsoleCommand( "ev", "setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), self.Usergroup.Selected, color.r, color.g, color.b )
+				RunConsoleCommand( "ev_setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), self.Usergroup.Selected, color.r, color.g, color.b )
 			end
 			self.applySettings = false
 		end
@@ -116,7 +116,7 @@ function TAB:Initialize( pnl )
 	self.Usergroup.OnSelect = function( id, value, data )
 		self.Usergroup.Selected = data
 		local color = self.ColorCircle:GetRGB()
-		RunConsoleCommand( "ev", "setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), data, color.r, color.g, color.b )
+		RunConsoleCommand( "ev_setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), data, color.r, color.g, color.b )
 	end
 	
 	// New button
@@ -138,7 +138,7 @@ function TAB:Initialize( pnl )
 	self.RemoveButton.DoClick = function()
 		local id = self.RankList:GetSelectedItems()[1].Rank
 		local rank = evolve.ranks[ id ].Title
-		Derma_Query( "Are you sure you want to remove the rank " .. rank .. "?", "Removing rank " .. rank, "Yes", function() RunConsoleCommand( "ev", "removerank", id ) end, "No", function() end )
+		Derma_Query( "Are you sure you want to remove the rank " .. rank .. "?", "Removing rank " .. rank, "Yes", function() RunConsoleCommand( "ev_removerank", id ) end, "No", function() end )
 	end
 	
 	// Rename button
@@ -149,7 +149,7 @@ function TAB:Initialize( pnl )
 	self.RenameButton.DoClick = function()
 		local rank = self.RankList:GetSelectedItems()[1].Rank
 		Derma_StringRequest( "Rename rank " .. evolve.ranks[ rank ].Title, "Enter a new name:", evolve.ranks[ rank ].Title, function( name )
-			RunConsoleCommand( "ev", "renamerank", rank, name )
+			RunConsoleCommand( "ev_renamerank", rank, name )
 		end )
 	end
 	
@@ -200,9 +200,9 @@ function TAB:Update()
 		line.OnMousePressed = function()
 			if ( line.LastPress + 0.5 > os.clock() ) then
 				if ( line.State:IsVisible() ) then
-					RunConsoleCommand( "ev", "setrank", line.LastRank, line:GetColumnText( 1 ), 0 )
+					RunConsoleCommand( "ev_setrank", line.LastRank, line:GetColumnText( 1 ), 0 )
 				else
-					RunConsoleCommand( "ev", "setrank", line.LastRank, line:GetColumnText( 1 ), 1 )
+					RunConsoleCommand( "ev_setrank", line.LastRank, line:GetColumnText( 1 ), 1 )
 				end
 				
 				line.State:SetVisible( !line.State:IsVisible() )				

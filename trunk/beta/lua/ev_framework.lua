@@ -459,22 +459,6 @@ function evolve:LoadRanks()
 	end
 end
 
-function evolve:RemoveRank( rank )
-	evolve.ranks[ rank ] = nil
-	
-	umsg.Start( "EV_RemoveRank" )
-		umsg.String( rank )
-	umsg.End()
-	
-	for _, pl in ipairs( player.GetAll() ) do
-		if ( pl:EV_GetRank() == rank ) then
-			pl:EV_SetRank( "guest" )
-		end
-	end
-	
-	evolve:SaveRanks()
-end
-
 if ( SERVER ) then evolve:LoadRanks() end
 
 function evolve:SyncRanks()
@@ -559,6 +543,94 @@ end )
 usermessage.Hook( "EV_RemoveRank", function( um )
 	evolve.ranks[ um:ReadString() ] = nil
 end )
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Rank modification
+-------------------------------------------------------------------------------------------------------------------------*/
+
+if ( SERVER ) then
+	concommand.Add( "ev_renamerank", function( ply, com, args )
+		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
+			if ( #args > 1 and evolve.ranks[ args[1] ] ) then
+				evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has renamed ", evolve.colors.blue, evolve.ranks[ args[1] ].Title, evolve.colors.white, " to ", evolve.colors.blue, table.concat( args, " ", 2 ), evolve.colors.white, "." )
+				
+				evolve.ranks[ args[1] ].Title = table.concat( args, " ", 2 )
+				
+				evolve:SaveRanks()
+				evolve:SyncRanks()
+			end
+		end
+	end )
+	
+	concommand.Add( "ev_setrank", function( ply, com, args )
+		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
+			if ( #args == 3 and tonumber( args[3] ) and evolve.ranks[ args[1] ] and table.HasValue( evolve.privileges, args[2] ) and args[1] != "owner" ) then
+				local rank = args[1]
+				local privilege = args[2]
+				
+				if ( tonumber( args[3] ) == 1 ) then
+					if ( !table.HasValue( evolve.ranks[ rank ].Privileges, privilege ) ) then
+						table.insert( evolve.ranks[ rank ].Privileges, privilege )
+						
+						evolve:SaveRanks()
+						evolve:SyncRanks()
+					end
+				else
+					if ( table.HasValue( evolve.ranks[ rank ].Privileges, privilege ) ) then
+						for i = 1, #evolve.ranks[ rank ].Privileges do
+							if ( evolve.ranks[ rank ].Privileges[i] == privilege ) then
+								table.remove( evolve.ranks[ rank ].Privileges, i )
+								
+								evolve:SaveRanks()
+								evolve:SyncRanks()
+								
+								return
+							end
+						end
+					end
+				end
+			end
+		end
+	end )
+	
+	concommand.Add( "ev_setrankp", function( ply, com, args )
+		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
+			if ( #args == 6 and tonumber( args[2] ) and evolve.ranks[ args[1] ] and ( args[3] == "guest" or args[3] == "admin" or args[3] == "superadmin" ) and args[1] != "owner" and tonumber( args[4] ) and tonumber( args[5] ) and tonumber( args[6] ) ) then						
+				evolve.ranks[ args[1] ].Immunity = args[2]
+				evolve.ranks[ args[1] ].UserGroup = args[3]
+				evolve.ranks[ args[1] ].Color = Color( args[4], args[5], args[6] )
+				
+				for _, pl in ipairs( player.GetAll() ) do
+					if ( pl:GetNWString( "EV_UserGroup" ) == args[1] ) then
+						pl:SetNWString( "UserGroup", args[3] )
+					end
+				end
+				
+				evolve:SaveRanks()
+				evolve:SyncRanks()
+			end
+		end
+	end )
+	
+	concommand.Add( "ev_removerank", function( ply, com, args )
+		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
+			evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has removed ", evolve.colors.blue, evolve.ranks[ args[1] ].Title, evolve.colors.white, "." )
+			
+			evolve.ranks[ args[1] ] = nil
+			evolve:SaveRanks()
+			
+			umsg.Start( "EV_RemoveRank" )
+				umsg.String( args[1] )
+			umsg.End()
+			
+			for _, pl in ipairs( player.GetAll() ) do
+				if ( pl:EV_GetRank() == args[1] ) then
+					pl:EV_SetRank( "guest" )
+				end
+			end
+		end
+	end )
+end
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Chat rank colors
