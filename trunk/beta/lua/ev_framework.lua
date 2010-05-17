@@ -399,10 +399,10 @@ function evolve:RankGroup( ply, rank )
 end
 
 function evolve:Rank( ply )
-	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) return end
-	
 	self:TransferPrivileges( ply )
 	self:TransferRanks( ply )
+	
+	if ( ply:IsListenServerHost() ) then ply:SetNWString( "EV_UserGroup", "owner" ) ply:SetNWString( "UserGroup", "superadmin" ) return end
 	
 	local usergroup = ply:GetNWString( "UserGroup", "guest" )
 	if ( usergroup == "user" ) then usergroup = "guest" end
@@ -478,7 +478,7 @@ function evolve:TransferRanks( ply )
 	for id, data in pairs( evolve.ranks ) do
 		local color = data.Color
 		
-		umsg.Start( "EV_Rank", ply )
+		umsg.Start( "EV_Rank", ply )			
 			umsg.String( id )
 			umsg.String( data.Title )
 			umsg.String( data.Icon )
@@ -508,7 +508,6 @@ end
 
 usermessage.Hook( "EV_Rank", function( um )
 	local id = string.lower( um:ReadString() )
-	if ( #id == 0 ) then id = "owner" end // don't ask
 	
 	evolve.ranks[id] = {
 		Title = um:ReadString(),
