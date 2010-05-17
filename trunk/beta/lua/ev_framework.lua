@@ -264,6 +264,7 @@ function _R.Entity:UniqueID() if ( !self:IsValid() ) then return 0 end end
 
 function evolve:LoadPlayerInfo()
 	if ( file.Exists( "ev_playerinfo.txt" ) ) then
+		debug.sethook()
 		self.PlayerInfo = glon.decode( file.Read( "ev_playerinfo.txt" ) )
 	else
 		self.PlayerInfo = {}
