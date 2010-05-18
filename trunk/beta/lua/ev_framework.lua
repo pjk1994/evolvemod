@@ -530,10 +530,13 @@ end
 
 usermessage.Hook( "EV_Rank", function( um )
 	local id = string.lower( um:ReadString() )
+	local title = um:ReadString()
 	local created = evolve.ranks[id] == nil
 	
+	if ( #id == 0 or #title == 0 ) then id = "owner" title = "Owner" print( "Correction applied." ) end
+	
 	evolve.ranks[id] = {
-		Title = um:ReadString(),
+		Title = title,
 		Icon = um:ReadString(),
 		UserGroup = um:ReadString(),
 		Immunity = um:ReadShort(),
