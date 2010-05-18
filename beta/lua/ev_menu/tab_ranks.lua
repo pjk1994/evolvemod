@@ -127,7 +127,16 @@ function TAB:Initialize( pnl )
 	self.NewButton:SetNotHighlightedColor( 50 )
 	self.NewButton:SetHighlightedColor( 90 )
 	self.NewButton.DoClick = function()
-		Derma_Message( "Unfortunately this feature is not available yet!", "Feature unavailable", "Ok" )
+		Derma_StringRequest( "Create a rank", "Enter the title of your rank (e.g. Noob):", "", function( title )
+			Derma_StringRequest( "Create a rank", "Enter the id of your rank (e.g. noob):", string.gsub( string.lower( title ), " ", "" ), function( id )
+				if ( string.find( id, " " ) or string.lower( id ) != id or evolve.ranks[ id ] ) then
+					chat.AddText( evolve.colors.red, "You specified an invalid identifier. Make sure it doesn't exist yet and does not contain spaces or capitalized characters." )
+				else
+					local curRank = self.RankList:GetSelectedItems()[1].Rank
+					Derma_Query( "Do you want to derive the settings and privileges of the currently selected rank, " .. evolve.ranks[ curRank ].Title .. "?", "Rank inheritance", "Yes", function() RunConsoleCommand( "ev_createrank", id, title, curRank ) end, "No", function() RunConsoleCommand( "ev_createrank", id, title ) end )
+				end
+			end )
+		end )
 	end
 	
 	// Remove button
@@ -138,7 +147,12 @@ function TAB:Initialize( pnl )
 	self.RemoveButton.DoClick = function()
 		local id = self.RankList:GetSelectedItems()[1].Rank
 		local rank = evolve.ranks[ id ].Title
-		Derma_Query( "Are you sure you want to remove the rank " .. rank .. "?", "Removing rank " .. rank, "Yes", function() RunConsoleCommand( "ev_removerank", id ) end, "No", function() end )
+		
+		if ( id == "guest" ) then
+			Derma_Message( "You can't remove the guest rank.", "Removing rank guest", "Ok" )
+		else
+			Derma_Query( "Are you sure you want to remove the rank " .. rank .. "?", "Removing rank " .. rank, "Yes", function() RunConsoleCommand( "ev_removerank", id ) end, "No", function() end )
+		end
 	end
 	
 	// Rename button
@@ -147,10 +161,10 @@ function TAB:Initialize( pnl )
 	self.RenameButton:SetSize( 60, 22 )
 	self.RenameButton:SetButtonText( "Rename" )
 	self.RenameButton.DoClick = function()
-		local rank = self.RankList:GetSelectedItems()[1].Rank
-		Derma_StringRequest( "Rename rank " .. evolve.ranks[ rank ].Title, "Enter a new name:", evolve.ranks[ rank ].Title, function( name )
-			RunConsoleCommand( "ev_renamerank", rank, name )
-		end )
+			local rank = self.RankList:GetSelectedItems()[1].Rank
+			Derma_StringRequest( "Rename rank " .. evolve.ranks[ rank ].Title, "Enter a new name:", evolve.ranks[ rank ].Title, function( name )
+				RunConsoleCommand( "ev_renamerank", rank, name )
+			end )
 	end
 	
 	self.ColorCircle:SetColor( evolve.ranks.guest.Color or color_white )
@@ -213,6 +227,64 @@ function TAB:Update()
 		end
 	end
 	self.PrivList:SelectFirstItem()
+end
+
+function TAB:EV_RankRemoved( rank )
+	for _, rankitem in pairs( self.RankList:GetItems() ) do
+		if ( rankitem.Rank == rank ) then
+			self.RankList:RemoveItem( rankitem )
+			break
+		end
+	end
+	self.RankList:SelectItem( self.RankList:GetItems()[1] )
+end
+
+function TAB:EV_RankRenamed( rank, title )
+	for _, rankitem in pairs( self.RankList:GetItems() ) do
+		if ( rankitem.Rank == rank ) then
+			rankitem.PaintOver = function()
+				draw.SimpleText( title, "Default", 28, 5, Color( 0, 0, 0, 255 ) )
+			end
+			
+			break
+		end
+	end
+end
+
+function TAB:EV_RankPrivilegeChange( rank, privilege, enabled )
+	if ( rank == self.RankList:GetSelectedItems()[1].Rank ) then
+		for _, line in pairs( self.PrivList:GetLines() ) do
+			if ( line:GetColumnText( 1 ) == privilege ) then
+				line.State:SetVisible( enabled )
+				break
+			end
+		end
+	end
+end
+
+function TAB:EV_RankCreated( id )
+	local rank = evolve.ranks[ id ]
+	local item = self.RankList:AddItem( "" )
+	
+	item:SetTall( 20 )
+	item.Rank = id
+	
+	item.Icon = vgui.Create( "DImage", item )
+	item.Icon:SetImage( "gui/silkicons/" .. rank.Icon )
+	item.Icon:SetPos( 4, 4 )
+	item.Icon:SetSize( 14, 14 )
+	item.PaintOver = function()
+		draw.SimpleText( rank.Title, "Default", 28, 5, Color( 0, 0, 0, 255 ) )
+	end
+end
+
+function TAB:EV_RankUpdated( id )
+	if ( id == self.RankList:GetSelectedItems()[1].Rank ) then
+		self.ColorCircle:SetColor( evolve.ranks[ id ].Color or color_white )
+		self.Immunity:SetValue( evolve.ranks[ id ].Immunity or 0 )
+		self.Usergroup:SetText( evolve.ranks[ id ].UserGroup or "unknown" )
+		self.Usergroup.Selected = evolve.ranks[ id ].UserGroup or "unknown"
+	end
 end
 
 evolve:RegisterTab( TAB )
