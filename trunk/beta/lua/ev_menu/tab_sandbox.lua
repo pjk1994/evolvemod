@@ -2,6 +2,8 @@
 	Tab with sandbox settings
 -------------------------------------------------------------------------------------------------------------------------*/
 
+if ( !GAMEMODE.IsSandboxDerived ) then return end
+
 local TAB = {}
 TAB.Title = "Sandbox"
 TAB.Description = "Manage sandbox settings."

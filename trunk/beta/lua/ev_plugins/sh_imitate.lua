@@ -17,7 +17,7 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #players == 1 ) then
 			if ( #msg > 0 ) then
-				evolve:Notify( team.GetColor( players[1]:Team() ), players[1]:Nick(), evolve.colors.white, ": " .. msg )
+				evolve:Notify( evolve.ranks[ players[1]:EV_GetRank() ].Color or team.GetColor( players[1]:Team() ), players[1]:Nick(), evolve.colors.white, ": " .. msg )
 			else
 				evolve:Notify( ply, evolve.colors.red, "No message specified." )
 			end

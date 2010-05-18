@@ -155,6 +155,22 @@ hook.Call = function( name, gm, ... )
 		end
 	end
 	
+	if ( CLIENT ) then
+		for _, tab in ipairs( evolve.MENU.Tabs ) do
+			if ( tab[ name ] ) then			
+				local retValues = { pcall( tab[name], tab, ... ) }
+				
+				if ( retValues[1] and retValues[2] != nil ) then
+					table.remove( retValues, 1 )
+					return unpack( retValues )
+				elseif ( !retValues[1] ) then
+					evolve:Notify( evolve.colors.red, "Hook '" .. name .. "' in tab '" .. tab.Title .. "' failed with error:" )
+					evolve:Notify( evolve.colors.red, retValues[2] )
+				end
+			end
+		end
+	end
+	
 	return evolve.HookCall( name, gm, ... )
 end
 
@@ -475,40 +491,46 @@ function evolve:TransferPrivileges( ply )
 	end
 end
 
+function evolve:TransferRank( ply, rank )
+	local data = evolve.ranks[ rank ]
+	local color = data.Color
+	
+	umsg.Start( "EV_Rank", ply )			
+		umsg.String( rank )
+		umsg.String( data.Title )
+		umsg.String( data.Icon )
+		umsg.String( data.UserGroup )
+		umsg.Short( data.Immunity )
+		
+		if ( color ) then
+			umsg.Bool( true )
+			umsg.Short( color.r )
+			umsg.Short( color.g )
+			umsg.Short( color.b )
+		else
+			umsg.Bool( false )
+		end
+	umsg.End()
+	
+	umsg.Start( "EV_RankPrivileges", ply )
+		umsg.String( rank )
+		umsg.Short( #( data.Privileges or {} ) )
+		
+		for _, privilege in ipairs( data.Privileges or {} ) do
+			umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
+		end
+	umsg.End()
+end
+
 function evolve:TransferRanks( ply )
 	for id, data in pairs( evolve.ranks ) do
-		local color = data.Color
-		
-		umsg.Start( "EV_Rank", ply )			
-			umsg.String( id )
-			umsg.String( data.Title )
-			umsg.String( data.Icon )
-			umsg.String( data.UserGroup )
-			umsg.Short( data.Immunity )
-			
-			if ( color ) then
-				umsg.Bool( true )
-				umsg.Short( color.r )
-				umsg.Short( color.g )
-				umsg.Short( color.b )
-			else
-				umsg.Bool( false )
-			end
-		umsg.End()
-		
-		umsg.Start( "EV_RankPrivileges", ply )
-			umsg.String( id )
-			umsg.Short( #( data.Privileges or {} ) )
-			
-			for _, privilege in ipairs( data.Privileges or {} ) do
-				umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
-			end
-		umsg.End()
+		evolve:TransferRank( ply, id )
 	end
 end
 
 usermessage.Hook( "EV_Rank", function( um )
 	local id = string.lower( um:ReadString() )
+	local created = evolve.ranks[id] == nil
 	
 	evolve.ranks[id] = {
 		Title = um:ReadString(),
@@ -523,6 +545,12 @@ usermessage.Hook( "EV_Rank", function( um )
 	end
 	
 	evolve.ranks[id].IconTexture = surface.GetTextureID( "gui/silkicons/" .. evolve.ranks[id].Icon )
+	
+	if ( created ) then
+		hook.Call( "EV_RankCreated", nil, id )
+	else
+		hook.Call( "EV_RankUpdated", nil, id )
+	end
 end )
 
 usermessage.Hook( "EV_Privilege", function( um )
@@ -542,7 +570,30 @@ usermessage.Hook( "EV_RankPrivileges", function( um )
 end )
 
 usermessage.Hook( "EV_RemoveRank", function( um )
-	evolve.ranks[ um:ReadString() ] = nil
+	local rank = um:ReadString()
+	hook.Call( "EV_RankRemoved", nil, rank )
+	evolve.ranks[ rank ] = nil
+end )
+
+usermessage.Hook( "EV_RenameRank", function( um )
+	local rank = um:ReadString()
+	evolve.ranks[ rank ].Title = um:ReadString()
+	
+	hook.Call( "EV_RankRenamed", nil, rank, evolve.ranks[ rank ].Title )
+end )
+
+usermessage.Hook( "EV_RankPrivilege", function( um )
+	local rank = um:ReadString()
+	local priv = evolve.privileges[ um:ReadShort() ]
+	local enabled = um:ReadBool()
+	
+	if ( enabled ) then
+		table.insert( evolve.ranks[ rank ].Privileges, priv )
+	else
+		table.remove( evolve.ranks[ rank ].Privileges, evolve:KeyByValue( evolve.ranks[ rank ].Privileges, priv ) )
+	end
+	
+	hook.Call( "EV_RankPrivilegeChange", nil, rank, priv, enabled )
 end )
 
 /*-------------------------------------------------------------------------------------------------------------------------
@@ -556,9 +607,12 @@ if ( SERVER ) then
 				evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has renamed ", evolve.colors.blue, evolve.ranks[ args[1] ].Title, evolve.colors.white, " to ", evolve.colors.blue, table.concat( args, " ", 2 ), evolve.colors.white, "." )
 				
 				evolve.ranks[ args[1] ].Title = table.concat( args, " ", 2 )
-				
 				evolve:SaveRanks()
-				evolve:SyncRanks()
+				
+				umsg.Start( "EV_RenameRank" )
+					umsg.String( args[1] )
+					umsg.String( evolve.ranks[ args[1] ].Title )
+				umsg.End()
 			end
 		end
 	end )
@@ -572,24 +626,20 @@ if ( SERVER ) then
 				if ( tonumber( args[3] ) == 1 ) then
 					if ( !table.HasValue( evolve.ranks[ rank ].Privileges, privilege ) ) then
 						table.insert( evolve.ranks[ rank ].Privileges, privilege )
-						
-						evolve:SaveRanks()
-						evolve:SyncRanks()
 					end
 				else
 					if ( table.HasValue( evolve.ranks[ rank ].Privileges, privilege ) ) then
-						for i = 1, #evolve.ranks[ rank ].Privileges do
-							if ( evolve.ranks[ rank ].Privileges[i] == privilege ) then
-								table.remove( evolve.ranks[ rank ].Privileges, i )
-								
-								evolve:SaveRanks()
-								evolve:SyncRanks()
-								
-								return
-							end
-						end
+						table.remove( evolve.ranks[ rank ].Privileges, evolve:KeyByValue( evolve.ranks[ rank ].Privileges, privilege ) )
 					end
 				end
+				
+				evolve:SaveRanks()
+				
+				umsg.Start( "EV_RankPrivilege" )
+					umsg.String( rank )
+					umsg.Short( evolve:KeyByValue( evolve.privileges, privilege ) )
+					umsg.Bool( tonumber( args[3] ) == 1 )
+				umsg.End()
 			end
 		end
 	end )
@@ -600,34 +650,65 @@ if ( SERVER ) then
 				evolve.ranks[ args[1] ].Immunity = args[2]
 				evolve.ranks[ args[1] ].UserGroup = args[3]
 				evolve.ranks[ args[1] ].Color = Color( args[4], args[5], args[6] )
+				evolve:SaveRanks()
 				
 				for _, pl in ipairs( player.GetAll() ) do
+					evolve:TransferRank( pl, args[1] )
+					
 					if ( pl:GetNWString( "EV_UserGroup" ) == args[1] ) then
 						pl:SetNWString( "UserGroup", args[3] )
 					end
 				end
-				
-				evolve:SaveRanks()
-				evolve:SyncRanks()
 			end
 		end
 	end )
 	
 	concommand.Add( "ev_removerank", function( ply, com, args )
 		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
-			evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has removed ", evolve.colors.blue, evolve.ranks[ args[1] ].Title, evolve.colors.white, "." )
-			
-			evolve.ranks[ args[1] ] = nil
-			evolve:SaveRanks()
-			
-			umsg.Start( "EV_RemoveRank" )
-				umsg.String( args[1] )
-			umsg.End()
-			
-			for _, pl in ipairs( player.GetAll() ) do
-				if ( pl:EV_GetRank() == args[1] ) then
-					pl:EV_SetRank( "guest" )
+			if ( args[1] != "guest" and args[1] != "owner" and evolve.ranks[ args[1] ] ) then
+				evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has removed the rank ", evolve.colors.blue, evolve.ranks[ args[1] ].Title, evolve.colors.white, "." )
+				
+				evolve.ranks[ args[1] ] = nil
+				evolve:SaveRanks()
+				
+				for _, pl in ipairs( player.GetAll() ) do
+					if ( pl:EV_GetRank() == args[1] ) then
+						pl:EV_SetRank( "guest" )
+					end
 				end
+				
+				umsg.Start( "EV_RemoveRank" )
+					umsg.String( args[1] )
+				umsg.End()
+			end
+		end
+	end )
+	
+	concommand.Add( "ev_createrank", function( ply, com, args )
+		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
+			if ( ( #args == 2 or #args == 3 ) and !string.find( args[1], " " ) and string.lower( args[1] ) == args[1] and !evolve.ranks[ args[1] ] ) then
+				if ( #args == 2 ) then
+					evolve.ranks[ args[1] ] = {
+						Title = args[2],
+						Icon = "user",
+						UserGroup = "guest",
+						Immunity = 0,
+						Privileges = {},
+					}
+				elseif ( #args == 3 and evolve.ranks[ args[3] ] ) then
+					local parent = evolve.ranks[ args[3] ]
+					
+					evolve.ranks[ args[1] ] = {
+						Title = args[2],
+						Icon = parent.Icon,
+						UserGroup = parent.UserGroup,
+						Immunity = parent.Immunity,
+						Privileges = table.Copy( parent.Privileges ),
+					}
+				end
+				
+				evolve:SaveRanks()
+				evolve:SyncRanks()
 			end
 		end
 	end )
@@ -638,29 +719,31 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 hook.Add( "OnPlayerChat", "EV_TeamColors", function( ply, txt, teamchat, dead )
-	local tab = {}
- 
-	if ( dead ) then
-		table.insert( tab, Color( 255, 30, 40 ) )
-		table.insert( tab, "*DEAD* " )
+	if ( GAMEMODE.IsSandboxDerived ) then
+		local tab = {}
+	 
+		if ( dead ) then
+			table.insert( tab, Color( 255, 30, 40 ) )
+			table.insert( tab, "*DEAD* " )
+		end
+	 
+		if ( teamchat ) then
+			table.insert( tab, Color( 30, 160, 40 ) )
+			table.insert( tab, "(TEAM) " )
+		end
+	 
+		if ( IsValid( ply ) ) then
+			table.insert( tab, evolve.ranks[ ply:EV_GetRank() ].Color or team.GetColor( ply:Team() ) )
+			table.insert( tab, ply:Nick() )
+		else
+			table.insert( tab, "Console" )
+		end
+	 
+		table.insert( tab, Color( 255, 255, 255 ) )
+		table.insert( tab, ": " .. txt )
+	 
+		chat.AddText( unpack( tab ) )
+	 
+		return true
 	end
- 
-	if ( teamchat ) then
-		table.insert( tab, Color( 30, 160, 40 ) )
-		table.insert( tab, "(TEAM) " )
-	end
- 
-	if ( IsValid( ply ) ) then
-		table.insert( tab, evolve.ranks[ ply:EV_GetRank() ].Color or team.GetColor( ply:Team() ) )
-		table.insert( tab, ply:Nick() )
-	else
-		table.insert( tab, "Console" )
-	end
- 
-	table.insert( tab, Color( 255, 255, 255 ) )
-	table.insert( tab, ": " .. txt )
- 
-	chat.AddText( unpack( tab ) )
- 
-	return true
 end )
