@@ -714,6 +714,8 @@ if ( SERVER ) then
 				
 				evolve:SaveRanks()
 				evolve:SyncRanks()
+				
+				evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has created the rank ", evolve.colors.blue, args[2], evolve.colors.white, "." )
 			end
 		end
 	end )
