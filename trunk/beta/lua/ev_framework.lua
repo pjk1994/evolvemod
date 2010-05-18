@@ -454,7 +454,9 @@ end
 
 hook.Add( "PlayerSpawn", "EV_RankHook", function( ply )
 	if ( !ply.EV_Ranked ) then
-		evolve:Rank( ply )
+		timer.Simple( 1, function()
+			evolve:Rank( ply )
+		end )
 		ply.EV_Ranked = true
 	end
 end )
@@ -533,7 +535,7 @@ usermessage.Hook( "EV_Rank", function( um )
 	local title = um:ReadString()
 	local created = evolve.ranks[id] == nil
 	
-	if ( #id == 0 or #title == 0 ) then id = "owner" title = "Owner" print( "Correction applied." ) end
+	//if ( #id == 0 or #title == 0 ) then id = "owner" title = "Owner" end
 	
 	evolve.ranks[id] = {
 		Title = title,
