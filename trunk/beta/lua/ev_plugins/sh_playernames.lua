@@ -6,6 +6,7 @@ local PLUGIN = {}
 PLUGIN.Title = "Player Names"
 PLUGIN.Description = "Displays player names above heads."
 PLUGIN.Author = "Overv"
+PLUGIN.Privileges = { "Player names" }
 
 if ( SERVER ) then
 	resource.AddFile( "materials/gui/silkicons/comments.vtf" )
@@ -27,7 +28,7 @@ else
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 
 	function PLUGIN:HUDPaint()
-		if ( !evolve.installed ) then return end
+		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) ) then return end
 		
 		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() ) then

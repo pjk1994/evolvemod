@@ -33,28 +33,18 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN.CheckLimit( ply, limit )
-	local count = server_settings.Int( "sbox_max" .. limit, -1 )
-	
-	if ( ply.EV_NoLimits ) then
-		return true
-	elseif ( ply:GetCount( limit ) < count or count == -1 ) then 
-		return true
-	else
-		ply:LimitHit( limit )
-		return false
-	end
+if ( SERVER ) then
+	timer.Simple( 1, function()
+		PLUGIN.GetCount = _R.Player.GetCount
+		function _R.Player:GetCount( limit, minus )
+			if ( self.EV_NoLimits ) then
+				return 0
+			else
+				return PLUGIN.GetCount( self, limit, minus )
+			end
+		end
+	end )
 end
-
-timer.Simple( 1, function()
-	function GAMEMODE:PlayerSpawnProp( ply, mdl ) return PLUGIN.CheckLimit( ply, "props" ) end
-	function GAMEMODE:PlayerSpawnVehicle( ply, mdl ) return PLUGIN.CheckLimit( ply, "vehicles" ) end
-	function GAMEMODE:PlayerSpawnNPC( ply, mdl ) return PLUGIN.CheckLimit( ply, "npcs" ) end
-	function GAMEMODE:PlayerSpawnEffect( ply, mdl ) return PLUGIN.CheckLimit( ply, "effects" ) end
-	function GAMEMODE:PlayerSpawnRagdoll( ply, mdl ) return PLUGIN.CheckLimit( ply, "ragdolls" ) end 
-	
-	_R.Player.CheckLimit = PLUGIN.CheckLimit
-end )
 
 function PLUGIN:Menu( arg, players )
 	if ( arg ) then

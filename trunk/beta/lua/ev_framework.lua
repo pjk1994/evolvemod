@@ -485,6 +485,8 @@ function evolve:SyncRanks()
 end
 
 function evolve:TransferPrivileges( ply )
+	if ( !ply:IsValid() ) then return end
+	
 	for id, privilege in ipairs( evolve.privileges ) do
 		umsg.Start( "EV_Privilege", ply )
 			umsg.Short( id )
@@ -534,8 +536,6 @@ usermessage.Hook( "EV_Rank", function( um )
 	local id = string.lower( um:ReadString() )
 	local title = um:ReadString()
 	local created = evolve.ranks[id] == nil
-	
-	//if ( #id == 0 or #title == 0 ) then id = "owner" title = "Owner" end
 	
 	evolve.ranks[id] = {
 		Title = title,
@@ -726,7 +726,7 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 hook.Add( "OnPlayerChat", "EV_TeamColors", function( ply, txt, teamchat, dead )
-	if ( GAMEMODE.IsSandboxDerived ) then
+	if ( GAMEMODE.Title == "Sandbox" ) then
 		local tab = {}
 	 
 		if ( dead ) then
