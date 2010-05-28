@@ -726,7 +726,7 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 hook.Add( "OnPlayerChat", "EV_TeamColors", function( ply, txt, teamchat, dead )
-	if ( GAMEMODE.Title == "Sandbox" ) then
+	if ( GAMEMODE.Name == "Sandbox" ) then
 		local tab = {}
 	 
 		if ( dead ) then
