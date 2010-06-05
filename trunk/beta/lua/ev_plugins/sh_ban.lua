@@ -75,11 +75,17 @@ function PLUGIN:Call( ply, args )
 				pl:SetProperty( "BanReason", reason )
 				pl:SetProperty( "BanAdmin", ply:UniqueID() )
 				evolve:CommitProperties()
+				
+				local info = evolve.PlayerInfo[ pl:UniqueID() ]
+				SendUserMessage( "EV_BanEntry", nil, tostring( pl:UniqueID() ), info.Nick, info.SteamID, info.BanReason, info.BanEnd - os.time(), evolve:GetProperty( info.BanAdmin, "Nick" ) )
 			else
 				evolve:SetProperty( uid, "BanEnd", endtime )
 				evolve:SetProperty( uid, "BanReason", reason )
 				evolve:SetProperty( uid, "BanAdmin", ply:UniqueID() )
 				evolve:CommitProperties()
+				
+				local info = evolve.PlayerInfo[ uid ]
+				SendUserMessage( "EV_BanEntry", nil, tostring( uid ), info.Nick, info.SteamID, info.BanReason, info.BanEnd - os.time(), evolve:GetProperty( info.BanAdmin, "Nick" ) )
 			end
 			
 			if ( time == 0 ) then
