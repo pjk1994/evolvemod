@@ -2,8 +2,6 @@
 	Tab with sandbox settings
 -------------------------------------------------------------------------------------------------------------------------*/
 
-if ( !GAMEMODE.IsSandboxDerived ) then return end
-
 local TAB = {}
 TAB.Title = "Sandbox"
 TAB.Description = "Manage sandbox settings."
@@ -38,7 +36,7 @@ TAB.ConVars = {
 	{ "g_ragdoll_maxcount", "Keep NPC bodies", 8 }
 }
 TAB.ConVarSliders = {}
-TAB.ConVarCheckboxes = { }
+TAB.ConVarCheckboxes = {}
 
 function TAB:ApplySettings()
 	for _, v in pairs( self.ConVarSliders ) do
@@ -52,6 +50,10 @@ function TAB:ApplySettings()
 			RunConsoleCommand( "ev", "convar", v.ConVar, evolve:BoolToInt( v:GetChecked() ) * ( v.OnValue or 1 ) )
 		end
 	end
+end
+
+function TAB:IsAllowed()
+	return LocalPlayer():EV_HasPrivilege( "Sandbox menu" )
 end
 
 function TAB:Update()
@@ -123,4 +125,8 @@ function TAB:Initialize( pnl )
 	end
 end
 
-evolve:RegisterTab( TAB )
+if ( CLIENT and GAMEMODE.IsSandboxDerived ) then
+	evolve:RegisterTab( TAB )
+elseif ( SERVER ) then
+	evolve:RegisterTab( TAB )
+end

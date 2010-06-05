@@ -7,7 +7,7 @@ TAB.Title = "Ranks"
 TAB.Description = "Manage ranks."
 TAB.Icon = "gui/silkicons/group"
 TAB.Author = "Overv"
-TAB.Width = 240
+TAB.Width = 260
 TAB.Privileges = { "Rank menu" }
 
 function TAB:Initialize( pnl )
@@ -133,7 +133,18 @@ function TAB:Initialize( pnl )
 					chat.AddText( evolve.colors.red, "You specified an invalid identifier. Make sure it doesn't exist yet and does not contain spaces or capitalized characters." )
 				else
 					local curRank = self.RankList:GetSelectedItems()[1].Rank
-					Derma_Query( "Do you want to derive the settings and privileges of the currently selected rank, " .. evolve.ranks[ curRank ].Title .. "?", "Rank inheritance", "Yes", function() RunConsoleCommand( "ev_createrank", id, title, curRank ) end, "No", function() RunConsoleCommand( "ev_createrank", id, title ) end )
+					Derma_Query( "Do you want to derive the settings and privileges of the currently selected rank, " .. evolve.ranks[ curRank ].Title .. "?", "Rank inheritance",
+					
+						"Yes",
+						function()
+							RunConsoleCommand( "ev_createrank", id, title, curRank )
+						end,
+						
+						"No",
+						function()
+							RunConsoleCommand( "ev_createrank", id, title )
+						end
+					)
 				end
 			end )
 		end )
@@ -285,6 +296,10 @@ function TAB:EV_RankUpdated( id )
 		self.Usergroup:SetText( evolve.ranks[ id ].UserGroup or "unknown" )
 		self.Usergroup.Selected = evolve.ranks[ id ].UserGroup or "unknown"
 	end
+end
+
+function TAB:IsAllowed()
+	return LocalPlayer():EV_HasPrivilege( "Rank menu" )
 end
 
 evolve:RegisterTab( TAB )

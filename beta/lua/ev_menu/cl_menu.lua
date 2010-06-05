@@ -5,8 +5,13 @@
 evolve.MENU = {}
 local MENU = evolve.MENU
 MENU.Tabs = {}
+MENU.Privileges = {}
 
 function evolve:RegisterTab( tab )
+	if ( tab.IsAllowed and !tab:IsAllowed() ) then return false end
+	
+	table.Add( MENU.Privileges, tab.Privileges or {} )
+	
 	tab.Panel = vgui.Create( "DPanel", MENU.TabContainer )
 	tab.Panel.Tab = tab
 	tab.Panel.Paint = function() surface.SetDrawColor( 171, 171, 171, 255 ) surface.DrawRect( 0, 0, tab.Panel:GetWide(), tab.Panel:GetTall() ) end
@@ -32,7 +37,7 @@ end
 
 function MENU:Initialize()
 	self.Panel = vgui.Create( "DFrame" )
-	self.Panel:SetSize( 250, 450 )
+	self.Panel:SetSize( 260, 490 )
 	self.Panel:SetPos( -self.Panel:GetWide(), ScrH() / 2 - self.Panel:GetTall() / 2 )
 	self.Panel:ShowCloseButton( false )
 	self.Panel:SetDraggable( false )
@@ -53,19 +58,42 @@ function MENU:Initialize()
 	timer.Create( "EV_MenuThink", 1/60, 0, function() MENU:Think() end )
 end
 
+function MENU:Destroy()
+	if ( !self.Panel ) then return end
+	self.Panel:Remove()
+	self.Panel = nil
+	self.Tabs = {}
+end
+
 function MENU:Think()
-	local activeTab = self:GetActiveTab()
-	
-	if ( self.ActiveTab != activeTab ) then
-		self.ActiveTab = activeTab
-		self:TabSelected( activeTab )
+	if ( self.LastRank and self.LastRank != LocalPlayer():EV_GetRank() ) then
+		self:Destroy()
+		self.LastRank = LocalPlayer():EV_GetRank()
+		return
+	else
+		self.LastRank = LocalPlayer():EV_GetRank()
 	end
 	
-	local w = self.TabContainer:GetWide() + ( ( activeTab.Width or 250 ) + 10 - self.TabContainer:GetWide() ) / 5
-	if ( math.abs( w - activeTab.Width ) < 5 ) then w = activeTab.Width + 10 end
-	self.Panel:SetWide( w )
-	self.TabContainer:SetWide( w )
+	if ( self.Panel ) then
+		local activeTab = self:GetActiveTab()
+		
+		if ( self.ActiveTab != activeTab ) then
+			self.ActiveTab = activeTab
+			self:TabSelected( activeTab )
+		end
+		
+		local w = self.TabContainer:GetWide() + ( ( activeTab.Width or 260 ) + 10 - self.TabContainer:GetWide() ) / 5
+		if ( math.abs( w - ( activeTab.Width or 260 ) ) < 5 ) then w = ( activeTab.Width or 260 ) + 10 end
+		self.Panel:SetWide( w )
+		self.TabContainer:SetWide( w )
+	end
 end
+
+hook.Add( "EV_RankPrivilegeChange", "EV_MenuPrivUpdate", function( rank, privilege )
+	if ( rank == LocalPlayer():EV_GetRank() and table.HasValue( MENU.Privileges, privilege ) ) then
+		MENU:Destroy()
+	end
+end )
 
 function MENU:Show()
 	if ( !LocalPlayer():EV_HasPrivilege( "Menu" ) ) then return end

@@ -10,7 +10,7 @@ TAB.Description = "Manage players on the server."
 TAB.Icon = "gui/silkicons/user"
 TAB.Author = "Overv"
 TAB.Privileges = { "Player menu" }
-TAB.Width = 240
+TAB.Width = 260
 
 function TAB:Initialize( pnl )
 	// Create the player list
@@ -87,6 +87,10 @@ function TAB:Update()
 		self.PluginList:Reset()
 		self.ButPlugins:SetButtonText( "Plugins" )
 	end
+end
+
+function TAB:IsAllowed()
+	return LocalPlayer():EV_HasPrivilege( "Player menu" )
 end
 
 evolve:RegisterTab( TAB )

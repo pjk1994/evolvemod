@@ -405,6 +405,10 @@ function _R.Player:EV_SetRank( rank )
 	self:SetNWString( "EV_UserGroup", rank )
 	
 	evolve:RankGroup( self, rank )
+	
+	if ( self:EV_HasPrivilege( "Ban menu" ) ) then
+		evolve:SyncBans( self )
+	end
 end
 
 function _R.Player:EV_GetRank()
@@ -447,6 +451,10 @@ function evolve:Rank( ply )
 			end
 		end
 		// COMPATIBILITY
+	end
+	
+	if ( ply:EV_HasPrivilege( "Ban menu" ) ) then
+		evolve:SyncBans( ply )
 	end
 	
 	evolve:RankGroup( ply, usergroup )
@@ -718,6 +726,43 @@ if ( SERVER ) then
 				evolve:Notify( evolve.colors.red, ply:Nick(), evolve.colors.white, " has created the rank ", evolve.colors.blue, args[2], evolve.colors.white, "." )
 			end
 		end
+	end )
+end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Ban synchronization
+-------------------------------------------------------------------------------------------------------------------------*/
+
+if ( SERVER ) then
+	function evolve:SyncBans( ply )
+		for uniqueid, info in pairs( evolve.PlayerInfo ) do
+			if ( info.BanEnd and ( info.BanEnd > os.time() or info.BanEnd == 0 ) ) then
+				SendUserMessage( "EV_BanEntry", ply, tostring( uniqueid ), info.Nick, info.SteamID, info.BanReason, info.BanEnd - os.time(), evolve:GetProperty( info.BanAdmin, "Nick" ) )
+			end
+		end
+	end
+else
+	usermessage.Hook( "EV_BanEntry", function( um )
+		if ( !evolve.bans ) then evolve.bans = {} end
+		
+		local id = um:ReadString()
+		evolve.bans[id] =  {
+			Nick = um:ReadString(),
+			SteamID = um:ReadString(),
+			Reason = um:ReadString(),
+			End = um:ReadLong() + os.time(),
+			Admin = um:ReadString()
+		}
+		
+		hook.Call( "EV_BanAdded", nil, id )		
+	end )
+	
+	usermessage.Hook( "EV_RemoveBanEntry", function( um )
+		if ( !evolve.bans ) then return end
+		
+		local id = um:ReadString()
+		hook.Call( "EV_BanRemoved", nil, id )
+		evolve.bans[id] = nil
 	end )
 end
 

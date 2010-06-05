@@ -2,6 +2,8 @@
 	Stylish button
 -------------------------------------------------------------------------------------------------------------------------*/
 
+if ( CLIENT ) then
+
 PANEL = {}
 
 function PANEL:Init()
@@ -47,6 +49,8 @@ derma.DefineControl( "EvolveButton", "Stylish menu button", PANEL, "DButton" )
 
 PANEL = {}
 
+local iconUser = surface.GetTextureID( "gui/silkicons/user" )
+
 function PANEL:AddPlayer( ply )
 	local item = self:AddItem( "" )
 	
@@ -72,14 +76,10 @@ function PANEL:AddPlayer( ply )
 			return
 		end
 		
-		if ( ply:EV_IsOwner() ) then
-			surface.SetTexture( surface.GetTextureID( "gui/silkicons/key" ) )
-		elseif ( ply:EV_IsSuperAdmin() ) then
-			surface.SetTexture( surface.GetTextureID( "gui/silkicons/shield_add" ) )
-		elseif ( ply:EV_IsAdmin() ) then
-			surface.SetTexture( surface.GetTextureID( "gui/silkicons/shield" ) )
+		if ( evolve.ranks[ ply:EV_GetRank() ] ) then
+			surface.SetTexture( evolve.ranks[ ply:EV_GetRank() ].IconTexture )
 		else
-			surface.SetTexture( surface.GetTextureID( "gui/silkicons/user" ) )
+			surface.SetTexture( iconUser )
 		end
 		surface.SetDrawColor( 255, 255, 255, 255 )
 		surface.DrawTexturedRect( item:GetWide() - 20, 4, 16, 16 )
@@ -346,3 +346,5 @@ function PANEL:CreatePluginsPage()
 end
 
 derma.DefineControl( "EvolvePluginList", "Plugin list", PANEL, "DPanelList" )
+
+end
