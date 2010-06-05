@@ -93,7 +93,7 @@ end
 
 function TAB:Update()
 	self.BanList:Clear()
-	for _, entry in pairs( evolve.bans or {} ) do
+	for _, entry in pairs( evolve.bans ) do
 		if ( entry.End - os.time() > 0 or entry.End == 0 ) then
 			self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, self:FormatTime( entry.End - os.time() ), entry.Admin )
 		end

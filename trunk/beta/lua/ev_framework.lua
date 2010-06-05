@@ -10,6 +10,7 @@ evolve.constants = {}
 evolve.colors = {}
 evolve.ranks = {}
 evolve.privileges = {}
+evolve.bans = {}
 evolve.constants.notallowed = "You are not allowed to do that."
 evolve.admins = 1
 evolve.colors.blue = Color( 98, 176, 255, 255 )
@@ -737,7 +738,9 @@ if ( SERVER ) then
 	function evolve:SyncBans( ply )
 		for uniqueid, info in pairs( evolve.PlayerInfo ) do
 			if ( info.BanEnd and ( info.BanEnd > os.time() or info.BanEnd == 0 ) ) then
-				SendUserMessage( "EV_BanEntry", ply, tostring( uniqueid ), info.Nick, info.SteamID, info.BanReason, info.BanEnd - os.time(), evolve:GetProperty( info.BanAdmin, "Nick" ) )
+				local time = info.BanEnd - os.time()
+				if ( info.BanEnd == 0 ) then time = 0 end
+				SendUserMessage( "EV_BanEntry", ply, tostring( uniqueid ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time )
 			end
 		end
 	end
@@ -750,9 +753,15 @@ else
 			Nick = um:ReadString(),
 			SteamID = um:ReadString(),
 			Reason = um:ReadString(),
-			End = um:ReadLong() + os.time(),
 			Admin = um:ReadString()
 		}
+		
+		local time = um:ReadLong()
+		if ( time > 0 ) then
+			evolve.bans[id].End = time + os.time()
+		else
+			evolve.bans[id].End = 0
+		end
 		
 		hook.Call( "EV_BanAdded", nil, id )		
 	end )
