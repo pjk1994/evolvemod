@@ -57,13 +57,13 @@ function TAB:EV_BanAdded( id )
 		if ( line:GetValue( 2 ) == entry.SteamID ) then
 			line:SetColumnText( 1, entry.Nick )
 			line:SetColumnText( 3, entry.Reason )
-			line:SetColumnText( 4, self:FormatTime( entry.End - os.time() ) )
+			line:SetColumnText( 4, evolve:FormatTime( entry.End - os.time() ) )
 			line:SetColumnText( 5, entry.Admin )
 			return
 		end
 	end
 	
-	self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, self:FormatTime( entry.End - os.time() ), entry.Admin )
+	self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, evolve:FormatTime( entry.End - os.time() ), entry.Admin )
 end
 
 function TAB:EV_BanRemoved( id )
@@ -75,27 +75,11 @@ function TAB:EV_BanRemoved( id )
 	end
 end
 
-function TAB:FormatTime( t )
-	if ( t < 0 ) then
-		return "Infinite"
-	elseif ( t < 60 ) then
-		return t .. " seconds"
-	elseif ( t < 3600 ) then
-		return math.ceil( t / 60 ) .. " minutes"
-	elseif ( t < 24 * 3600 ) then
-		return math.ceil( t / 3600 ) .. " hours"
-	elseif ( t < 24 * 3600 * 7 ) then
-		return math.ceil( t / ( 24 * 3600 ) ) .. " days"
-	else
-		return math.ceil( t / ( 24 * 3600 * 7 ) ) .. " weeks"
-	end
-end
-
 function TAB:Update()
 	self.BanList:Clear()
 	for _, entry in pairs( evolve.bans ) do
 		if ( entry.End - os.time() > 0 or entry.End == 0 ) then
-			self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, self:FormatTime( entry.End - os.time() ), entry.Admin )
+			self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, evolve:FormatTime( entry.End - os.time() ), entry.Admin )
 		end
 	end
 	self.BanList:SelectFirstItem()
