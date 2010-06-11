@@ -14,11 +14,27 @@ function TAB:Initialize( pnl )
 	// Create the rank list
 	self.RankList = vgui.Create( "DComboBox", pnl )
 	self.RankList:SetPos( 0, 0 )
-	self.RankList:SetSize( self.Width, 105 )
+	self.RankList:SetSize( self.Width, 125 )
 	self.RankList:SetMultiple( false )
 	self.RankList.Think = function()
 		if ( self.LastRank != self.RankList:GetSelectedItems()[1].Rank ) then self.LastRank = self.RankList:GetSelectedItems()[1].Rank else return end
-		self.ColorCircle:SetColor( evolve.ranks[ self.LastRank ].Color or color_white )
+		
+		self.Immunity:SetVisible( self.LastRank != "owner" )
+		self.Usergroup:SetVisible( self.LastRank != "owner" )
+		self.PrivList:SetVisible( self.LastRank != "owner" )
+		self.RemoveButton:SetVisible( self.LastRank != "owner" )
+		
+		if ( self.LastRank == "owner" ) then
+			self.PropertyContainer:SetSize( self.Width, pnl:GetParent():GetTall() - 188 )
+			self.ColorPicker:SetSize( self.Width + 37, self.PropertyContainer:GetTall() - 10 )
+			self.RenameButton:SetPos( self.Width - 60, pnl:GetParent():GetTall() - 53 )
+		else
+			self.PropertyContainer:SetSize( self.Width, 74 )
+			self.ColorPicker:SetSize( 76, 64 )
+			self.RenameButton:SetPos( self.Width - 125, pnl:GetParent():GetTall() - 53 )
+		end
+		
+		self.ColorPicker:SetColor( evolve.ranks[ self.LastRank ].Color or color_white )
 		self.Immunity:SetValue( evolve.ranks[ self.LastRank ].Immunity or 0 )
 		self.Usergroup:SetText( evolve.ranks[ self.LastRank ].UserGroup or "unknown" )
 		self.Usergroup.Selected = evolve.ranks[ self.LastRank ].UserGroup or "unknown"
@@ -26,62 +42,27 @@ function TAB:Initialize( pnl )
 	
 	// Create the privilege list
 	self.PrivList = vgui.Create( "DListView", pnl )
-	self.PrivList:SetPos( 0, self.RankList:GetTall() + 5 + 79 )
-	self.PrivList:SetSize( self.Width, pnl:GetParent():GetTall() - 105 - 63 - 79 )
+	self.PrivList:SetPos( 0, self.RankList:GetTall() + 84 )
+	self.PrivList:SetSize( self.Width, pnl:GetParent():GetTall() - 267 )
 	local col = self.PrivList:AddColumn( "Privilege" )
 	col:SetFixedWidth( self.Width * 0.8 )
 	self.PrivList:AddColumn( "" )
 	
 	self.PropertyContainer = vgui.Create( "DPanelList", pnl )
-	self.PropertyContainer:SetPos( 0, 110 )
+	self.PropertyContainer:SetPos( 0, 130 )
 	self.PropertyContainer:SetSize( self.Width, 74 )
 	
 	// Rank color
-	self.ColorCircle = vgui.Create( "DColorCircle", self.PropertyContainer )
-	self.ColorCircle:SetPos( 5, 5 )
-	self.ColorCircle:SetSize( 64, 64 )
-	self.ColorCircle.TranslateValues = function( self, x, y )
-		x = x - 0.5
-		y = y - 0.5
-		
-		local angle = math.atan2( x, y )
-		
-		local length = math.sqrt( x*x + y*y )
-		length = math.Clamp( length, 0, 0.5 )
-		
-		x = 0.5 + math.sin( angle ) * length
-		y = 0.5 + math.cos( angle ) * length
-		
-		self:SetHue( math.Rad2Deg( angle ) + 270 )
-		self:SetSaturation( length * 2 )
-		
-		self:SetRGB( HSVToColor( self:GetHue(), self:GetSaturation(), 1 ) )
-
-		return x, y
-	end
-	self.ColorCircle.SetColor = function( self, color )		
-		local hue, sat, value = ColorToHSV( color )
-		
-		self:SetHue( hue )
-		self:SetSaturation( sat )
-		self:SetRGB( color )
-		
-		local length = sat / 2
-		local angle = math.Deg2Rad( hue - 270 )
-		
-		local x = 0.5 + math.sin( angle ) * length
-		local y = 0.5 + math.cos( angle ) * length
-		
-		self:SetSlideX( x )
-		self:SetSlideY( y )
-	end
-	self.ColorCircle.OldRelease = self.ColorCircle.OnMouseReleased
-	self.ColorCircle.OnMouseReleased = function( mcode )
-		self.ColorCircle.OldRelease( mcode )
-		local color = self.ColorCircle:GetRGB()
+	self.ColorPicker = vgui.Create( "DColorMixer", self.PropertyContainer )
+	self.ColorPicker:SetPos( 5, 5 )
+	self.ColorPicker:SetSize( 76, 64 )
+	self.ColorPicker.ColorCube.OldRelease = self.ColorPicker.ColorCube.OnMouseReleased
+	self.ColorPicker.ColorCube.OnMouseReleased = function( mcode )
+		self.ColorPicker.ColorCube.OldRelease( mcode )
+		local color = self.ColorPicker:GetColor()
 		RunConsoleCommand( "ev_setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), self.Usergroup.Selected, color.r, color.g, color.b )
 	end
-	self.ColorCircle:SetColor( color_white )
+	self.ColorPicker:SetColor( color_white )
 	
 	// Immunity
 	self.Immunity = vgui.Create( "DNumSlider", self.PropertyContainer )
@@ -97,7 +78,7 @@ function TAB:Initialize( pnl )
 		elseif ( !input.IsMouseDown( MOUSE_LEFT ) and self.applySettings ) then
 			local rank = self.RankList:GetSelectedItems()[1].Rank
 			if ( evolve.ranks[ rank ].Immunity != self.Immunity:GetValue() ) then
-				local color = self.ColorCircle:GetRGB()
+				local color = self.ColorPicker:GetColor()
 				RunConsoleCommand( "ev_setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), self.Usergroup.Selected, color.r, color.g, color.b )
 			end
 			self.applySettings = false
@@ -115,7 +96,7 @@ function TAB:Initialize( pnl )
 	self.Usergroup:ChooseOptionID( 1 )
 	self.Usergroup.OnSelect = function( id, value, data )
 		self.Usergroup.Selected = data
-		local color = self.ColorCircle:GetRGB()
+		local color = self.ColorPicker:GetColor()
 		RunConsoleCommand( "ev_setrankp", self.RankList:GetSelectedItems()[1].Rank, self.Immunity:GetValue(), data, color.r, color.g, color.b )
 	end
 	
@@ -178,27 +159,32 @@ function TAB:Initialize( pnl )
 			end )
 	end
 	
-	self.ColorCircle:SetColor( evolve.ranks.guest.Color or color_white )
+	self.ColorPicker:SetColor( evolve.ranks.guest.Color or color_white )
 	self.Immunity:SetValue( evolve.ranks.guest.Immunity or 0 )
 	self.Usergroup:SetText( evolve.ranks.guest.UserGroup or "unknown" )
 	self.Usergroup.Selected = evolve.ranks.guest.UserGroup or "unknown"
 end
 
 function TAB:Update()	
-	self.RankList:Clear()
+	// Sort ranks by immunity
+	local ranks = {}
 	for id, rank in pairs( evolve.ranks ) do
-		if ( id != "owner" ) then
-			local item = self.RankList:AddItem( "" )
-			item:SetTall( 20 )
-			item.Rank = id
-			
-			item.Icon = vgui.Create( "DImage", item )
-			item.Icon:SetImage( "gui/silkicons/" .. rank.Icon )
-			item.Icon:SetPos( 4, 4 )
-			item.Icon:SetSize( 14, 14 )
-			item.PaintOver = function()
-				draw.SimpleText( rank.Title, "Default", 28, 5, Color( 0, 0, 0, 255 ) )
-			end
+		table.insert( ranks, { ID = id, Icon = rank.Icon, Title = rank.Title, Immunity = rank.Immunity } )
+	end
+	table.SortByMember( ranks, "Immunity" )
+	
+	self.RankList:Clear()
+	for _, rank in ipairs( ranks ) do
+		local item = self.RankList:AddItem( "" )
+		item:SetTall( 20 )
+		item.Rank = rank.ID
+		
+		item.Icon = vgui.Create( "DImage", item )
+		item.Icon:SetImage( "gui/silkicons/" .. rank.Icon )
+		item.Icon:SetPos( 4, 4 )
+		item.Icon:SetSize( 14, 14 )
+		item.PaintOver = function()
+			draw.SimpleText( rank.Title, "Default", 28, 5, Color( 0, 0, 0, 255 ) )
 		end
 	end
 	self.RankList:SelectItem( self.RankList:GetItems()[1] )
@@ -291,7 +277,7 @@ end
 
 function TAB:EV_RankUpdated( id )
 	if ( id == self.RankList:GetSelectedItems()[1].Rank ) then
-		self.ColorCircle:SetColor( evolve.ranks[ id ].Color or color_white )
+		self.ColorPicker:SetColor( evolve.ranks[ id ].Color or color_white )
 		self.Immunity:SetValue( evolve.ranks[ id ].Immunity or 0 )
 		self.Usergroup:SetText( evolve.ranks[ id ].UserGroup or "unknown" )
 		self.Usergroup.Selected = evolve.ranks[ id ].UserGroup or "unknown"

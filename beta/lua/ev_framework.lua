@@ -107,6 +107,24 @@ function evolve:KeyByValue( tbl, value, iterator )
 	end
 end
 
+function evolve:FormatTime( t )
+	if ( t < 0 ) then
+		return "Forever"
+	elseif ( t < 60 ) then
+		if ( t == 1 ) then return "one second" else return t .. " seconds" end
+	elseif ( t < 3600 ) then
+		if ( math.ceil( t / 60 ) == 1 ) then return "one minute" else return math.ceil( t / 60 ) .. " minutes" end
+	elseif ( t < 24 * 3600 ) then
+		if ( math.ceil( t / 3600 ) == 1 ) then return "one hour" else return math.ceil( t / 3600 ) .. " hours" end
+	elseif ( t < 24 * 3600 * 7 ) then
+		if ( math.ceil( t / ( 24 * 3600 ) ) == 1 ) then return "one day" else return math.ceil( t / ( 24 * 3600 ) ) .. " days" end
+	elseif ( t < 24 * 3600 * 30 ) then
+		if ( math.ceil( t / ( 24 * 3600 * 7 ) ) == 1 ) then return "one week" else return math.ceil( t / ( 24 * 3600 * 7 ) ) .. " weeks" end
+	else
+		if ( math.ceil( t / ( 24 * 3600 * 30 ) ) == 1 ) then return "one month" else return math.ceil( t / ( 24 * 3600 * 30 ) )  .. " months" end
+	end
+end
+
 /*-------------------------------------------------------------------------------------------------------------------------
 	Plugin management
 -------------------------------------------------------------------------------------------------------------------------*/
@@ -590,7 +608,7 @@ usermessage.Hook( "EV_RemoveRank", function( um )
 end )
 
 usermessage.Hook( "EV_RenameRank", function( um )
-	local rank = um:ReadString()
+	local rank = um:ReadString():lower()
 	evolve.ranks[ rank ].Title = um:ReadString()
 	
 	hook.Call( "EV_RankRenamed", nil, rank, evolve.ranks[ rank ].Title )
@@ -624,6 +642,7 @@ if ( SERVER ) then
 				evolve:SaveRanks()
 				
 				umsg.Start( "EV_RenameRank" )
+					print( args[1], evolve.ranks[ args[1] ].Title )
 					umsg.String( args[1] )
 					umsg.String( evolve.ranks[ args[1] ].Title )
 				umsg.End()
@@ -660,19 +679,22 @@ if ( SERVER ) then
 	
 	concommand.Add( "ev_setrankp", function( ply, com, args )
 		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
-			if ( #args == 6 and tonumber( args[2] ) and evolve.ranks[ args[1] ] and ( args[3] == "guest" or args[3] == "admin" or args[3] == "superadmin" ) and args[1] != "owner" and tonumber( args[4] ) and tonumber( args[5] ) and tonumber( args[6] ) ) then						
-				evolve.ranks[ args[1] ].Immunity = args[2]
-				evolve.ranks[ args[1] ].UserGroup = args[3]
+			if ( #args == 6 and tonumber( args[2] ) and evolve.ranks[ args[1] ] and ( args[3] == "guest" or args[3] == "admin" or args[3] == "superadmin" ) and tonumber( args[4] ) and tonumber( args[5] ) and tonumber( args[6] ) ) then						
+				if ( args[1] != "owner" ) then
+					evolve.ranks[ args[1] ].Immunity = args[2]
+					evolve.ranks[ args[1] ].UserGroup = args[3]
+				end
+				
 				evolve.ranks[ args[1] ].Color = Color( args[4], args[5], args[6] )
 				evolve:SaveRanks()
 				
 				for _, pl in ipairs( player.GetAll() ) do
-					evolve:TransferRank( pl, args[1] )
-					
-					if ( pl:GetNWString( "EV_UserGroup" ) == args[1] ) then
-						pl:SetNWString( "UserGroup", args[3] )
+						evolve:TransferRank( pl, args[1] )
+						
+						if ( args[1] != "owner" and pl:GetNWString( "EV_UserGroup" ) == args[1] ) then
+							pl:SetNWString( "UserGroup", args[3] )
+						end
 					end
-				end
 			end
 		end
 	end )
