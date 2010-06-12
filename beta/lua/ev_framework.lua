@@ -523,6 +523,8 @@ function evolve:TransferPrivileges( ply )
 end
 
 function evolve:TransferRank( ply, rank )
+	if ( !ply:IsValid() ) then return end
+	
 	local data = evolve.ranks[ rank ]
 	local color = data.Color
 	

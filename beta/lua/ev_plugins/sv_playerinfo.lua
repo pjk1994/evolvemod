@@ -31,6 +31,8 @@ function PLUGIN:ShowPlayerInfo( ply )
 	end
 	
 	http.Get("http://api.hostip.info/get_html.php?ip=" .. ply:IPAddress(), "", function ( contents, size )
+		if ( !ply:IsValid() ) then return end
+		
 		local country
 		for line in contents:gmatch( "[^\r\n]+" ) do
 			country = line:gsub( "Country:", "" )
