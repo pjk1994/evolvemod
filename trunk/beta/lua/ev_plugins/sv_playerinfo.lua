@@ -89,4 +89,9 @@ function PLUGIN:PlayerSpawn( ply )
 	end
 end
 
+function PLUGIN:PlayerDisconnected( ply )
+	ply:SetProperty( "LastJoin", os.time() )
+	evolve:CommitProperties()
+end
+
 evolve:RegisterPlugin( PLUGIN )
