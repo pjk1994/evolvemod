@@ -20,7 +20,7 @@ function PLUGIN:Call( ply, args )
 		-------------------------------------------------------------------------------------------------------------------------*/
 		
 		local pl
-		if ( string.match( args[1], "STEAM_[0-5]:[0-9]:[0-9]+" ) ) then
+		if ( string.match( args[1] or "", "STEAM_[0-5]:[0-9]:[0-9]+" ) ) then
 			local unid = evolve:UniqueIDByProperty( "SteamID", args[1] )
 			
 			if ( unid ) then
@@ -90,7 +90,7 @@ function PLUGIN:Call( ply, args )
 				local info = evolve.PlayerInfo[ uid ]
 				local time = info.BanEnd - os.time()
 				if ( info.BanEnd == 0 ) then time = 0 end
-				if ( ply:IsValid() ) then SendUserMessage( "EV_BanEntry", ply, tostring( pl:UniqueID() ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time ) end
+				if ( ply:IsValid() ) then SendUserMessage( "EV_BanEntry", ply, tostring( uid ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time ) end
 			end
 			
 			if ( time == 0 ) then

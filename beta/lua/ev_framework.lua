@@ -359,6 +359,31 @@ function evolve:SetProperty( uniqueid, id, value )
 end
 
 function evolve:CommitProperties()
+	/*-------------------------------------------------------------------------------------------------------------------------
+		Check if a cleanup would be convenient
+	-------------------------------------------------------------------------------------------------------------------------*/
+	
+	local count = table.Count( evolve.PlayerInfo )
+	
+	if ( count > 800 ) then
+		local original = count
+		local info = {}
+		for uid, entry in pairs( evolve.PlayerInfo ) do
+			table.insert( info, { UID = uid, LastJoin = entry.LastJoin, Rank = entry.Rank } )
+		end
+		table.SortByMember( info, "LastJoin", function(a, b) return a > b end )
+		
+		for _, entry in pairs( info ) do
+			if ( ( !entry.BanEnd or entry.BanEnd < os.time() ) and ( !entry.Rank or entry.Rank == "guest" ) ) then
+				evolve.PlayerInfo[ entry.UID ] = nil
+				count = count - 1
+				if ( count < 800 ) then break end
+			end
+		end
+		
+		evolve:Message( "Cleaned up " .. original - count .. " players." )
+	end
+	
 	evolve:SavePlayerInfo()
 end
 
