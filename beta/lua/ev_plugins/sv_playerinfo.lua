@@ -11,6 +11,7 @@ PLUGIN.ChatCommand = nil
 function PLUGIN:ShowPlayerInfo( ply )
 	local first = !ply:GetProperty( "Nick" )
 	local lastjoin
+	local lastnick
 	
 	if ( first ) then		
 		ply:SetProperty( "Nick", ply:Nick() )
@@ -20,6 +21,7 @@ function PLUGIN:ShowPlayerInfo( ply )
 		evolve:CommitProperties()
 	else
 		lastjoin = ply:GetProperty( "LastJoin" )
+		lastnick = ply:GetProperty( "Nick" )
 		
 		ply:SetProperty( "Nick", ply:Nick() )
 		ply:SetProperty( "LastJoin", os.time() )
@@ -39,19 +41,37 @@ function PLUGIN:ShowPlayerInfo( ply )
 		country = country:gsub( "(%a)([%w_']*)", function( first, rest ) return first:upper() .. rest:lower() end )
 		country = country:gsub( "^%s*(.-)%s*$", "%1" )
 		
-		if ( country != '' ) then
-			if ( first ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has joined for the first time from ", evolve.colors.red, country, evolve.colors.white, "." )
-			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " last joined ", evolve.colors.red, evolve:FormatTime( os.time() - lastjoin ) .. " ago", evolve.colors.white, " as ", evolve.colors.blue, ply:GetProperty( "Nick" ), evolve.colors.white, " from ", evolve.colors.red, country, evolve.colors.white, "." )
-			end
+		local message = { evolve.colors.blue, ply:Nick(), evolve.colors.white }
+		
+		/*-------------------------------------------------------------------------------------------------------------------------
+			Here for the first time or joined earlier?
+		-------------------------------------------------------------------------------------------------------------------------*/
+
+		if ( first ) then
+			table.insert( message, " has joined for the first time" )
 		else
-			if ( first ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has joined for the first time." )
-			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " last joined ", evolve.colors.red, evolve:FormatTime( os.time() - lastjoin ) .. " ago", evolve.colors.white, " as ", evolve.colors.blue, ply:GetProperty( "Nick" ), evolve.colors.white, "." )
-			end
+			table.Add( message, { " last joined ", evolve.colors.red, evolve:FormatTime( os.time() - lastjoin ) .. " ago", evolve.colors.white } )
 		end
+		
+		/*-------------------------------------------------------------------------------------------------------------------------
+			Did you pick a new name?
+		-------------------------------------------------------------------------------------------------------------------------*/
+		
+		if ( lastnick != ply:Nick() ) then
+			table.insert( message, " as " .. lastnick )
+		end
+		
+		/*-------------------------------------------------------------------------------------------------------------------------
+			Where are you from?
+		-------------------------------------------------------------------------------------------------------------------------*/
+		
+		if ( #country > 0 ) then
+			table.Add( message, { " from ", evolve.colors.red, country, evolve.colors.white } )
+		end
+		
+		table.insert( message, "." )
+		
+		evolve:Notify( unpack( message ) )
 	end )
 
 end

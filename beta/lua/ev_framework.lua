@@ -642,7 +642,6 @@ if ( SERVER ) then
 				evolve:SaveRanks()
 				
 				umsg.Start( "EV_RenameRank" )
-					print( args[1], evolve.ranks[ args[1] ].Title )
 					umsg.String( args[1] )
 					umsg.String( evolve.ranks[ args[1] ].Title )
 				umsg.End()
