@@ -189,27 +189,4 @@ function PLUGIN:HUDDrawScoreBoard()
 	self.Height = y - self.Y
 end
 
-function PLUGIN:PlayerInitialSpawn( ply )
-	ply.EV_JoinTime = os.time()
-	
-	timer.Simple( 1, function()
-		umsg.Start( "EV_JoinTime" )
-			umsg.Short( ply:EntIndex() )
-			umsg.Long( ply.EV_JoinTime )
-		umsg.End()
-		
-		for _, pl in pairs( player.GetAll() ) do
-			umsg.Start( "EV_JoinTime", ply )
-				umsg.Short( pl:EntIndex() )
-				umsg.Long( pl.EV_JoinTime )
-			umsg.End()
-		end
-	end )
-end
-
-usermessage.Hook( "EV_JoinTime", function( um )
-	local ply, jointime = player.GetByID( um:ReadShort() ), um:ReadLong()
-	ply.EV_JoinTime = jointime
-end )
-
 evolve:RegisterPlugin( PLUGIN )

@@ -464,6 +464,8 @@ function evolve:RankGroup( ply, rank )
 end
 
 function evolve:Rank( ply )
+	if ( !ply:IsValid() ) then return end
+	
 	self:TransferPrivileges( ply )
 	self:TransferRanks( ply )
 	

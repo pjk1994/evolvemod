@@ -59,7 +59,7 @@ function PLUGIN:ShowPlayerInfo( ply )
 			Did you pick a new name?
 		-------------------------------------------------------------------------------------------------------------------------*/
 		
-		if ( lastnick != ply:Nick() ) then
+		if ( !first and lastnick != ply:Nick() ) then
 			table.insert( message, " as " .. lastnick )
 		end
 		
