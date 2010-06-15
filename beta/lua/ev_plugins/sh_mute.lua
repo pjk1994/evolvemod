@@ -33,8 +33,8 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:PlayerCanHearPlayersVoice( ply1, ply2 )
-	if ( ply1.EV_Muted or ply2.EV_Muted ) then return false end
+function PLUGIN:PlayerCanHearPlayersVoice( _, ply )
+	if ( ply.EV_Muted ) then return false end
 end
 
 function PLUGIN:Menu( arg, players )

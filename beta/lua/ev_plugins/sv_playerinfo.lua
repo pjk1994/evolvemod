@@ -50,7 +50,7 @@ function PLUGIN:ShowPlayerInfo( ply )
 		-------------------------------------------------------------------------------------------------------------------------*/
 
 		if ( first ) then
-			table.insert( message, " has joined for the first time" )
+			table.Add( message, { " has joined for the first time", evolve.colors.white } )
 		else
 			table.Add( message, { " last joined ", evolve.colors.red, evolve:FormatTime( os.time() - lastjoin ) .. " ago", evolve.colors.white } )
 		end
