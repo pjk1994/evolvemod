@@ -80,7 +80,7 @@ function PLUGIN:Call( ply, args )
 				local time = info.BanEnd - os.time()
 				if ( info.BanEnd == 0 ) then time = 0 end
 				
-				if ( ply:IsValid() ) then SendUserMessage( "EV_BanEntry", ply, tostring( pl:UniqueID() ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time ) end
+				SendUserMessage( "EV_BanEntry", tostring( pl:UniqueID() ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time )
 			else
 				evolve:SetProperty( uid, "BanEnd", endtime )
 				evolve:SetProperty( uid, "BanReason", reason )
@@ -90,7 +90,7 @@ function PLUGIN:Call( ply, args )
 				local info = evolve.PlayerInfo[ uid ]
 				local time = info.BanEnd - os.time()
 				if ( info.BanEnd == 0 ) then time = 0 end
-				if ( ply:IsValid() ) then SendUserMessage( "EV_BanEntry", ply, tostring( uid ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time ) end
+				SendUserMessage( "EV_BanEntry", tostring( uid ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time )
 			end
 			
 			if ( time == 0 ) then
