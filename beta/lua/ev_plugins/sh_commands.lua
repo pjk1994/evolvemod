@@ -9,22 +9,35 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "commands"
 
 function PLUGIN:Call( ply, args )
-	umsg.Start( "EV_CommandStart", ply ) umsg.End()
 	local commands = table.Copy( evolve.plugins )
 	table.SortByMember( commands, "ChatCommand", function( a, b ) return a > b end )
 	
-	for _, plug in ipairs( commands ) do
-		if ( plug.ChatCommand ) then
-			umsg.Start( "EV_Command", ply )
-				umsg.String( plug.ChatCommand )
-				umsg.String( tostring( plug.Usage ) )
-				umsg.String( plug.Description )
-			umsg.End()
+	if ( ply:IsValid() ) then
+		umsg.Start( "EV_CommandStart", ply ) umsg.End()
+		
+		for _, plug in ipairs( commands ) do
+			if ( plug.ChatCommand ) then
+				umsg.Start( "EV_Command", ply )
+					umsg.String( plug.ChatCommand )
+					umsg.String( tostring( plug.Usage ) )
+					umsg.String( plug.Description )
+				umsg.End()
+			end
+		end
+		umsg.Start( "EV_CommandEnd", ply ) umsg.End()
+		
+		evolve:Notify( ply, evolve.colors.white, "All chat commands have been printed to your console." )
+	else
+		for _, plugin in ipairs( commands ) do
+			if ( plugin.ChatCommand ) then
+				if ( plugin.Usage ) then
+					print( "!" .. plugin.ChatCommand .. " " .. plugin.Usage .. " - " .. plugin.Description )
+				else
+					print( "!" .. plugin.ChatCommand .. " - " .. plugin.Description )
+				end
+			end
 		end
 	end
-	umsg.Start( "EV_CommandEnd", ply ) umsg.End()
-	
-	evolve:Notify( ply, evolve.colors.white, "All chat commands have been printed to your console." )
 end
 
 usermessage.Hook( "EV_CommandStart", function( um )

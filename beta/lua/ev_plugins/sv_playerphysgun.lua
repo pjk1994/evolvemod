@@ -9,7 +9,7 @@ PLUGIN.Author = "Overv"
 PLUGIN.Privileges = { "Physgun players" }
 
 function PLUGIN:PhysgunPickup( ply, pl )
-	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() ) then
+	if ( ply:EV_HasPrivilege( "Physgun players" ) and pl:IsPlayer() and ply:EV_BetterThanOrEqual( pl ) ) then
 		pl.EV_PickedUp = true
 		pl:SetMoveType( MOVETYPE_NOCLIP )
 		return true
