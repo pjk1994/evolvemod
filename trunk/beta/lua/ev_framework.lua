@@ -431,11 +431,11 @@ function _R.Player:EV_HasPrivilege( priv )
 end
 
 function _R.Player:EV_BetterThan( ply )
-	return evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity > evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity
+	return tonumber( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity ) > tonumber( evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity )
 end
 
 function _R.Player:EV_BetterThanOrEqual( ply )
-	return evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity >= evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity
+	return tonumber( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity ) >= tonumber( evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity )
 end
 
 function _R.Entity:EV_HasPrivilege( priv )
