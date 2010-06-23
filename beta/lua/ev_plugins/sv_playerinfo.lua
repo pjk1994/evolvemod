@@ -30,52 +30,29 @@ function PLUGIN:ShowPlayerInfo( ply )
 		evolve:CommitProperties()
 	end
 	
-	http.Get("http://api.hostip.info/get_html.php?ip=" .. ply:IPAddress(), "", function ( contents, size )
-		if ( !ply:IsValid() ) then return end
-		
-		local country
-		for line in contents:gmatch( "[^\r\n]+" ) do
-			country = line:gsub( "Country:", "" )
-			break
-		end
-		
-		country = country:gsub( "%b()", "" )
-		country = country:gsub( "(%a)([%w_']*)", function( first, rest ) return first:upper() .. rest:lower() end )
-		country = country:gsub( "^%s*(.-)%s*$", "%1" )
-		
-		local message = { evolve.colors.blue, ply:Nick(), evolve.colors.white }
-		
-		/*-------------------------------------------------------------------------------------------------------------------------
-			Here for the first time or joined earlier?
-		-------------------------------------------------------------------------------------------------------------------------*/
+	local message = { evolve.colors.blue, ply:Nick(), evolve.colors.white }
+	
+	/*-------------------------------------------------------------------------------------------------------------------------
+		Here for the first time or joined earlier?
+	-------------------------------------------------------------------------------------------------------------------------*/
 
-		if ( first ) then
-			table.Add( message, { " has joined for the first time", evolve.colors.white } )
-		else
-			table.Add( message, { " last joined ", evolve.colors.red, evolve:FormatTime( os.time() - lastjoin ) .. " ago", evolve.colors.white } )
-		end
-		
-		/*-------------------------------------------------------------------------------------------------------------------------
-			Did you pick a new name?
-		-------------------------------------------------------------------------------------------------------------------------*/
-		
-		if ( !first and lastnick != ply:Nick() ) then
-			table.insert( message, " as " .. lastnick )
-		end
-		
-		/*-------------------------------------------------------------------------------------------------------------------------
-			Where are you from?
-		-------------------------------------------------------------------------------------------------------------------------*/
-		
-		if ( #country > 0 ) then
-			table.Add( message, { " from ", evolve.colors.red, country, evolve.colors.white } )
-		end
-		
-		table.insert( message, "." )
-		
-		evolve:Notify( unpack( message ) )
-	end )
-
+	if ( first ) then
+		table.Add( message, { " has joined for the first time", evolve.colors.white } )
+	else
+		table.Add( message, { " last joined ", evolve.colors.red, evolve:FormatTime( os.time() - lastjoin ) .. " ago", evolve.colors.white } )
+	end
+	
+	/*-------------------------------------------------------------------------------------------------------------------------
+		Did you pick a new name?
+	-------------------------------------------------------------------------------------------------------------------------*/
+	
+	if ( !first and lastnick != ply:Nick() ) then
+		table.insert( message, " as " .. lastnick )
+	end
+	
+	table.insert( message, "." )
+	
+	evolve:Notify( unpack( message ) )
 end
 
 function PLUGIN:PlayerInitialSpawn( ply )
