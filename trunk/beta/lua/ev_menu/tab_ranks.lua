@@ -40,10 +40,23 @@ function TAB:Initialize( pnl )
 		self.Usergroup.Selected = evolve.ranks[ self.LastRank ].UserGroup or "unknown"
 	end
 	
+	// Create the privilege filter
+	self.PrivFilter = vgui.Create( "DMultiChoice", pnl )
+	self.PrivFilter:SetPos( 0, self.RankList:GetTall() + 84 )
+	self.PrivFilter:SetSize( self.Width, 20 )
+	self.PrivFilter:SetEditable( false )
+	self.PrivFilter:AddChoice( "Privileges" )
+	self.PrivFilter:AddChoice( "Weapons" )
+	self.PrivFilter:ChooseOptionID( 1 )
+	self.PrivFilter.OnSelect = function( id, value, data )
+		self.PrivFilter.Selected = data
+		self:UpdatePrivileges()
+	end
+	
 	// Create the privilege list
 	self.PrivList = vgui.Create( "DListView", pnl )
-	self.PrivList:SetPos( 0, self.RankList:GetTall() + 84 )
-	self.PrivList:SetSize( self.Width, pnl:GetParent():GetTall() - 267 )
+	self.PrivList:SetPos( 0, self.RankList:GetTall() + 84 + 20 + 5 )
+	self.PrivList:SetSize( self.Width, pnl:GetParent():GetTall() - 267 - 20 - 5 )
 	local col = self.PrivList:AddColumn( "Privilege" )
 	col:SetFixedWidth( self.Width * 0.8 )
 	self.PrivList:AddColumn( "" )
@@ -165,6 +178,78 @@ function TAB:Initialize( pnl )
 	self.Usergroup.Selected = evolve.ranks.guest.UserGroup or "unknown"
 end
 
+TAB.HL2Weps = {
+	weapon_crowbar = "Crowbar",
+	weapon_pistol = "Pistol",
+	weapon_smg1 = "SMG",
+	weapon_frag = "Frag grenade",
+	weapon_physcannon = "Gravity gun",
+	weapon_crossbow = "Crossbow",
+	weapon_shotgun = "Shotgun",
+	weapon_357 = ".357",
+	weapon_rpg = "RPG",
+	weapon_ar2 = "AR2",
+	weapon_physgun = "Physgun",
+}
+
+function TAB:PrintNameByClass( class )
+	if ( self.HL2Weps[ class ] ) then
+		return self.HL2Weps[ class ]
+	else
+		for _, wep in ipairs( weapons.GetList() ) do
+			if ( wep.ClassName == class ) then
+				return wep.PrintName or class
+			end
+		end
+		return class
+	end
+end
+
+function TAB:UpdatePrivileges()
+	self.PrivList:Clear()
+	for _, privilege in ipairs( evolve.privileges ) do
+		if ( ( string.Left( privilege, 1 ) == "@" and self.PrivFilter.Selected == "Weapons" ) or ( string.Left( privilege, 1 ) != "@" and ( self.PrivFilter.Selected or "Privileges" ) == "Privileges" ) ) then
+			local line
+			if ( string.Left( privilege, 1 ) == "@" ) then
+				line = self.PrivList:AddLine( self:PrintNameByClass( string.sub( privilege, 2 ) ), "" )
+			else
+				line = self.PrivList:AddLine( privilege, "" )
+			end
+			
+			line.State = vgui.Create( "DImage", line )
+			line.State:SetImage( "gui/silkicons/check_on_s" )
+			line.State:SetSize( 16, 16 )
+			line.State:SetPos( self.Width * 0.875 - 12, 1 )
+			
+			line.Think = function()
+				if ( line.LastRank != self.RankList:GetSelectedItems()[1].Rank ) then line.LastRank = self.RankList:GetSelectedItems()[1].Rank else return end
+				
+				line.State:SetVisible( line.LastRank == "owner" or table.HasValue( evolve.ranks[ line.LastRank ].Privileges, privilege ) )
+			end
+			
+			line.OnPress = line.OnMousePressed
+			line.LastPress = os.clock()
+			
+			line.OnMousePressed = function()
+				if ( line.LastPress + 0.5 > os.clock() ) then
+					if ( line.State:IsVisible() ) then
+						RunConsoleCommand( "ev_setrank", line.LastRank, privilege, 0 )
+					else
+						RunConsoleCommand( "ev_setrank", line.LastRank, privilege, 1 )
+					end
+					
+					line.State:SetVisible( !line.State:IsVisible() )				
+				end
+				
+				line.LastPress = os.clock()
+				line:OnPress()
+			end
+		end
+	end
+	self.PrivList:SortByColumn( 1 )
+	self.PrivList:SelectFirstItem()
+end
+
 function TAB:Update()	
 	// Sort ranks by immunity
 	local ranks = {}
@@ -173,57 +258,25 @@ function TAB:Update()
 	end
 	table.SortByMember( ranks, "Immunity" )
 	
-	self.RankList:Clear()
-	for _, rank in ipairs( ranks ) do
-		local item = self.RankList:AddItem( "" )
-		item:SetTall( 20 )
-		item.Rank = rank.ID
-		
-		item.Icon = vgui.Create( "DImage", item )
-		item.Icon:SetImage( "gui/silkicons/" .. rank.Icon )
-		item.Icon:SetPos( 4, 4 )
-		item.Icon:SetSize( 14, 14 )
-		item.PaintOver = function()
-			draw.SimpleText( rank.Title, "Default", 28, 5, Color( 0, 0, 0, 255 ) )
-		end
-	end
-	self.RankList:SelectItem( self.RankList:GetItems()[1] )
-	
-	self.PrivList:Clear()
-	
-	for _, privilege in ipairs( evolve.privileges ) do
-		local line = self.PrivList:AddLine( privilege, "" )
-		
-		line.State = vgui.Create( "DImage", line )
-		line.State:SetImage( "gui/silkicons/check_on_s" )
-		line.State:SetSize( 16, 16 )
-		line.State:SetPos( self.Width * 0.875 - 12, 1 )
-		
-		line.Think = function()
-			if ( line.LastRank != self.RankList:GetSelectedItems()[1].Rank ) then line.LastRank = self.RankList:GetSelectedItems()[1].Rank else return end
+	if ( #self.RankList:GetItems() == 0 ) then
+		self.RankList:Clear()
+		for _, rank in ipairs( ranks ) do
+			local item = self.RankList:AddItem( "" )
+			item:SetTall( 20 )
+			item.Rank = rank.ID
 			
-			line.State:SetVisible( line.LastRank == "owner" or table.HasValue( evolve.ranks[ line.LastRank ].Privileges, privilege ) )
-		end
-		
-		line.OnPress = line.OnMousePressed
-		line.LastPress = os.clock()
-		
-		line.OnMousePressed = function()
-			if ( line.LastPress + 0.5 > os.clock() ) then
-				if ( line.State:IsVisible() ) then
-					RunConsoleCommand( "ev_setrank", line.LastRank, line:GetColumnText( 1 ), 0 )
-				else
-					RunConsoleCommand( "ev_setrank", line.LastRank, line:GetColumnText( 1 ), 1 )
-				end
-				
-				line.State:SetVisible( !line.State:IsVisible() )				
+			item.Icon = vgui.Create( "DImage", item )
+			item.Icon:SetImage( "gui/silkicons/" .. rank.Icon )
+			item.Icon:SetPos( 4, 4 )
+			item.Icon:SetSize( 14, 14 )
+			item.PaintOver = function()
+				draw.SimpleText( rank.Title, "Default", 28, 5, Color( 0, 0, 0, 255 ) )
 			end
-			
-			line.LastPress = os.clock()
-			line:OnPress()
 		end
+		self.RankList:SelectItem( self.RankList:GetItems()[#self.RankList:GetItems()] )
 	end
-	self.PrivList:SelectFirstItem()
+	
+	self:UpdatePrivileges()
 end
 
 function TAB:EV_RankRemoved( rank )
@@ -233,7 +286,9 @@ function TAB:EV_RankRemoved( rank )
 			break
 		end
 	end
-	self.RankList:SelectItem( self.RankList:GetItems()[1] )
+	if ( #self.RankList:GetSelectedItems() == 0 ) then
+		self.RankList:SelectItem( self.RankList:GetItems()[1] )
+	end
 end
 
 function TAB:EV_RankRenamed( rank, title )
@@ -249,6 +304,7 @@ function TAB:EV_RankRenamed( rank, title )
 end
 
 function TAB:EV_RankPrivilegeChange( rank, privilege, enabled )
+	print( rank, privilege, enabled )
 	if ( rank == self.RankList:GetSelectedItems()[1].Rank ) then
 		for _, line in pairs( self.PrivList:GetLines() ) do
 			if ( line:GetColumnText( 1 ) == privilege ) then

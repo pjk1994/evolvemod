@@ -31,6 +31,8 @@ function evolve:Message( msg )
 end
 
 if ( SERVER ) then
+	evolve.SilentNotify = false
+	
 	function evolve:Notify( ... )
 		local ply
 		local arg = { ... }
@@ -46,7 +48,7 @@ if ( SERVER ) then
 			return
 		end
 		
-		if ( ply != NULL ) then
+		if ( ply != NULL and !self.SilentNotify ) then
 			umsg.Start( "EV_Notification", ply )
 				umsg.Short( #arg )
 				for _, v in ipairs( arg ) do
@@ -862,3 +864,30 @@ hook.Add( "OnPlayerChat", "EV_TeamColors", function( ply, txt, teamchat, dead )
 		return true
 	end
 end )
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Global data system
+-------------------------------------------------------------------------------------------------------------------------*/
+
+function evolve:SaveGlobalVars()
+	file.Write( "ev_globalvars.txt", glon.encode( evolve.globalvars ) )
+end
+
+function evolve:LoadGlobalVars()
+	if ( file.Exists( "ev_globalvars.txt" ) ) then
+		evolve.globalvars = glon.decode( file.Read( "ev_globalvars.txt" ) )
+	else
+		evolve.globalvars = {}
+		evolve:SaveGlobalVars()
+	end
+end
+evolve:LoadGlobalVars()
+
+function evolve:SetGlobalVar( name, value )
+	evolve.globalvars[name] = value
+	evolve:SaveGlobalVars()
+end
+
+function evolve:GetGlobalVar( name, default )
+	return evolve.globalvars[name] or default
+end

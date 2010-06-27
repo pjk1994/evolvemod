@@ -116,6 +116,18 @@ function PANEL:Populate()
 	
 	for _, pl in ipairs( players ) do
 		local item = self:AddPlayer( pl.Ply )
+		
+		item.DoClick= function( mc )
+			if ( item.LastClick and os.clock() < item.LastClick + 0.3 and item.LastX == gui.MouseX() and item.LastY == gui.MouseY() ) then
+				self:MoveTo( -self.Parent.Width, 0, 0.1 )
+				self.Parent.PluginList:MoveTo( 0, 0, 0.1 )
+				self.Parent.ButPlugins:SetButtonText( "Players" )
+			end
+			
+			item.LastClick = os.clock()
+			item.LastX, item.LastY = gui.MousePos()
+		end
+		
 		if ( table.HasValue( selectedPlayers, pl.Ply ) ) then
 			self:SelectItem( item )
 		end

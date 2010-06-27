@@ -76,6 +76,8 @@ function TAB:Initialize( pnl )
 	self.PluginList:SetPos( self.Width, 0 )
 	self.PluginList:SetSize( self.Width, pnl:GetParent():GetTall() - 58 )
 	self.PluginList:CreatePluginsPage()
+	
+	self.PlayerList.Parent = self
 end
 
 function TAB:Update()

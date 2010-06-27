@@ -40,14 +40,16 @@ function PLUGIN:GetArguments( msg )
 end
 
 function PLUGIN:PlayerSay( ply, msg )
-	if ( string.Left( msg, 1 ) == "/" or string.Left( msg, 1 ) == "!" ) then
+	if ( string.Left( msg, 1 ) == "/" or string.Left( msg, 1 ) == "!" or string.Left( msg, 1 ) == "@" ) then
 		local command = self:GetCommand( msg )
 		local args = self:GetArguments( msg )
 		local closest = { dist = 99, plugin = "" }
 		
 		for _, plugin in ipairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
-				res, ret = pcall( plugin.Call, plugin, ply, args )
+				evolve.SilentNotify = string.Left( msg, 1 ) == "@"			
+					res, ret = pcall( plugin.Call, plugin, ply, args )
+				evolve.SilentNotify = false				
 				
 				if ( !res ) then
 					evolve:Notify( evolve.colors.red, "Plugin '" .. plugin.Title .. "' failed with error:" )
