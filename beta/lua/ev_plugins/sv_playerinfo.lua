@@ -5,7 +5,7 @@
 local PLUGIN = {}
 PLUGIN.Title = "Player Info"
 PLUGIN.Description = "When players join, show info about them."
-PLUGIN.Author = "Overv and Alan Edwardes"
+PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = nil
 
 function PLUGIN:ShowPlayerInfo( ply )
@@ -18,6 +18,8 @@ function PLUGIN:ShowPlayerInfo( ply )
 		ply:SetProperty( "LastJoin", os.time() )
 		ply:SetProperty( "SteamID", ply:SteamID() )
 		ply:SetProperty( "IPAddress", ply:IPAddress() )
+		ply:SetProperty( "PlayTime", 0 )
+		
 		evolve:CommitProperties()
 	else
 		lastjoin = ply:GetProperty( "LastJoin" )
@@ -25,8 +27,9 @@ function PLUGIN:ShowPlayerInfo( ply )
 		
 		ply:SetProperty( "Nick", ply:Nick() )
 		ply:SetProperty( "LastJoin", os.time() )
-		ply:SetProperty( "SteamID", ply:SteamID() )
 		ply:SetProperty( "IPAddress", ply:IPAddress() )
+		if ( !ply:GetProperty( "PlayTime" ) ) then ply:SetProperty( "PlayTime", 0 ) end
+		
 		evolve:CommitProperties()
 	end
 	
@@ -68,6 +71,8 @@ end
 
 function PLUGIN:PlayerDisconnected( ply )
 	ply:SetProperty( "LastJoin", os.time() )
+	ply:SetProperty( "PlayTime", ply:GetProperty( "PlayTime" ) + ply:TimeConnected() )
+	
 	evolve:CommitProperties()
 end
 

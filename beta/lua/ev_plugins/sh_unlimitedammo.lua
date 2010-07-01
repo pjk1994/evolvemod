@@ -32,7 +32,7 @@ function PLUGIN:Call( ply, args )
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has disabled unlimited ammo for ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 			end
 		else
-			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

@@ -25,7 +25,7 @@ function PLUGIN:Call( ply, args )
 					evolve:Notify( ply, evolve.colors.red, "No message specified." )
 				end
 			else
-				evolve:Notify( ply, evolve.colors.red, "No matching player found." )
+				evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 			end
 		else
 			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( players, true ), evolve.colors.white, "?" )

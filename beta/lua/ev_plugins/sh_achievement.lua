@@ -12,7 +12,7 @@ PLUGIN.Privileges = { "Achievement" }
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "Achievement" ) ) then
-		local players = evolve:FindPlayer( args[1] )
+		local players = evolve:FindPlayer( args[1], nil, nil, true )
 		
 		if ( players[1] ) then			
 			local achievement = table.concat( args, " ", 2 )
@@ -25,7 +25,7 @@ function PLUGIN:Call( ply, args )
 				evolve:Notify( ply, evolve.colors.red, "No achievement specified." )
 			end
 		else
-			evolve:Notify( ply, evolve.colors.red, "No matching player found." )
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayersnoimmunity )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

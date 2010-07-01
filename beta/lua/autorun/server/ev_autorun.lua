@@ -7,7 +7,7 @@ evolve = {}
 
 // Requirements
 if ( !glon ) then require( "glon" ) end
-if ( !gatekeeper ) then require( "gatekeeper" ) end
+//if ( !gatekeeper ) then require( "gatekeeper" ) end
 
 // Distribute clientside and shared files
 AddCSLuaFile( "autorun/client/ev_autorun.lua" )

@@ -68,9 +68,9 @@ else
 					surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
 					surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
 					
-					local teamColor = team.GetColor( pl:Team() )
-					teamColor.a = math.Clamp( alpha * 2, 0, 255 )
-					draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, teamColor, 0 )
+					local col = evolve.ranks[ pl:EV_GetRank() ].Color or team.GetColor( pl:Team() )
+					col.a = math.Clamp( alpha * 2, 0, 255 )
+					draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, col, 0 )
 				end
 			end
 		end
