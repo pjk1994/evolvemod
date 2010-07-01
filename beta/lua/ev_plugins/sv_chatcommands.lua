@@ -45,7 +45,9 @@ function PLUGIN:PlayerSay( ply, msg )
 		local args = self:GetArguments( msg )
 		local closest = { dist = 99, plugin = "" }
 		
-		evolve:Log( evolve:PlayerLogStr( ply ) .. " ran command '" .. command .. "' with arguments '" .. table.concat( args, " " ) .. "' via chat." )
+		if ( command ) then
+			evolve:Log( evolve:PlayerLogStr( ply ) .. " ran command '" .. command .. "' with arguments '" .. table.concat( args, " " ) .. "' via chat." )
+		end
 		
 		for _, plugin in ipairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
