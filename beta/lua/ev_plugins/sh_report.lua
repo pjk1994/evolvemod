@@ -22,8 +22,8 @@ function PLUGIN:Call( ply, args )
 				
 				filex.Append( "ev_reports.txt", "[" .. os.date() .. "] " ..  evolve:PlayerLogStr( ply ) .. " reported " .. evolve:PlayerLogStr( pl[1] ) .. " with reason '" .. msg .. "'\n" )
 				
-				for _, pl in ipairs( player.GetAll() ) do
-					if ( pl:EV_IsAdmin() ) then evolve:Notify( pl, evolve.colors.red, ply:Nick() .. " reported " .. pl[1]:Nick() .. " with reason: ", evolve.colors.white, msg ) end
+				for _, admin in ipairs( player.GetAll() ) do
+					if ( admin:EV_IsAdmin() ) then evolve:Notify( admin, evolve.colors.red, ply:Nick() .. " reported " .. pl[1]:Nick() .. " with reason: ", evolve.colors.white, msg ) end
 				end
 			else
 				evolve:Notify( ply, evolve.colors.red, "No reason specified!" )

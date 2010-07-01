@@ -39,10 +39,20 @@ function PLUGIN:Call( ply, args )
 				else					
 					if ( evolve.ranks[ args[2] ] ) then
 						if ( pl.Ply ) then
-							pl.Ply:EV_SetRank( args[2] )
+							if ( ply:EV_BetterThan( pl.Ply ) ) then
+								pl.Ply:EV_SetRank( args[2] )
+							else
+								evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
+								return
+							end
 						else
-							evolve:SetProperty( pl.UniqueID, "Rank", args[2] )
-							evolve:CommitProperties()
+							if ( evolve.ranks[ ply:EV_GetRank() ].Immunity > evolve.ranks[ evolve:GetProperty( pl.UniqueID, "Rank", "guest" ) ].Immunity ) then
+								evolve:SetProperty( pl.UniqueID, "Rank", args[2] )
+								evolve:CommitProperties()
+							else
+								evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
+								return
+							end
 						end
 						
 						evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the rank of ", evolve.colors.red, pl.Nick, evolve.colors.white, " to " .. evolve.ranks[ args[2] ].Title .. "." )
