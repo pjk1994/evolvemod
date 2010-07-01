@@ -141,25 +141,33 @@ end
 	Plugin management
 -------------------------------------------------------------------------------------------------------------------------*/
 
+local pluginFile
+
 function evolve:LoadPlugins()
 	evolve.plugins = {}
 	
 	local plugins = file.FindInLua( "ev_plugins/*.lua" )
 	for _, plugin in ipairs( plugins ) do
 		local prefix = string.Left( plugin, string.find( plugin, "_" ) - 1 )
+		pluginFile = plugin
 		
 		if ( CLIENT and ( prefix == "sh" or prefix == "cl" ) ) then
 			include( "ev_plugins/" .. plugin )
 		elseif ( SERVER ) then
-			if ( prefix == "sh" or prefix == "sv" ) then include( "ev_plugins/" .. plugin ) end
+			include( "ev_plugins/" .. plugin )
 			if ( prefix == "sh" or prefix == "cl" ) then AddCSLuaFile( "ev_plugins/" .. plugin ) end
 		end
 	end
 end
 
 function evolve:RegisterPlugin( plugin )
-	table.insert( evolve.plugins, plugin )
-	if ( plugin.Privileges ) then table.Add( evolve.privileges, plugin.Privileges ) table.sort( evolve.privileges ) end
+	if ( string.Left( pluginFile, string.find( pluginFile, "_" ) - 1 ) != "cl" or CLIENT ) then
+		table.insert( evolve.plugins, plugin )
+		plugin.File = pluginFile
+		if ( plugin.Privileges ) then table.Add( evolve.privileges, plugin.Privileges ) table.sort( evolve.privileges ) end
+	else
+		table.insert( evolve.plugins, { Title = plugin.Title, File = pluginFile } )
+	end
 end
 
 function evolve:FindPlugin( name )
@@ -203,6 +211,48 @@ hook.Call = function( name, gm, ... )
 	end
 	
 	return evolve.HookCall( name, gm, ... )
+end
+
+if ( SERVER ) then
+	concommand.Add( "ev_reloadplugin", function( ply, com, args )
+		if ( !ply:IsValid() and args[1] ) then
+			local found
+			
+			for k, plugin in ipairs( evolve.plugins ) do
+				if ( string.lower( plugin.Title ) == string.lower( args[1] ) ) then
+					found = k
+					break
+				end
+			end
+			
+			if ( found ) then
+				print( "[EV] Reloading plugin " .. evolve.plugins[found].Title .. "..." )
+				
+				local plugin = evolve.plugins[found].File
+				local title = evolve.plugins[found].Title
+				local prefix = string.Left( plugin, string.find( plugin, "_" ) - 1 )
+				
+				if ( prefix != "cl" ) then table.remove( evolve.plugins, found ) pluginFile = plugin include( "ev_plugins/" .. plugin ) end
+				
+				if ( prefix == "sh" or prefix == "cl" ) then
+					datastream.StreamToClients( player.GetAll(), "EV_PluginFile", { Title = title, Contents = file.Read( "../lua/ev_plugins/" .. plugin ) } )
+				end
+			else
+				print( "[EV] Plugin '" .. tostring( args[1] ) .. "' not found!" )
+			end
+		end
+	end )
+else
+	datastream.Hook( "EV_PluginFile", function( handler, id, encoded, decoded )
+		for k, plugin in ipairs( evolve.plugins ) do
+			if ( string.lower( plugin.Title ) == string.lower( decoded.Title ) ) then
+				found = k
+				table.remove( evolve.plugins, k )
+			end
+		end
+		
+		RunString( decoded.Contents )
+	end )
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------

@@ -19,13 +19,15 @@ function PLUGIN:HUDPaint()
 		
 		surface.SetFont( "ChatFont" )
 		
-		for _, v in ipairs( self.Suggestions ) do			
-			draw.SimpleText( v.ChatCommand, "ChatFont", x, y, Color( 0, 0, 0, 255 ) )
-			draw.SimpleText( " " .. v.Usage or "", "ChatFont", x + surface.GetTextSize( v.ChatCommand ), y, Color( 0, 0, 0, 255 ) )
-			draw.SimpleText( v.ChatCommand, "ChatFont", x, y, Color( 255, 255, 100, 255 ) )
-			draw.SimpleText( " " .. v.Usage or "", "ChatFont", x + surface.GetTextSize( v.ChatCommand ), y, Color( 255, 255, 255, 255 ) )
+		for _, v in ipairs( self.Suggestions ) do
+			local sx, sy = surface.GetTextSize( v.ChatCommand )
 			
-			y = y + 15
+			draw.SimpleText( v.ChatCommand, "ChatFont", x, y, Color( 0, 0, 0, 255 ) )
+			draw.SimpleText( " " .. v.Usage or "", "ChatFont", x + sx, y, Color( 0, 0, 0, 255 ) )
+			draw.SimpleText( v.ChatCommand, "ChatFont", x, y, Color( 255, 255, 100, 255 ) )
+			draw.SimpleText( " " .. v.Usage or "", "ChatFont", x + sx, y, Color( 255, 255, 255, 255 ) )
+			
+			y = y + sy
 		end
 	end
 end
