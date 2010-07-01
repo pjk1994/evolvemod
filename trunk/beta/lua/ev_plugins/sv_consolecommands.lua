@@ -23,6 +23,8 @@ function PLUGIN:CCommand( ply, com, cargs )
 	local command = cargs[1]
 	local args = self:GetArguments( cargs )
 	
+	evolve:Log( evolve:PlayerLogStr( ply ) .. " ran command '" .. command .. "' with arguments '" .. table.concat( args, " " ) .. "' via console." )
+	
 	for _, plugin in ipairs( evolve.plugins ) do
 		if ( plugin.ChatCommand == string.lower( command or "" ) ) then
 			plugin:Call( ply, args )

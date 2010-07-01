@@ -38,7 +38,7 @@ function PLUGIN:Call( ply, args )
 		if ( #players > 0 ) then
 			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has rocketed ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 		else
-			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

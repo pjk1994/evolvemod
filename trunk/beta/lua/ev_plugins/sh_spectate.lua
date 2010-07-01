@@ -27,7 +27,7 @@ function PLUGIN:Call( ply, args )
 			elseif ( #players > 1 or players[1] == ply ) then
 				evolve:Notify( ply, evolve.colors.red, "You can not spectate multiple players or yourself." )
 			else
-				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
+				evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 			end
 		elseif ( ply:GetNWBool( "EV_Spectating", false ) ) then
 			ply:Spectate( OBS_MODE_NONE )

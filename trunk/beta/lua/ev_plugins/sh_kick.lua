@@ -41,7 +41,7 @@ function PLUGIN:Call( ply, args )
 				end
 			end
 		else
-			evolve:Notify( ply, evolve.colors.red, "No matching players found." )
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )

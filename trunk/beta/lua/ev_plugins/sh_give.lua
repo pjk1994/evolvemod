@@ -25,7 +25,7 @@ function PLUGIN:Call( ply, args )
 				
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has given ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, " a " .. wep .. "." )
 			else
-				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
+				evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 			end
 		end
 	else

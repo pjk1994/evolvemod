@@ -17,18 +17,27 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #players == 1 ) then
 			if ( #msg > 0 ) then
-				evolve:Notify( evolve.ranks[ players[1]:EV_GetRank() ].Color or team.GetColor( players[1]:Team() ), players[1]:Nick(), evolve.colors.white, ": " .. msg )
+				umsg.Start( "EV_Imitate" )
+					umsg.Entity( players[1] )
+					umsg.String( msg )
+					umsg.Bool( players[1]:IsBot() or players[1]:Alive() )
+				umsg.End()
 			else
 				evolve:Notify( ply, evolve.colors.red, "No message specified." )
 			end
 		elseif ( #players > 1 ) then
 			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( players, true ), evolve.colors.white, "?" )
 		else
-			evolve:Notify( ply, evolve.colors.red, "No matching player found." )
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
+
+usermessage.Hook( "EV_Imitate", function( um )
+	local ply = um:ReadEntity()
+	hook.Call( "OnPlayerChat", nil, ply, um:ReadString(), false, !um:ReadBool() )
+end )
 
 evolve:RegisterPlugin( PLUGIN )

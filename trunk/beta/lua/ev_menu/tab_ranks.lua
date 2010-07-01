@@ -286,9 +286,9 @@ function TAB:EV_RankRemoved( rank )
 			break
 		end
 	end
-	if ( #self.RankList:GetSelectedItems() == 0 ) then
-		self.RankList:SelectItem( self.RankList:GetItems()[1] )
-	end
+	
+	self.RankList:SelectItem( self.RankList:GetItems()[1] )
+	self.LastRank = "owner"
 end
 
 function TAB:EV_RankRenamed( rank, title )

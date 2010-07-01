@@ -27,7 +27,7 @@ function PLUGIN:Call( ply, args )
 				
 				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has cleaned up the entities of ", evolve.colors.red, evolve:CreatePlayerList( players ), evolve.colors.white, "." )
 			else
-				evolve:Notify( ply, evolve.colors.red, "No matching players found." )
+				evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 			end
 		end
 	else

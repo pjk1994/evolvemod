@@ -12,6 +12,8 @@ evolve.ranks = {}
 evolve.privileges = {}
 evolve.bans = {}
 evolve.constants.notallowed = "You are not allowed to do that."
+evolve.constants.noplayers = "No matching players with an equal or lower immunity found."
+evolve.constants.noplayersnoimmunity = "No matching players found."
 evolve.admins = 1
 evolve.colors.blue = Color( 98, 176, 255, 255 )
 evolve.colors.red = Color( 255, 62, 62, 255 )
@@ -68,7 +70,14 @@ if ( SERVER ) then
 		for _, v in ipairs( arg ) do
 			if ( type( v ) == "string" ) then str = str .. v end
 		end
-		if ( ply ) then print( "[EV] " .. ply:Nick() .. " -> " .. str ) else print( "[EV] " .. str ) end
+		
+		if ( ply ) then
+			print( "[EV] " .. ply:Nick() .. " -> " .. str )
+			evolve:Log( evolve:PlayerLogStr( ply ) .. " -> " .. str )
+		else
+			print( "[EV] " .. str )
+			evolve:Log( str )
+		end
 	end
 else
 	function evolve:Notify( ... )
@@ -215,7 +224,7 @@ function evolve:IsNameMatch( ply, str )
 	end
 end
 
-function evolve:FindPlayer( name, def, nonum )
+function evolve:FindPlayer( name, def, nonum, noimmunity )
 	local matches = {}
 	
 	if ( !name or #name == 0 ) then
@@ -229,7 +238,7 @@ function evolve:FindPlayer( name, def, nonum )
 		
 		for _, ply in ipairs( player.GetAll() ) do
 			for _, pm in ipairs( name2 ) do
-				if ( evolve:IsNameMatch( ply, pm ) and !table.HasValue( matches, ply ) ) then table.insert( matches, ply ) end
+				if ( evolve:IsNameMatch( ply, pm ) and !table.HasValue( matches, ply ) and ( noimmunity or !def or def:EV_BetterThanOrEqual( ply ) ) ) then table.insert( matches, ply ) end
 			end
 		end
 	end
@@ -393,12 +402,12 @@ end
 	Entity ownership
 -------------------------------------------------------------------------------------------------------------------------*/
 
-hook.Add( "PlayerSpawnedProp", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() end )
-hook.Add( "PlayerSpawnedSENT", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() end )
-hook.Add( "PlayerSpawnedNPC", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() end )
-hook.Add( "PlayerSpawnedVehicle", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() end )
-hook.Add( "PlayerSpawnedEffect", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() end )
-hook.Add( "PlayerSpawnedRagdoll", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() end )
+hook.Add( "PlayerSpawnedProp", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned prop '" .. model .. "'." ) end )
+hook.Add( "PlayerSpawnedSENT", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned scripted entity '" .. ent:GetClass() .. "'." ) end )
+hook.Add( "PlayerSpawnedNPC", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned npc '" .. ent:GetClass() .. "'." ) end )
+hook.Add( "PlayerSpawnedVehicle", "EV_SpawnHook", function( ply, ent ) ent.EV_Owner = ply:UniqueID() evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned vehicle '" .. ent:GetClass() .. "'." ) end )
+hook.Add( "PlayerSpawnedEffect", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned effect '" .. model .. "'." ) end )
+hook.Add( "PlayerSpawnedRagdoll", "EV_SpawnHook", function( ply, model, ent ) ent.EV_Owner = ply:UniqueID() evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned ragdoll '" .. model .. "'." ) end )
 
 evolve.AddCount = _R.Player.AddCount
 function _R.Player:AddCount( type, ent )
@@ -430,6 +439,14 @@ function _R.Player:EV_HasPrivilege( priv )
 	else
 		return false
 	end
+end
+
+function _R.Entity:EV_BetterThan( ply )
+	return true
+end
+
+function _R.Entity:EV_BetterThanOrEqual( ply )
+	return true
 end
 
 function _R.Player:EV_BetterThan( ply )
@@ -832,40 +849,6 @@ else
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------
-	Chat rank colors
--------------------------------------------------------------------------------------------------------------------------*/
-
-hook.Add( "OnPlayerChat", "EV_TeamColors", function( ply, txt, teamchat, dead )
-	if ( GAMEMODE.Name == "Sandbox" ) then
-		local tab = {}
-	 
-		if ( dead ) then
-			table.insert( tab, Color( 255, 30, 40 ) )
-			table.insert( tab, "*DEAD* " )
-		end
-	 
-		if ( teamchat ) then
-			table.insert( tab, Color( 30, 160, 40 ) )
-			table.insert( tab, "(TEAM) " )
-		end
-	 
-		if ( IsValid( ply ) ) then
-			table.insert( tab, evolve.ranks[ ply:EV_GetRank() ].Color or team.GetColor( ply:Team() ) )
-			table.insert( tab, ply:Nick() )
-		else
-			table.insert( tab, "Console" )
-		end
-	 
-		table.insert( tab, Color( 255, 255, 255 ) )
-		table.insert( tab, ": " .. txt )
-	 
-		chat.AddText( unpack( tab ) )
-	 
-		return true
-	end
-end )
-
-/*-------------------------------------------------------------------------------------------------------------------------
 	Global data system
 -------------------------------------------------------------------------------------------------------------------------*/
 
@@ -891,3 +874,49 @@ end
 function evolve:GetGlobalVar( name, default )
 	return evolve.globalvars[name] or default
 end
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Log system
+-------------------------------------------------------------------------------------------------------------------------*/
+
+function evolve:Log( str )
+	filex.Append( "ev_log.txt", "[" .. os.date() .. "] " .. str .. "\n" )
+end
+
+function evolve:PlayerLogStr( ply )
+	if ( ply:IsValid() ) then
+		if ( ply:IsPlayer() ) then
+			return ply:Nick() .. " [" .. ply:SteamID() .. "|" .. ply:IPAddress() .. "]"
+		else
+			return ply:GetClass()
+		end
+	else
+		return "Console"
+	end
+end
+
+hook.Add( "InitPostEntity", "EV_LogInit", function()
+	evolve:Log( "== Started in map '" .. game.GetMap() .. "' and gamemode '" .. GAMEMODE.Name .. "' ==" )
+end )
+
+hook.Add( "PlayerDisconnected", "EV_LogDisconnect", function( ply )
+	evolve:Log( evolve:PlayerLogStr( ply ) .. " disconnected from the server." )
+end )
+
+hook.Add( "PlayerInitialSpawn", "EV_LogSpawn", function( ply )
+	evolve:Log( evolve:PlayerLogStr( ply ) .. " spawned for the first time this session." )
+end )
+
+hook.Add( "PlayerConnect", "EV_LogConnect", function( name, address )
+	evolve:Log( name .. " [" .. address .. "] connected to the server." )
+end )
+
+hook.Add( "PlayerDeath", "EV_LogDeath", function( ply, inf, killer )
+	if ( ply != killer ) then
+		evolve:Log( evolve:PlayerLogStr( ply ) .. " was killed by " .. evolve:PlayerLogStr( killer ) .. "." )
+	end
+end )
+
+hook.Add( "PlayerSay", "EV_PlayerChat", function( ply, txt )
+	evolve:Log( evolve:PlayerLogStr( ply ) .. ": " ..  txt )
+end )
