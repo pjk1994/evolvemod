@@ -13,6 +13,7 @@ evolve.privileges = {}
 evolve.bans = {}
 evolve.constants.notallowed = "You are not allowed to do that."
 evolve.constants.noplayers = "No matching players with an equal or lower immunity found."
+evolve.constants.noplayers2 = "No matching players with a lower immunity found."
 evolve.constants.noplayersnoimmunity = "No matching players found."
 evolve.admins = 1
 evolve.colors.blue = Color( 98, 176, 255, 255 )
@@ -450,7 +451,7 @@ function _R.Entity:EV_BetterThanOrEqual( ply )
 end
 
 function _R.Player:EV_BetterThan( ply )
-	return tonumber( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity ) > tonumber( evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity )
+	return tonumber( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity ) > tonumber( evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity ) or self == ply
 end
 
 function _R.Player:EV_BetterThanOrEqual( ply )

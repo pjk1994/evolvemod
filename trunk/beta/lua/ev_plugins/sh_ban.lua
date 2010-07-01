@@ -38,8 +38,8 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #pl > 1 ) then
 			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
-		elseif ( #pl == 0 ) then
-			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
+		elseif ( #pl == 0 or ( type( pl[1] ) == "Player" and !ply:EV_BetterThan( pl[1] ) ) ) then
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
 		else
 			/*-------------------------------------------------------------------------------------------------------------------------
 				Collect data
@@ -51,6 +51,11 @@ function PLUGIN:Call( ply, args )
 				uid = pl:UniqueID()
 				nick = pl:Nick()
 			else
+				if ( evolve.ranks[ ply:EV_GetRank() ].Immunity <= evolve.ranks[ evolve:GetProperty( pl[1], "Rank", "guest" ) ].Immunity ) then
+					evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
+					return
+				end
+				
 				uid = pl[1]
 				pl = nil
 				nick = evolve:GetProperty( uid, "Nick" )
