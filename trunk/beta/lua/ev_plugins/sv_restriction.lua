@@ -14,7 +14,7 @@ function PLUGIN:PlayerSpawnSWEP( ply, name, tbl )
 end
 
 function PLUGIN:PlayerCanPickupWeapon( ply, wep )
-	if ( table.HasValue( evolve.privileges, "@" .. wep:GetClass() ) and !ply:EV_HasPrivilege( "@" .. wep:GetClass() ) ) then
+	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, "@" .. wep:GetClass() ) and !ply:EV_HasPrivilege( "@" .. wep:GetClass() ) ) then
 		return false
 	end
 end
