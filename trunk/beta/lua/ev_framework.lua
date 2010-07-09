@@ -931,7 +931,14 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 function evolve:Log( str )
-	--filex.Append( "ev_log.txt", "[" .. os.date() .. "] " .. str .. "\n" )
+	local cur = ""
+	if ( file.Exists( "ev_log.txt" ) ) then
+		cur = file.Read( "ev_log.txt" )
+		if ( #cur > 5 * 1024 ) then cur = "" end
+	end
+	cur = cur .. "[" .. os.date() .. "] " .. str .. "\n"
+	
+	file.Write( cur )
 end
 
 function evolve:PlayerLogStr( ply )
