@@ -938,7 +938,7 @@ function evolve:Log( str )
 	end
 	cur = cur .. "[" .. os.date() .. "] " .. str .. "\n"
 	
-	file.Write( cur )
+	file.Write( "ev_log.txt", cur )
 end
 
 function evolve:PlayerLogStr( ply )
