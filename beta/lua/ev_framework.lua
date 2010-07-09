@@ -931,7 +931,7 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 function evolve:Log( str )
-	filex.Append( "ev_log.txt", "[" .. os.date() .. "] " .. str .. "\n" )
+	--filex.Append( "ev_log.txt", "[" .. os.date() .. "] " .. str .. "\n" )
 end
 
 function evolve:PlayerLogStr( ply )
