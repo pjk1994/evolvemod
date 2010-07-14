@@ -19,14 +19,7 @@ function PLUGIN:PlayerCanPickupWeapon( ply, wep )
 	end
 end
 
-function PLUGIN:PlayerInitialSpawn( ply )
-	ply:StripWeapons()
-	timer.Simple( 2, function()
-		GAMEMODE:PlayerLoadout( ply )
-	end )
-end
-
-hook.Add( "Initialize", "WeaponPrivs", function()
+function PLUGIN:Initialize()	
 	local weps = {}
 	
 	for _, wep in pairs( weapons.GetList() ) do
@@ -60,6 +53,6 @@ hook.Add( "Initialize", "WeaponPrivs", function()
 		evolve:SetGlobalVar( "RestrictionSetUp", true )
 		evolve:SaveRanks()
 	end
-end )
+end
 
 evolve:RegisterPlugin( PLUGIN )

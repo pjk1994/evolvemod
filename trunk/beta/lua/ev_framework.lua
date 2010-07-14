@@ -485,7 +485,7 @@ evolve.compatibilityRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
 // COMPATIBILITY
 
 function _R.Player:EV_HasPrivilege( priv )
-	if ( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ] ) then
+	if ( evolve.ranks[ self:EV_GetRank() ] ) then
 		return self:GetNWString( "EV_UserGroup" ) == "owner" or table.HasValue( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Privileges, priv )
 	else
 		return false
@@ -582,6 +582,8 @@ end
 
 hook.Add( "PlayerSpawn", "EV_RankHook", function( ply )
 	if ( !ply.EV_Ranked ) then
+		ply:SetNWString( "EV_UserGroup", ply:GetProperty( "Rank", "guest" ) )
+		
 		timer.Simple( 1, function()
 			evolve:Rank( ply )
 		end )
