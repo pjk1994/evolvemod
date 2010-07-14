@@ -74,14 +74,14 @@ end
 function PLUGIN:Menu( arg, players )
 	if ( arg ) then
 		RunConsoleCommand( "ev", "rank", players[1], arg )
-	else
-		return "Rank", evolve.category.administration, {
-			{ "Owner", "owner" },
-			{ "Super Admin", "superadmin" },
-			{ "Admin", "admin" },
-			{ "Respected", "respected" },
-			{ "Guest", "guest" }
-		}
+	else		
+		local ranks = {}
+		for id, info in pairs( evolve.ranks ) do
+			table.insert( ranks, { info.Title, id, Immunity = info.Immunity } )
+		end
+		table.SortByMember( ranks, "Immunity", function( a, b ) return a > b end )
+		
+		return "Rank", evolve.category.administration, ranks
 	end
 end
 
