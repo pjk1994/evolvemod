@@ -30,7 +30,7 @@ function PLUGIN:GetArguments( msg )
 	local args = {}
 	local first = true
 	
-	for match in string.gmatch( msg, "%S+" ) do
+	for match in string.gmatch( msg, "[^ ]+" ) do
 		if ( first ) then first = false else
 			table.insert( args, match )
 		end
@@ -52,7 +52,7 @@ function PLUGIN:PlayerSay( ply, msg )
 		for _, plugin in ipairs( evolve.plugins ) do
 			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
 				evolve.SilentNotify = string.Left( msg, 1 ) == "@"			
-					res, ret = pcall( plugin.Call, plugin, ply, args )
+					res, ret = pcall( plugin.Call, plugin, ply, args, string.sub( msg, #command + 3 ) )
 				evolve.SilentNotify = false				
 				
 				if ( !res ) then
