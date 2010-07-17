@@ -32,45 +32,49 @@ else
 		
 		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() ) then
-				local td = {}
-				td.start = LocalPlayer():GetShootPos()
-				td.endpos = pl:GetShootPos()
-				local trace = util.TraceLine( td )
+				local visible = hook.Call( "EV_ShowPlayerName", nil, pl )
 				
-				if ( !trace.HitWorld ) then				
-					surface.SetFont( "ScoreboardText" )
-					local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
-					local h = 24
+				if ( visible != false ) then				
+					local td = {}
+					td.start = LocalPlayer():GetShootPos()
+					td.endpos = pl:GetShootPos()
+					local trace = util.TraceLine( td )
 					
-					local drawPos = pl:GetShootPos():ToScreen()
-					local distance = LocalPlayer():GetShootPos():Distance( pl:GetShootPos() )
-					drawPos.x = drawPos.x - w / 2
-					drawPos.y = drawPos.y - h - 12
-					
-					local alpha = 128
-					if ( distance > 512 ) then
-						alpha = 128 - math.Clamp( ( distance - 512 ) / ( 2048 - 512 ) * 128, 0, 128 )
-					end
-					
-					surface.SetDrawColor( 0, 0, 0, alpha )
-					surface.DrawRect( drawPos.x, drawPos.y, w, h )
-					
-					if ( pl:GetNWBool( "EV_Chatting", false ) ) then
-						surface.SetTexture( self.iconChat )
-					else
-						if ( evolve.ranks[ pl:EV_GetRank() ] ) then
-							surface.SetTexture( evolve.ranks[ pl:EV_GetRank() ].IconTexture )
-						else
-							surface.SetTexture( self.iconUser )
+					if ( !trace.HitWorld ) then				
+						surface.SetFont( "ScoreboardText" )
+						local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
+						local h = 24
+						
+						local drawPos = pl:GetShootPos():ToScreen()
+						local distance = LocalPlayer():GetShootPos():Distance( pl:GetShootPos() )
+						drawPos.x = drawPos.x - w / 2
+						drawPos.y = drawPos.y - h - 12
+						
+						local alpha = 128
+						if ( distance > 512 ) then
+							alpha = 128 - math.Clamp( ( distance - 512 ) / ( 2048 - 512 ) * 128, 0, 128 )
 						end
+						
+						surface.SetDrawColor( 0, 0, 0, alpha )
+						surface.DrawRect( drawPos.x, drawPos.y, w, h )
+						
+						if ( pl:GetNWBool( "EV_Chatting", false ) ) then
+							surface.SetTexture( self.iconChat )
+						else
+							if ( evolve.ranks[ pl:EV_GetRank() ] ) then
+								surface.SetTexture( evolve.ranks[ pl:EV_GetRank() ].IconTexture )
+							else
+								surface.SetTexture( self.iconUser )
+							end
+						end
+						
+						surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
+						surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
+						
+						local col = evolve.ranks[ pl:EV_GetRank() ].Color or team.GetColor( pl:Team() )
+						col.a = math.Clamp( alpha * 2, 0, 255 )
+						draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, col, 0 )
 					end
-					
-					surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
-					surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
-					
-					local col = evolve.ranks[ pl:EV_GetRank() ].Color or team.GetColor( pl:Team() )
-					col.a = math.Clamp( alpha * 2, 0, 255 )
-					draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, col, 0 )
 				end
 			end
 		end

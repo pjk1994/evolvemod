@@ -44,7 +44,7 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:EV_ShowPlayerTag( ply )
+function PLUGIN:EV_ShowPlayerName( ply )
 	if ( ply:GetNWBool( "EV_Spectating", false ) ) then return false end
 end
 
