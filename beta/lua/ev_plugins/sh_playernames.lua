@@ -31,7 +31,7 @@ else
 		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) ) then return end
 		
 		for _, pl in ipairs( player.GetAll() ) do
-			if ( pl != LocalPlayer() ) then
+			if ( pl != LocalPlayer() and pl:Health() > 0 ) then
 				local visible = hook.Call( "EV_ShowPlayerName", nil, pl )
 				
 				if ( visible != false ) then				
