@@ -21,10 +21,15 @@ end
 function PLUGIN:VoteEnd()
 	SendUserMessage( "EV_VoteEnd", nil )
 	
+	local totalvotes = 0
+	for _, votes in pairs( self.Votes ) do
+		totalvotes = totalvotes + votes
+	end
+	
 	local msg = ""	
 	for i = 1, #self.Options do
 		local percent
-		if ( table.Count( self.Votes ) == 0 ) then percent = 0 else percent = math.Round( ( self.Votes[i] or 0 ) / table.Count( self.Votes ) * 100 ) end
+		if ( table.Count( self.Votes ) == 0 ) then percent = 0 else percent = math.Round( ( self.Votes[i] or 0 ) / totalvotes * 100 ) end
 		
 		msg = msg .. self.Options[i] .. " (" .. percent .. "%)"
 		
