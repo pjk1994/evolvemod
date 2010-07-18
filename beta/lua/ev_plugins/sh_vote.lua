@@ -21,15 +21,10 @@ end
 function PLUGIN:VoteEnd()
 	SendUserMessage( "EV_VoteEnd", nil )
 	
-	local totalvotes = 0
-	for _, votes in pairs( self.Votes ) do
-		totalvotes = totalvotes + votes
-	end
-	
 	local msg = ""	
 	for i = 1, #self.Options do
 		local percent
-		if ( table.Count( self.Votes ) == 0 ) then percent = 0 else percent = math.Round( ( self.Votes[i] or 0 ) / totalvotes * 100 ) end
+		if ( table.Count( self.Votes ) == 0 ) then percent = 0 else percent = math.Round( ( self.Votes[i] or 0 ) / self.VotingPlayers * 100 ) end
 		
 		msg = msg .. self.Options[i] .. " (" .. percent .. "%)"
 		
@@ -78,7 +73,7 @@ function PLUGIN:Call( ply, _, argstr )
 				end
 			umsg.End()
 			
-			timer.Create( "EV_VoteEnd", 5, 1, function() PLUGIN:VoteEnd() end )
+			timer.Create( "EV_VoteEnd", 10, 1, function() PLUGIN:VoteEnd() end )
 			
 			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has started the vote ", evolve.colors.red, self.Question, evolve.colors.white, "." )
 		end
