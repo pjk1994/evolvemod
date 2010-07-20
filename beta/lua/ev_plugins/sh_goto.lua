@@ -12,7 +12,7 @@ PLUGIN.Privileges = { "Goto" }
 
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "Goto" ) and ply:IsValid() ) then	
-		local players = evolve:FindPlayer( args, ply )
+		local players = evolve:FindPlayer( args, ply, false, true )
 		
 		if ( #players < 2 ) then			
 			if ( #players > 0 ) then
