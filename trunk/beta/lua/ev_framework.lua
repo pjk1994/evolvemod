@@ -785,7 +785,7 @@ if ( SERVER ) then
 		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
 			if ( #args == 6 and tonumber( args[2] ) and evolve.ranks[ args[1] ] and ( args[3] == "guest" or args[3] == "admin" or args[3] == "superadmin" ) and tonumber( args[4] ) and tonumber( args[5] ) and tonumber( args[6] ) ) then						
 				if ( args[1] != "owner" ) then
-					evolve.ranks[ args[1] ].Immunity = args[2]
+					evolve.ranks[ args[1] ].Immunity = tonumber( args[2] )
 					evolve.ranks[ args[1] ].UserGroup = args[3]
 				end
 				
@@ -842,7 +842,7 @@ if ( SERVER ) then
 						Title = args[2],
 						Icon = parent.Icon,
 						UserGroup = parent.UserGroup,
-						Immunity = parent.Immunity,
+						Immunity = tonumber( parent.Immunity ),
 						Privileges = table.Copy( parent.Privileges ),
 					}
 				end

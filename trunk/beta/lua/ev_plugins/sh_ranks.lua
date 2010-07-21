@@ -46,7 +46,7 @@ function PLUGIN:Call( ply, args )
 								return
 							end
 						else
-							if ( evolve.ranks[ ply:EV_GetRank() ].Immunity > evolve.ranks[ evolve:GetProperty( pl.UniqueID, "Rank", "guest" ) ].Immunity ) then
+							if ( tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) > tonumber( evolve.ranks[ evolve:GetProperty( pl.UniqueID, "Rank", "guest" ) ].Immunity ) ) then
 								evolve:SetProperty( pl.UniqueID, "Rank", args[2] )
 								evolve:CommitProperties()
 							else
