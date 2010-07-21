@@ -51,7 +51,7 @@ function PLUGIN:Call( ply, args )
 				uid = pl:UniqueID()
 				nick = pl:Nick()
 			else
-				if ( evolve.ranks[ ply:EV_GetRank() ].Immunity <= evolve.ranks[ evolve:GetProperty( pl[1], "Rank", "guest" ) ].Immunity ) then
+				if ( tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) <= tonumber( evolve.ranks[ evolve:GetProperty( pl[1], "Rank", "guest" ) ].Immunity ) ) then
 					evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
 					return
 				end
