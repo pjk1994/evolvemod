@@ -271,7 +271,7 @@ function evolve:IsNameMatch( ply, str )
 	elseif ( string.Left( str, 1 ) == "\"" and string.Right( str, 1 ) == "\"" ) then
 		return ( ply:Nick() == string.sub( str, 2, #str - 1 ) )
 	else
-		return ( string.lower( ply:Nick() ) == string.lower( str ) or string.find( string.lower( ply:Nick() ), string.lower( str ) ) )
+		return ( string.lower( ply:Nick() ) == string.lower( str ) or string.find( string.lower( ply:Nick() ), string.lower( str ), nil, true ) )
 	end
 end
 
