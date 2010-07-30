@@ -29,7 +29,7 @@ else
 	PLUGIN.iconDeveloper = surface.GetTextureID( "gui/silkicons/emoticon_smile" )
 
 	function PLUGIN:HUDPaint()
-		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) ) then return end
+		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) or ( GAMEMODE.Name != "Sandbox" and GAMEMODE.BaseClass.Name != "Sandbox" ) ) then return end
 		
 		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() and pl:Health() > 0 ) then
