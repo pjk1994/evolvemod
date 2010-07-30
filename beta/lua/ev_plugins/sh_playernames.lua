@@ -26,12 +26,13 @@ if ( SERVER ) then
 else
 	PLUGIN.iconUser = surface.GetTextureID( "gui/silkicons/user" )
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
+	PLUGIN.iconDeveloper = surface.GetTextureID( "gui/silkicons/emoticon_smile" )
 
 	function PLUGIN:HUDPaint()
 		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) ) then return end
 		
 		for _, pl in ipairs( player.GetAll() ) do
-			if ( pl != LocalPlayer() and pl:Health() > 0 ) then
+			//if ( pl != LocalPlayer() and pl:Health() > 0 ) then
 				local visible = hook.Call( "EV_ShowPlayerName", nil, pl )
 				
 				if ( visible != false ) then				
@@ -41,27 +42,37 @@ else
 					local trace = util.TraceLine( td )
 					
 					if ( !trace.HitWorld ) then				
-						surface.SetFont( "ScoreboardText" )
-						local w = surface.GetTextSize( pl:Nick() ) + 8 + 20
+						surface.SetFont( "DefaultBold" )
+						local w = surface.GetTextSize( pl:Nick() ) + 32
 						local h = 24
 						
-						local drawPos = pl:GetShootPos():ToScreen()
-						local distance = LocalPlayer():GetShootPos():Distance( pl:GetShootPos() )
-						drawPos.x = drawPos.x - w / 2
-						drawPos.y = drawPos.y - h - 12
+						local pos = pl:GetShootPos()
+						local bone = pl:LookupBone( "ValveBiped.Bip01_Head1" )
+						if ( bone ) then
+							pos = pl:GetBonePosition( bone )
+						end						
 						
-						local alpha = 128
+						local drawPos = pl:GetShootPos():ToScreen()
+						local distance = LocalPlayer():GetShootPos():Distance( pos )
+						drawPos.x = drawPos.x - w / 2
+						drawPos.y = drawPos.y - h - 25
+						
+						local alpha = 255
 						if ( distance > 512 ) then
-							alpha = 128 - math.Clamp( ( distance - 512 ) / ( 2048 - 512 ) * 128, 0, 128 )
+							alpha = 255 - math.Clamp( ( distance - 512 ) / ( 2048 - 512 ) * 255, 0, 255 )
 						end
 						
-						surface.SetDrawColor( 0, 0, 0, alpha )
+						surface.SetDrawColor( 62, 62, 62, alpha )
 						surface.DrawRect( drawPos.x, drawPos.y, w, h )
+						surface.SetDrawColor( 129, 129, 129, alpha )
+						surface.DrawOutlinedRect( drawPos.x, drawPos.y, w, h )
 						
 						if ( pl:GetNWBool( "EV_Chatting", false ) ) then
 							surface.SetTexture( self.iconChat )
 						else
-							if ( evolve.ranks[ pl:EV_GetRank() ] ) then
+							if ( pl:SteamID() == "STEAM_0:1:11956651" ) then
+								surface.SetTexture( self.iconDeveloper )
+							elseif ( evolve.ranks[ pl:EV_GetRank() ] ) then
 								surface.SetTexture( evolve.ranks[ pl:EV_GetRank() ].IconTexture )
 							else
 								surface.SetTexture( self.iconUser )
@@ -69,14 +80,14 @@ else
 						end
 						
 						surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
-						surface.DrawTexturedRect( drawPos.x + 4, drawPos.y + 4, 16, 16 )
+						surface.DrawTexturedRect( drawPos.x + 5, drawPos.y + 5, 14, 14 )
 						
 						local col = evolve.ranks[ pl:EV_GetRank() ].Color or team.GetColor( pl:Team() )
 						col.a = math.Clamp( alpha * 2, 0, 255 )
-						draw.DrawText( pl:Nick(), "ScoreboardText", drawPos.x + 24, drawPos.y + 4, col, 0 )
+						draw.DrawText( pl:Nick(), "DefaultBold", drawPos.x + 28, drawPos.y + 5, col, 0 )
 					end
 				end
-			end
+			//end
 		end
 	end
 
