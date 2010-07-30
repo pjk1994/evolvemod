@@ -32,7 +32,7 @@ else
 		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) ) then return end
 		
 		for _, pl in ipairs( player.GetAll() ) do
-			//if ( pl != LocalPlayer() and pl:Health() > 0 ) then
+			if ( pl != LocalPlayer() and pl:Health() > 0 ) then
 				local visible = hook.Call( "EV_ShowPlayerName", nil, pl )
 				
 				if ( visible != false ) then				
@@ -87,7 +87,7 @@ else
 						draw.DrawText( pl:Nick(), "DefaultBold", drawPos.x + 28, drawPos.y + 5, col, 0 )
 					end
 				end
-			//end
+			end
 		end
 	end
 
