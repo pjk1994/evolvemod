@@ -13,7 +13,7 @@ PLUGIN.Privileges = { "Ranking" }
 function PLUGIN:Call( ply, args )
 	if ( #args <= 1 or ply:EV_HasPrivilege( "Ranking" ) ) then
 		local pl
-		if ( string.match( args[1], "STEAM_[0-5]:[0-9]:[0-9]+" ) ) then
+		if ( string.match( args[1] or "", "STEAM_[0-5]:[0-9]:[0-9]+" ) ) then
 			local uid = evolve:UniqueIDByProperty( "SteamID", args[1] )
 			if ( uid ) then
 				local p = player.GetByUniqueID( uid )

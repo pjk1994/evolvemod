@@ -320,27 +320,27 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 function _R.Player:EV_IsRespected()
-	return self:GetNWString( "EV_UserGroup" ) == "respected" or self:EV_IsAdmin()
+	return self:EV_GetRank() == "respected" or self:EV_IsAdmin()
 end
 
 function _R.Player:EV_IsAdmin()
-	return self:GetNWString( "EV_UserGroup" ) == "admin" or self:IsAdmin() or self:EV_IsSuperAdmin()
+	return self:EV_GetRank() == "admin" or self:IsAdmin() or self:EV_IsSuperAdmin()
 end
 
 function _R.Player:EV_IsSuperAdmin()
-	return self:GetNWString( "EV_UserGroup" ) == "superadmin" or self:IsSuperAdmin() or self:EV_IsOwner()
+	return self:EV_GetRank() == "superadmin" or self:IsSuperAdmin() or self:EV_IsOwner()
 end
 
 function _R.Player:EV_IsOwner()
 	if ( SERVER ) then
-		return self:GetNWString( "EV_UserGroup" ) == "owner" or self:IsListenServerHost()
+		return self:EV_GetRank() == "owner" or self:IsListenServerHost()
 	else
-		return self:GetNWString( "EV_UserGroup" ) == "owner"
+		return self:EV_GetRank() == "owner"
 	end
 end
 
 function _R.Player:EV_IsRank( rank )
-	return self:GetNWString( "EV_UserGroup" ) == rank
+	return self:EV_GetRank() == rank
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------
@@ -486,7 +486,7 @@ evolve.compatibilityRanks = glon.decode( file.Read( "ev_ranks.txt" ) )
 
 function _R.Player:EV_HasPrivilege( priv )
 	if ( evolve.ranks[ self:EV_GetRank() ] ) then
-		return self:GetNWString( "EV_UserGroup" ) == "owner" or table.HasValue( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Privileges, priv )
+		return self:EV_GetRank() == "owner" or table.HasValue( evolve.ranks[ self:EV_GetRank() ].Privileges, priv )
 	else
 		return false
 	end
@@ -501,11 +501,11 @@ function _R.Entity:EV_BetterThanOrEqual( ply )
 end
 
 function _R.Player:EV_BetterThan( ply )
-	return tonumber( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity ) > tonumber( evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity ) or self == ply
+	return tonumber( evolve.ranks[ self:EV_GetRank() ].Immunity ) > tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) or self == ply
 end
 
 function _R.Player:EV_BetterThanOrEqual( ply )
-	return tonumber( evolve.ranks[ self:GetNWString( "EV_UserGroup" ) ].Immunity ) >= tonumber( evolve.ranks[ ply:GetNWString( "EV_UserGroup" ) ].Immunity )
+	return tonumber( evolve.ranks[ self:EV_GetRank() ].Immunity ) >= tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity )
 end
 
 function _R.Entity:EV_HasPrivilege( priv )
@@ -530,7 +530,19 @@ function _R.Player:EV_SetRank( rank )
 end
 
 function _R.Player:EV_GetRank()
-	return self:GetNWString( "EV_UserGroup", "guest" )
+	local rank
+	
+	if ( SERVER ) then
+		rank = self:GetProperty( "Rank", "guest" )
+	else
+		rank = self:GetNWString( "EV_UserGroup", "guest" )
+	end
+	
+	if ( evolve.ranks[ rank ] ) then
+		return rank
+	else
+		return guest
+	end
 end
 
 function evolve:RankGroup( ply, rank )
@@ -795,7 +807,7 @@ if ( SERVER ) then
 				for _, pl in ipairs( player.GetAll() ) do
 						evolve:TransferRank( pl, args[1] )
 						
-						if ( args[1] != "owner" and pl:GetNWString( "EV_UserGroup" ) == args[1] ) then
+						if ( args[1] != "owner" and pl:EV_GetRank() == args[1] ) then
 							pl:SetNWString( "UserGroup", args[3] )
 						end
 					end
