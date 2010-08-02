@@ -41,9 +41,14 @@ function PLUGIN:Call( ply, args )
 			THIS = ply:GetEyeTrace().Entity
 			PLAYER = function( nick ) return evolve:FindPlayer( nick )[1] end
 			
-			RunString( code )
+			local f = CompileString( code, "" )
+			local status, err = pcall( f )
 			
-			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " ran Lua code: ", evolve.colors.red, code )
+			if ( status ) then
+				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " ran Lua code: ", evolve.colors.red, code )
+			else
+				evolve:Notify( ply, evolve.colors.red, string.sub( err, 5 ) )
+			end
 			
 			THIS, ME, PLAYER = nil
 		else
