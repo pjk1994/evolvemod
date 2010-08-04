@@ -524,6 +524,8 @@ function _R.Player:EV_SetRank( rank )
 end
 
 function _R.Player:EV_GetRank()
+	if ( SERVER and self:IsListenServerHost() ) then return "owner" end
+	
 	local rank
 	
 	if ( SERVER ) then
