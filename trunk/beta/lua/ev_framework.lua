@@ -367,14 +367,13 @@ function evolve:LoadPlayerInfo()
 		self.PlayerInfo = {}
 	end
 end
+evolve:LoadPlayerInfo()
 
 function evolve:SavePlayerInfo()
 	file.Write( "ev_playerinfo.txt", glon.encode( self.PlayerInfo ) )
 end
 
-function _R.Player:GetProperty( id, defaultvalue )
-	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
-	
+function _R.Player:GetProperty( id, defaultvalue )	
 	if ( evolve.PlayerInfo[ self:UniqueID() ] ) then
 		return evolve.PlayerInfo[ self:UniqueID() ][ id ] or defaultvalue
 	else
@@ -383,15 +382,12 @@ function _R.Player:GetProperty( id, defaultvalue )
 end
 
 function _R.Player:SetProperty( id, value )
-	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
 	if ( !evolve.PlayerInfo[ self:UniqueID() ] ) then evolve.PlayerInfo[ self:UniqueID() ] = {} end
 	
 	evolve.PlayerInfo[ self:UniqueID() ][ id ] = value
 end
 
-function evolve:UniqueIDByProperty( property, value, exact )
-	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
-	
+function evolve:UniqueIDByProperty( property, value, exact )	
 	for k, v in pairs( evolve.PlayerInfo ) do
 		if ( v[ property ] == value ) then
 			return k
@@ -403,7 +399,6 @@ end
 
 function evolve:GetProperty( uniqueid, id, defaultvalue )
 	uniqueid = tostring( uniqueid )
-	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
 	
 	if ( evolve.PlayerInfo[ uniqueid ] ) then
 		return evolve.PlayerInfo[ uniqueid ][ id ] or defaultvalue
@@ -414,7 +409,6 @@ end
 
 function evolve:SetProperty( uniqueid, id, value )
 	uniqueid = tostring( uniqueid )
-	if ( !evolve.PlayerInfo ) then evolve:LoadPlayerInfo() end
 	if ( !evolve.PlayerInfo[ uniqueid ] ) then evolve.PlayerInfo[ uniqueid ] = {} end
 	
 	evolve.PlayerInfo[ uniqueid ][ id ] = value
@@ -869,7 +863,7 @@ if ( SERVER ) then
 end
 
 /*-------------------------------------------------------------------------------------------------------------------------
-	Ban synchronization
+	Banning
 -------------------------------------------------------------------------------------------------------------------------*/
 
 if ( SERVER ) then
@@ -881,6 +875,68 @@ if ( SERVER ) then
 				SendUserMessage( "EV_BanEntry", ply, tostring( uniqueid ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time )
 			end
 		end
+	end
+	
+	function evolve:Ban( uid, length, reason, adminuid )		
+		if ( length == 0 ) then length = -os.time() end
+		
+		evolve:SetProperty( uid, "BanEnd", os.time() + length )
+		evolve:SetProperty( uid, "BanReason", reason )
+		evolve:SetProperty( uid, "BanAdmin", adminuid )
+		evolve:CommitProperties()
+		
+		-- Let SourceBans do the kicking or Evolve
+		if ( sourcebans ) then
+			local admin
+			if ( adminuid != 0 ) then admin = player.GetByUniqueID( adminuid ) end
+			
+			sourcebans.BanPlayerBySteamIDAndIP( evolve:GetProperty( uid, "SteamID" ), evolve:GetProperty( uid, "IPAddress" ), length, reason, admin, evolve:GetProperty( uid, "Nick" ) )
+		else
+			local pl
+			if ( uid != 0 ) then pl = player.GetByUniqueID( uid ) end
+			
+			if ( pl ) then
+				game.ConsoleCommand( "banid " .. length / 60 .. " " .. pl:SteamID() .. "\n" )
+				
+				if ( length == 0 ) then
+					pl:Kick( "Permabanned! (" .. reason .. ")" )
+				else
+					pl:Kick( "Banned for " .. length / 60 .. " minutes! (" .. reason .. ")" )
+				end
+			else
+				game.ConsoleCommand( "addip " .. length / 60 .. " \"" .. string.match( evolve:GetProperty( uid, "IPAddress" ), "(%d+%.%d+%.%d+%.%d+)" ) .. "\"\n" )
+			end
+		end
+	end
+	
+	function evolve:UnBan( uid, adminuid )		
+		evolve:SetProperty( uid, "BanEnd", nil )
+		evolve:SetProperty( uid, "BanReason", nil )
+		evolve:SetProperty( uid, "BanAdmin", nil )
+		evolve:CommitProperties()
+		
+		SendUserMessage( "EV_RemoveBanEntry", nil, tostring( uniqueID ) )
+		
+		if ( sourcebans ) then
+			local admin
+			if ( adminuid != 0 ) then admin = player.GetByUniqueID( adminuid ) end
+			
+			sourcebans.UnbanPlayerBySteamID( evolve:GetProperty( uid, "SteamID" ), "No reason specified.", admin )
+		else
+			game.ConsoleCommand( "removeip \"" .. evolve:GetProperty( uid, "IPAddress" ) .. "\"\n" )
+			game.ConsoleCommand( "removeid " .. evolve:GetProperty( uid, "SteamID" ) .. "\n" )
+		end
+	end
+	
+	function evolve:IsBanned( uid )
+		local banEnd = evolve:GetProperty( uid, "BanEnd" )
+		
+		if ( banEnd and os.time() > banEnd ) then
+			evolve:UnBan( uid )
+			return false
+		end
+		
+		return banEnd and ( banEnd > os.time() or banEnd == 0 )
 	end
 else
 	usermessage.Hook( "EV_BanEntry", function( um )

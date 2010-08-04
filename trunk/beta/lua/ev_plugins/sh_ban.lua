@@ -16,139 +16,64 @@ function PLUGIN:Call( ply, args )
 	
 	if ( ( time > 0 and ply:EV_HasPrivilege( "Ban" ) ) or ( time == 0 and ply:EV_HasPrivilege( "Permaban" ) ) ) then
 		/*-------------------------------------------------------------------------------------------------------------------------
-			Check if a player name or SteamID was specified and gather data
+			Get the unique ID to ban
 		-------------------------------------------------------------------------------------------------------------------------*/
 		
-		local pl
+		local uid, pl
+		
 		if ( string.match( args[1] or "", "STEAM_[0-5]:[0-9]:[0-9]+" ) ) then
-			local unid = evolve:UniqueIDByProperty( "SteamID", args[1] )
-			
-			if ( unid ) then
-				if ( player.GetByUniqueID( unid ) ) then
-					pl = { player.GetByUniqueID( unid ) }
-				else
-					pl = { unid }
-				end
-			else
-				pl = {}
-			end
+			uid = evolve:UniqueIDByProperty( "SteamID", args[1] )
+			pl = player.GetByUniqueID( uid )
 		else
 			pl = evolve:FindPlayer( args[1] )
-		end
-		
-		if ( #pl > 1 ) then
-			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
-		elseif ( #pl == 0 or ( type( pl[1] ) == "Player" and !ply:EV_BetterThan( pl[1] ) ) ) then
-			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
-		else
-			/*-------------------------------------------------------------------------------------------------------------------------
-				Collect data
-			-------------------------------------------------------------------------------------------------------------------------*/
 			
-			local uid, nick
-			if ( type( pl[1] ) == "Player" ) then
+			if ( #pl > 1 ) then
+				evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
+				
+				return
+			elseif ( #pl == 1 ) then
 				pl = pl[1]
 				uid = pl:UniqueID()
-				nick = pl:Nick()
-			else
-				if ( tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) <= tonumber( evolve.ranks[ evolve:GetProperty( pl[1], "Rank", "guest" ) ].Immunity ) ) then
-					evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
-					return
-				end
-				
-				uid = pl[1]
-				pl = nil
-				nick = evolve:GetProperty( uid, "Nick" )
 			end
-			
-			local time = math.Clamp( tonumber( args[2] ) or 5, 0, 10080 )
-			local endtime
-			if ( time > 0 ) then endtime = os.time() + time * 60 else endtime = 0 end
-			local reason = table.concat( args, " ", 3 )
+		end
+		
+		/*-------------------------------------------------------------------------------------------------------------------------
+			Make sure the player exists and we're allowed to ban it
+		-------------------------------------------------------------------------------------------------------------------------*/
+		
+		if ( !uid or ( tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) <= tonumber( evolve.ranks[ evolve:GetProperty( uid, "Rank", "guest" ) ].Immunity ) and ply != NULL ) ) then
+			evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
+			return
+		end
+		
+		/*-------------------------------------------------------------------------------------------------------------------------
+			Gather data and perform ban
+		-------------------------------------------------------------------------------------------------------------------------*/
+		
+		local length = math.Clamp( tonumber( args[2] ) or 5, 0, 10080 ) * 60
+		local reason = table.concat( args, " ", 3 )
 			if ( #reason == 0 ) then reason = "No reason specified" end
-			
-			/*-------------------------------------------------------------------------------------------------------------------------
-				Perform banning
-			-------------------------------------------------------------------------------------------------------------------------*/
-			
-			if ( pl ) then
-				for _, v in ipairs( ents.GetAll() ) do
-					if ( v:EV_GetOwner() == pl:UniqueID() ) then v:Remove() end
-				end
-				
-				pl:SetProperty( "BanEnd", endtime )
-				pl:SetProperty( "BanReason", reason )
-				pl:SetProperty( "BanAdmin", ply:UniqueID() )
-				evolve:CommitProperties()
-				
-				local info = evolve.PlayerInfo[ pl:UniqueID() ]
-				local time = info.BanEnd - os.time()
-				if ( info.BanEnd == 0 ) then time = 0 end
-				
-				if ( ply:IsValid() ) then SendUserMessage( "EV_BanEntry", nil, tostring( pl:UniqueID() ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time ) end
-			else
-				evolve:SetProperty( uid, "BanEnd", endtime )
-				evolve:SetProperty( uid, "BanReason", reason )
-				evolve:SetProperty( uid, "BanAdmin", ply:UniqueID() )
-				evolve:CommitProperties()
-				
-				local info = evolve.PlayerInfo[ uid ]
-				local time = info.BanEnd - os.time()
-				if ( info.BanEnd == 0 ) then time = 0 end
-				if ( ply:IsValid() ) then SendUserMessage( "EV_BanEntry", nil, tostring( uid ), info.Nick, info.SteamID, info.BanReason, evolve:GetProperty( info.BanAdmin, "Nick" ), time ) end
-			end
-			
-			if ( time == 0 ) then
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, nick, evolve.colors.white, " permanently (" .. reason .. ")." )
-				
-				if ( pl ) then
-					if ( gatekeeper ) then
-						gatekeeper.Drop( pl:UserID(), "Permanently banned (" .. reason .. ")" )
-					else
-						pl:Kick( "Permanently banned (" .. reason .. ")" )
-					end
-				end
-			else
-				evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, nick, evolve.colors.white, " for " .. time .. " minutes (" .. reason .. ")." )
-				
-				if ( pl ) then
-					if ( gatekeeper ) then
-						gatekeeper.Drop( pl:UserID(), "Banned for " .. time .. " minutes (" .. reason .. ")" )
-					else
-						pl:Kick( "Banned for " .. time .. " minutes (" .. reason .. ")" )
-					end
-				end
-			end
+		local nick = evolve:GetProperty( uid, "Nick" )
+		
+		evolve:Ban( uid, length, reason, ply:UniqueID() )
+		
+		if ( length == 0 ) then
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, nick, evolve.colors.white, " permanently (" .. reason .. ")." )
+		else
+			evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " banned ", evolve.colors.red, nick, evolve.colors.white, " for " .. length / 60 .. " minutes (" .. reason .. ")." )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
 	end
 end
 
-function PLUGIN:PlayerPasswordAuth( user, pass, steamid, ip )
-	local uid = evolve:UniqueIDByProperty( "SteamID", steamid )
-	if ( uid ) then
-		local banend = tonumber( evolve:GetProperty( uid, "BanEnd" ) )
-		local reason = evolve:GetProperty( uid, "BanReason" )
+function PLUGIN:PlayerAuthed( ply, steamid, uniqueid )	
+	if ( !sourcebans and evolve:IsBanned( uniqueid ) ) then
+		local timeLeft = ply:GetProperty( "BanEnd" ) - os.time()
+		print( "banid " .. timeLeft / 60 .. " " .. steamid )
+		game.ConsoleCommand( "banid " .. timeLeft / 60 .. " " .. steamid .. "\n" )
 		
-		if ( banend and ( banend > os.time() or banend == 0 ) ) then
-			if ( banend == 0 ) then
-				return "You have been permabanned (" .. reason .. ")."
-			else
-				return "You have been banned for " .. math.ceil( ( banend - os.time() ) / 60 ) .. " more minutes (" .. reason .. ")."
-			end
-		end
-	end
-end
-
-function PLUGIN:PlayerAuthed( ply, steamid, uniqueid )
-	if ( ply:GetProperty( "BanEnd", false ) ) then
-		if ( ply:GetProperty( "BanEnd" ) > os.time() or tonumber( ply:GetProperty( "BanEnd" )  ) == 0 ) then
-			ply:Kick( "Banned." )
-		else
-			ply:SetProperty( "BanEnd", nil )
-			evolve:CommitProperties()
-		end
+		ply:Kick( "Banned" )
 	end
 end
 

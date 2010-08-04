@@ -21,11 +21,8 @@ function PLUGIN:Call( ply, args )
 				uniqueID = evolve:UniqueIDByProperty( "Nick", args[1], false )
 			end
 			
-			if ( uniqueID and evolve:GetProperty( uniqueID, "BanEnd" ) and ( evolve:GetProperty( uniqueID, "BanEnd" ) > os.time() or evolve:GetProperty( uniqueID, "BanEnd" ) == 0 ) ) then
-				evolve:SetProperty( uniqueID, "BanEnd", nil )
-				evolve:CommitProperties()
-				
-				SendUserMessage( "EV_RemoveBanEntry", nil, tostring( uniqueID ) )
+			if ( uniqueID and evolve:IsBanned( uniqueID ) ) then
+				evolve:UnBan( uniqueID, ply:UniqueID() )
 				
 				evolve:Notify( evolve.colors.blue, ply:Nick(), color_white, " has unbanned ", evolve.colors.red, evolve:GetProperty( uniqueID, "Nick" ), color_white, "." )
 			elseif ( uniqueID ) then
