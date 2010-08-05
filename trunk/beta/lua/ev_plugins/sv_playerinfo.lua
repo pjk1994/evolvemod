@@ -9,7 +9,7 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = nil
 
 function PLUGIN:ShowPlayerInfo( ply )
-	local first = !ply:GetProperty( "Nick" )
+	local first = !ply:GetProperty( "LastJoin" )
 	local lastjoin
 	local lastnick
 	
