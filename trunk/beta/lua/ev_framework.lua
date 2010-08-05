@@ -892,7 +892,7 @@ if ( SERVER ) then
 			local admin
 			if ( adminuid != 0 ) then admin = player.GetByUniqueID( adminuid ) end
 			
-			sourcebans.BanPlayerBySteamIDAndIP( evolve:GetProperty( uid, "SteamID" ), evolve:GetProperty( uid, "IPAddress" ), os.time() + length, reason, admin, evolve:GetProperty( uid, "Nick" ) )
+			sourcebans.BanPlayerBySteamIDAndIP( evolve:GetProperty( uid, "SteamID" ), evolve:GetProperty( uid, "IPAddress" ), math.max( 0, length ), reason, admin, evolve:GetProperty( uid, "Nick" ) )
 		else
 			local pl
 			if ( uid != 0 ) then pl = player.GetByUniqueID( uid ) end

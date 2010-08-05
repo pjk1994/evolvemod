@@ -3,7 +3,7 @@
 	true OR false
 ]]--
 
-local SourceBansEnabled = false
+local SourceBansEnabled = true
 
 --[[
 	STOP EDITING AGAIN HERE
