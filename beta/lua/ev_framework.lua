@@ -887,6 +887,10 @@ if ( SERVER ) then
 		evolve:SetProperty( uid, "BanAdmin", adminuid )
 		evolve:CommitProperties()
 		
+		local a = "Console"
+		if ( adminuid != 0 ) then a = player.GetByUniqueID( adminuid ):Nick() end
+		SendUserMessage( "EV_BanEntry", nil, uid, evolve:GetProperty( uid, "Nick" ), evolve:GetProperty( uid, "SteamID" ), reason, a, length )
+		
 		-- Let SourceBans do the kicking or Evolve
 		if ( sourcebans ) then
 			local admin
@@ -917,7 +921,7 @@ if ( SERVER ) then
 		evolve:SetProperty( uid, "BanAdmin", nil )
 		evolve:CommitProperties()
 		
-		SendUserMessage( "EV_RemoveBanEntry", nil, tostring( uniqueID ) )
+		SendUserMessage( "EV_RemoveBanEntry", nil, tostring( uid ) )
 		
 		if ( sourcebans ) then
 			local admin
