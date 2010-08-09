@@ -13,7 +13,7 @@ PLUGIN.Privileges = { "Health" }
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "Health" ) ) then
 		local players = evolve:FindPlayer( args, ply, true )
-		local hp = math.Clamp( tonumber( args[ #args ] ) or 100, 0, 99999 )
+		local hp = math.Clamp( tonumber( args[ #args ] ) or 100, 0, 2147483647 )
 		
 		for _, pl in ipairs( players ) do
 			pl:SetHealth( hp )

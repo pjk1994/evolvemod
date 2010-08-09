@@ -5,7 +5,7 @@
 local PLUGIN = {}
 PLUGIN.Title = "Teleport"
 PLUGIN.Description = "Teleport a player."
-PLUGIN.Author = "Overv"
+PLUGIN.Author = "Overv & Divran"
 PLUGIN.ChatCommand = "tp"
 PLUGIN.Usage = "[players]"
 PLUGIN.Privileges = { "Teleport" }
@@ -13,13 +13,35 @@ PLUGIN.Privileges = { "Teleport" }
 function PLUGIN:Call( ply, args )
 	if ( ply:EV_HasPrivilege( "Teleport" ) and ply:IsValid() ) then	
 		local players = evolve:FindPlayer( args, ply )
-		local tr = ply:GetEyeTraceNoCursor()
 		
-		if ( #players > 0 ) then
+		if (#players > 0) then			
+			local size = Vector( 32, 32, 72 )
+			
+			local tr = {}
+			tr.start = ply:GetShootPos()
+			tr.endpos = ply:GetShootPos() + ply:GetAimVector() * 10000000
+			tr.filter = ply
+			trace = util.TraceEntity( tr, ply )
+			
+			local EyeTrace = ply:GetEyeTraceNoCursor()
+			if (trace.HitPos:Distance(EyeTrace.HitPos) > size:Length()) then -- It seems the player wants to teleport through a narrow spot. Attempt to find a good position at the point the player wants to teleport to...
+				local tr = {}
+				tr.start = EyeTrace.HitPos + EyeTrace.HitNormal
+				tr.endpos = EyeTrace.HitPos + EyeTrace.HitNormal
+				tr.filter = ply
+				trace = util.TraceEntity( tr, ply )
+				
+				if (trace.Hit) then -- No good position was found. Force the player to teleport to the position anyway.
+					trace.HitPos = EyeTrace.HitPos
+				end
+			end
+			
+			size = size * 1.5
+			
 			for i, pl in ipairs( players ) do
 				if ( pl:InVehicle() ) then pl:ExitVehicle() end
 				
-				pl:SetPos( tr.HitPos + ( i - 0.8 ) * tr.HitNormal * 128 )
+				pl:SetPos( trace.HitPos + trace.HitNormal * ( i - 1 ) * size )
 				pl:SetLocalVelocity( Vector( 0, 0, 0 ) )
 			end
 			
