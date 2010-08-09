@@ -25,15 +25,12 @@ function PLUGIN:Call( ply, args )
 			
 			local EyeTrace = ply:GetEyeTraceNoCursor()
 			if (trace.HitPos:Distance(EyeTrace.HitPos) > size:Length()) then -- It seems the player wants to teleport through a narrow spot. Attempt to find a good position at the point the player wants to teleport to...
+				ply:ChatPrint("narrow")
 				local tr = {}
-				tr.start = EyeTrace.HitPos + EyeTrace.HitNormal
-				tr.endpos = EyeTrace.HitPos + EyeTrace.HitNormal
+				tr.start = EyeTrace.HitPos + EyeTrace.HitNormal * size:Length()
+				tr.endpos = EyeTrace.HitPos
 				tr.filter = ply
 				trace = util.TraceEntity( tr, ply )
-				
-				if (trace.Hit) then -- No good position was found. Force the player to teleport to the position anyway.
-					trace.HitPos = EyeTrace.HitPos
-				end
 			end
 			
 			size = size * 1.5
