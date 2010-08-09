@@ -19,18 +19,14 @@ function PLUGIN:Call( ply, args )
 			
 			local tr = {}
 			tr.start = ply:GetShootPos()
-			tr.endpos = ply:GetShootPos() + ply:GetAimVector() * 10000000
+			tr.endpos = ply:GetShootPos() + ply:GetAimVector() * 100000000
 			tr.filter = ply
-			trace = util.TraceEntity( tr, ply )
+			local trace = util.TraceEntity( tr, ply )
 			
 			local EyeTrace = ply:GetEyeTraceNoCursor()
-			if (trace.HitPos:Distance(EyeTrace.HitPos) > size:Length()) then -- It seems the player wants to teleport through a narrow spot. Attempt to find a good position at the point the player wants to teleport to...
-				ply:ChatPrint("narrow")
-				local tr = {}
-				tr.start = EyeTrace.HitPos + EyeTrace.HitNormal * size:Length()
-				tr.endpos = EyeTrace.HitPos
-				tr.filter = ply
-				trace = util.TraceEntity( tr, ply )
+			if (trace.HitPos:Distance(EyeTrace.HitPos) > size:Length()) then -- It seems the player wants to teleport through a narrow spot... Force them there even if there is something in the way.
+				trace = EyeTrace
+				trace.HitPos = trace.HitPos + trace.HitNormal * size * 1.2
 			end
 			
 			size = size * 1.5
