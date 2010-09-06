@@ -16,7 +16,11 @@ function PLUGIN:Call( ply, args )
 		local enabled = ( tonumber( args[ #args ] ) or 1 ) > 0
 		
 		for _, pl in ipairs( players ) do
-			pl.EV_Muted = enabled
+			pl:SetNWBool( "Muted", enabled )
+			
+			if ( enabled ) then
+				pl:SendLua( "LocalPlayer():ConCommand( \"-voicerecord\" )" )
+			end
 		end
 		
 		if ( #players > 0 ) then
@@ -33,8 +37,10 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:PlayerCanHearPlayersVoice( _, ply )
-	if ( ply.EV_Muted ) then return false end
+function PLUGIN:PlayerStartVoice( ply )
+	if ( LocalPlayer():GetNWBool( "Muted" ) ) then
+		RunConsoleCommand( "-voicerecord" )
+	end
 end
 
 function PLUGIN:Menu( arg, players )

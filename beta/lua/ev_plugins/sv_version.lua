@@ -9,7 +9,7 @@ PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "version"
 
 function PLUGIN:Call( ply, args )
-	evolve:Notify( ply, evolve.colors.white, "This server is running ", evolve.colors.red, "revision 140", evolve.colors.white, " of Evolve." )
+	evolve:Notify( ply, evolve.colors.white, "This server is running ", evolve.colors.red, "revision 154", evolve.colors.white, " of Evolve." )
 end
 
 evolve:RegisterPlugin( PLUGIN )
