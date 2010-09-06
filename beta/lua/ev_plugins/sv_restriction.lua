@@ -83,7 +83,7 @@ function PLUGIN:Initialize()
 	local tools = {}
 	
 	if ( GAMEMODE.Name == "Sandbox" ) then
-		for _, val in ipairs( file.FindInLua( "../" .. GAMEMODE.Folder .. "/entities/weapons/gmod_tool/stools/*.lua" )  ) do
+		for _, val in ipairs( file.FindInLua( "weapons/gmod_tool/stools/*.lua" )  ) do
 			local _, __, class = string.find( val, "([%w_]*)\.lua" )
 			table.insert( tools, "#" .. class )
 		end
@@ -114,14 +114,14 @@ function PLUGIN:Initialize()
 		evolve:SaveRanks()
 	end
 	
-	if ( !evolve:GetGlobalVar( "RestrictionSetUpTools", false ) ) then		
+	if ( !evolve:GetGlobalVar( "RestrictionSetUpTools2", false ) ) then		
 		for id, rank in pairs( evolve.ranks ) do
 			if ( id != "owner" ) then
 				table.Add( rank.Privileges, tools )
 			end
 		end
 		
-		evolve:SetGlobalVar( "RestrictionSetUpTools", true )
+		evolve:SetGlobalVar( "RestrictionSetUpTools2", true )
 		evolve:SaveRanks()
 	end
 end
