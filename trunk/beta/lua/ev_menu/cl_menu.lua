@@ -32,7 +32,9 @@ function MENU:GetActiveTab()
 end
 
 function MENU:TabSelected( tab )
-	tab:Update()
+	if ( tab ) then
+		tab:Update()
+	end
 end
 
 function MENU:Initialize()
@@ -82,10 +84,12 @@ function MENU:Think()
 			self:TabSelected( activeTab )
 		end
 		
-		local w = self.TabContainer:GetWide() + ( ( activeTab.Width or 260 ) + 10 - self.TabContainer:GetWide() ) / 5
-		if ( math.abs( w - ( activeTab.Width or 260 ) ) < 5 ) then w = ( activeTab.Width or 260 ) + 10 end
-		self.Panel:SetWide( w )
-		self.TabContainer:SetWide( w )
+		if ( activeTab ) then
+			local w = self.TabContainer:GetWide() + ( ( activeTab.Width or 260 ) + 10 - self.TabContainer:GetWide() ) / 5
+			if ( math.abs( w - ( activeTab.Width or 260 ) ) < 5 ) then w = ( activeTab.Width or 260 ) + 10 end
+			self.Panel:SetWide( w )
+			self.TabContainer:SetWide( w )
+		end
 	end
 end
 

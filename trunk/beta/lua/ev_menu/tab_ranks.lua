@@ -47,6 +47,8 @@ function TAB:Initialize( pnl )
 	self.PrivFilter:SetEditable( false )
 	self.PrivFilter:AddChoice( "Privileges" )
 	self.PrivFilter:AddChoice( "Weapons" )
+	self.PrivFilter:AddChoice( "Entities" )
+	self.PrivFilter:AddChoice( "Tools" )
 	self.PrivFilter:ChooseOptionID( 1 )
 	self.PrivFilter.OnSelect = function( id, value, data )
 		self.PrivFilter.Selected = data
@@ -201,6 +203,28 @@ function TAB:PrintNameByClass( class )
 				return wep.PrintName or class
 			end
 		end
+		
+		for c, ent in pairs( scripted_ents.GetList() ) do
+			if ( c == class ) then
+				return ent.t.PrintName or class
+			end
+		end
+		
+		for _, val in ipairs( file.FindInLua( "../" .. GAMEMODE.Folder .. "/entities/weapons/gmod_tool/stools/*.lua" )  ) do
+			local _, __, c = string.find( val, "([%w_]*)\.lua" )
+			
+			if ( c == class ) then
+				// Load the tool to find the name
+				TOOL = {}
+				include( "../" .. GAMEMODE.Folder .. "/entities/weapons/gmod_tool/stools/" .. val )
+				
+				local name = TOOL.Name
+				TOOL = nil
+				
+				return name or class
+			end
+		end
+		
 		return class
 	end
 end
@@ -208,9 +232,12 @@ end
 function TAB:UpdatePrivileges()
 	self.PrivList:Clear()
 	for _, privilege in ipairs( evolve.privileges ) do
-		if ( ( string.Left( privilege, 1 ) == "@" and self.PrivFilter.Selected == "Weapons" ) or ( string.Left( privilege, 1 ) != "@" and ( self.PrivFilter.Selected or "Privileges" ) == "Privileges" ) ) then
+		// Get first character to determine what kind of privilege this is.
+		local prefix = string.Left( privilege, 1 )
+		
+		if ( ( prefix == "@" and self.PrivFilter.Selected == "Weapons" ) or ( prefix == ":" and self.PrivFilter.Selected == "Entities" ) or ( prefix == "#" and self.PrivFilter.Selected == "Tools" ) or ( !string.match( prefix, "[@:#]" ) and ( self.PrivFilter.Selected or "Privileges" ) == "Privileges" ) ) then
 			local line
-			if ( string.Left( privilege, 1 ) == "@" ) then
+			if ( string.match( prefix, "[@:]" ) ) then
 				line = self.PrivList:AddLine( self:PrintNameByClass( string.sub( privilege, 2 ) ), "" )
 			else
 				line = self.PrivList:AddLine( privilege, "" )
@@ -304,7 +331,6 @@ function TAB:EV_RankRenamed( rank, title )
 end
 
 function TAB:EV_RankPrivilegeChange( rank, privilege, enabled )
-	print( rank, privilege, enabled )
 	if ( rank == self.RankList:GetSelectedItems()[1].Rank ) then
 		for _, line in pairs( self.PrivList:GetLines() ) do
 			if ( line:GetColumnText( 1 ) == privilege ) then

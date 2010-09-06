@@ -9,7 +9,7 @@ print( "=====================================================\n" )
 
 usermessage.Hook( "EV_Init", function( um )
 	evolve.installed = true
+	
+	// Load plugins
+	evolve:LoadPlugins()
 end )
-
-// Load plugins
-evolve:LoadPlugins()

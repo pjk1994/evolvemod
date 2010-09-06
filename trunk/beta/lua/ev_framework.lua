@@ -24,6 +24,7 @@ evolve.category.administration = 1
 evolve.category.actions = 2
 evolve.category.punishment = 3
 evolve.category.teleportation = 4
+evolve.plugins = {}
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Messages and notifications
@@ -1007,14 +1008,18 @@ end
 -------------------------------------------------------------------------------------------------------------------------*/
 
 function evolve:Log( str )
-	local cur = ""
-	if ( file.Exists( "ev_log.txt" ) ) then
-		cur = file.Read( "ev_log.txt" )
-		if ( #cur > 5 * 1024 ) then cur = "" end
-	end
-	cur = cur .. "[" .. os.date() .. "] " .. str .. "\n"
+	if ( CLIENT ) then return end
 	
-	file.Write( "ev_log.txt", cur )
+	local logFile = "ev_logs/" .. os.date( "%d-%m-%Y" ) .. ".txt"
+	local files = file.Find( "ev_logs/" .. os.date( "%d-%m-%Y" ) .. "*.txt" )
+	if ( #files > 0 ) then logFile = "ev_logs/" .. files[1] end
+	
+	local src = file.Read( logFile ) or ""
+	if ( #src > 200 * 1024 ) then
+		logFile = "ev_logs/" .. os.date( "%d-%m-%Y" ) .. " (" .. #files + 1 .. ").txt"
+	end
+	
+	filex.Append( logFile, "[" .. os.date() .. "] " .. str .. "\n" )
 end
 
 function evolve:PlayerLogStr( ply )
