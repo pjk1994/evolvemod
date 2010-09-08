@@ -1012,7 +1012,8 @@ function evolve:Log( str )
 	
 	local logFile = "ev_logs/" .. os.date( "%d-%m-%Y" ) .. ".txt"
 	local files = file.Find( "ev_logs/" .. os.date( "%d-%m-%Y" ) .. "*.txt" )
-	if ( #files > 0 ) then logFile = "ev_logs/" .. files[1] end
+	table.sort( files )
+	if ( #files > 0 ) then logFile = "ev_logs/" .. files[math.max(#files-1,1)] end
 	
 	local src = file.Read( logFile ) or ""
 	if ( #src > 200 * 1024 ) then
