@@ -657,14 +657,21 @@ function evolve:TransferRank( ply, rank )
 		end
 	umsg.End()
 	
-	umsg.Start( "EV_RankPrivileges", ply )
-		umsg.String( rank )
-		umsg.Short( #( data.Privileges or {} ) )
+	local privs = #( data.Privileges or {} )
+	local count
+	
+	for i = 1, privs, 100 do
+		count = math.min( privs, i + 99 ) - i
 		
-		for _, privilege in ipairs( data.Privileges or {} ) do
-			umsg.Short( evolve:KeyByValue( evolve.privileges, privilege, ipairs ) )
-		end
-	umsg.End()
+		umsg.Start( "EV_RankPrivileges", ply )
+			umsg.String( rank )
+			umsg.Short( count )
+			
+			for ii = i, i + count do
+				umsg.Short( evolve:KeyByValue( evolve.privileges, data.Privileges[ii], ipairs ) )
+			end
+		umsg.End()
+	end
 end
 
 function evolve:TransferRanks( ply )
