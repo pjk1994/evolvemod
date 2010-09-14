@@ -538,7 +538,7 @@ function _R.Player:EV_GetRank()
 	if ( evolve.ranks[ rank ] ) then
 		return rank
 	else
-		return guest
+		return "guest"
 	end
 end
 
