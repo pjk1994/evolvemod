@@ -12,7 +12,7 @@ evolve:LoadPlugins()
 
 // Tell the clients Evolve is installed on the server
 hook.Add( "PlayerInitialSpawn", "EvolveInit", function( ply )
-	umsg.Start( "EV_Init" )
+	umsg.Start( "EV_Init", ply )
 	umsg.End()
 end )
 
