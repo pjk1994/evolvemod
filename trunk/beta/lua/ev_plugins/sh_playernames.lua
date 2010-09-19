@@ -23,10 +23,31 @@ if ( SERVER ) then
 			ply:SetNWBool( "EV_Chatting", tonumber( args[1] ) > 0 )
 		end
 	end )
+	
+	function PLUGIN:PlayerSpawn( ply ) ply.EV_AFKTimer = CurTime() end
+	function PLUGIN:KeyPress( ply ) ply.EV_AFKTimer = CurTime() end
+	function PLUGIN:PlayerSay( ply ) ply.EV_AFKTimer = CurTime() end
+	function PLUGIN:Think()
+		if ( self.NextAFKCheck and self.NextAFKCheck > CurTime() ) then return end
+		self.NextAFKCheck = CurTime() + 1
+		
+		for _, ply in ipairs( player.GetAll() ) do
+			if ( ply:EyeAngles() != ply.EV_AFKAngles ) then
+				ply.EV_AFKTimer = CurTime()
+				ply.EV_AFKAngles = ply:EyeAngles()
+			end
+			
+			local b = ply.EV_AFKTimer < CurTime() - 300
+			if ( ply:GetNWBool( "EV_AFK" ) != b ) then
+				ply:SetNWBool( "EV_AFK", b )
+			end
+		end
+	end
 else
 	PLUGIN.iconUser = surface.GetTextureID( "gui/silkicons/user" )
 	PLUGIN.iconChat = surface.GetTextureID( "gui/silkicons/comments" )
 	PLUGIN.iconDeveloper = surface.GetTextureID( "gui/silkicons/emoticon_smile" )
+	PLUGIN.iconAFK = surface.GetTextureID( "gui/silkicons/arrow_refresh" )
 
 	function PLUGIN:HUDPaint()
 		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) or ( GAMEMODE.Name != "Sandbox" and GAMEMODE.BaseClass.Name != "Sandbox" ) ) then return end
@@ -69,14 +90,14 @@ else
 						
 						if ( pl:GetNWBool( "EV_Chatting", false ) ) then
 							surface.SetTexture( self.iconChat )
-						else
-							if ( pl:SteamID() == "STEAM_0:1:11956651" ) then
+						elseif ( pl:GetNWBool( "EV_AFK", false ) ) then
+							surface.SetTexture( self.iconAFK )
+						elseif ( pl:SteamID() == "STEAM_0:1:11956651" ) then
 								surface.SetTexture( self.iconDeveloper )
-							elseif ( evolve.ranks[ pl:EV_GetRank() ] ) then
-								surface.SetTexture( evolve.ranks[ pl:EV_GetRank() ].IconTexture )
-							else
-								surface.SetTexture( self.iconUser )
-							end
+						elseif ( evolve.ranks[ pl:EV_GetRank() ] ) then
+							surface.SetTexture( evolve.ranks[ pl:EV_GetRank() ].IconTexture )
+						else
+							surface.SetTexture( self.iconUser )
 						end
 						
 						surface.SetDrawColor( 255, 255, 255, math.Clamp( alpha * 2, 0, 255 ) )
