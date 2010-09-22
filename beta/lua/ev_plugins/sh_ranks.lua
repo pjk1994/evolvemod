@@ -25,7 +25,7 @@ function PLUGIN:Call( ply, args )
 			end
 		else
 			pl = {}
-			for _, p in ipairs( evolve:FindPlayer( args[1], ply ) ) do
+			for _, p in ipairs( evolve:FindPlayer( args[1], ply, false, true ) ) do
 				table.insert( pl, { UniqueID = p:UniqueID(), Nick = p:Nick(), Rank = p:EV_GetRank(), Ply = p } )
 			end
 		end
@@ -35,27 +35,31 @@ function PLUGIN:Call( ply, args )
 			
 			if ( pl ) then
 				if ( #args <= 1 ) then
-					evolve:Notify( ply, evolve.colors.blue, pl.Nick, evolve.colors.white, " is ranked as ", evolve.colors.red, pl.Rank, evolve.colors.white, "." )
-				else					
+					evolve:Notify( ply, evolve.colors.blue, pl.Nick, evolve.colors.white, " is ranked as ", evolve.colors.red, evolve.ranks[ pl.Rank ].Title, evolve.colors.white, "." )
+				else
 					if ( evolve.ranks[ args[2] ] ) then
-						if ( pl.Ply ) then
-							if ( ply:EV_BetterThan( pl.Ply ) ) then
-								pl.Ply:EV_SetRank( args[2] )
+						if ( evolve.ranks[ args[2] ].Immunity < evolve.ranks[ ply:EV_GetRank() ].Immunity ) then
+							if ( pl.Ply ) then
+								if ( ply:EV_BetterThan( pl.Ply ) ) then
+									pl.Ply:EV_SetRank( args[2] )
+								else
+									evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
+									return
+								end
 							else
-								evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
-								return
+								if ( tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) > tonumber( evolve.ranks[ evolve:GetProperty( pl.UniqueID, "Rank", "guest" ) ].Immunity ) ) then
+									evolve:SetProperty( pl.UniqueID, "Rank", args[2] )
+									evolve:CommitProperties()
+								else
+									evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
+									return
+								end
 							end
+							
+							evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the rank of ", evolve.colors.red, pl.Nick, evolve.colors.white, " to " .. evolve.ranks[ args[2] ].Title .. "." )
 						else
-							if ( tonumber( evolve.ranks[ ply:EV_GetRank() ].Immunity ) > tonumber( evolve.ranks[ evolve:GetProperty( pl.UniqueID, "Rank", "guest" ) ].Immunity ) ) then
-								evolve:SetProperty( pl.UniqueID, "Rank", args[2] )
-								evolve:CommitProperties()
-							else
-								evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers2 )
-								return
-							end
+							evolve:Notify( ply, evolve.colors.red, "You can't rank someone higher or equal to yourself!" )
 						end
-						
-						evolve:Notify( evolve.colors.blue, ply:Nick(), evolve.colors.white, " has set the rank of ", evolve.colors.red, pl.Nick, evolve.colors.white, " to " .. evolve.ranks[ args[2] ].Title .. "." )
 					else
 						evolve:Notify( ply, evolve.colors.red, "Unknown rank specified." )
 					end
@@ -64,7 +68,7 @@ function PLUGIN:Call( ply, args )
 				evolve:Notify( ply, evolve.colors.red, evolve.constants.noplayers )
 			end
 		else
-			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( pl, true ), evolve.colors.white, "?" )
+			evolve:Notify( ply, evolve.colors.white, "Did you mean ", evolve.colors.red, evolve:CreatePlayerList( evolve:FindPlayer( args[1], ply, false, true ), true ), evolve.colors.white, "?" )
 		end
 	else
 		evolve:Notify( ply, evolve.colors.red, evolve.constants.notallowed )
