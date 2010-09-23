@@ -38,7 +38,7 @@ function PLUGIN:Call( ply, args )
 					evolve:Notify( ply, evolve.colors.blue, pl.Nick, evolve.colors.white, " is ranked as ", evolve.colors.red, evolve.ranks[ pl.Rank ].Title, evolve.colors.white, "." )
 				else
 					if ( evolve.ranks[ args[2] ] ) then
-						if ( evolve.ranks[ args[2] ].Immunity < evolve.ranks[ ply:EV_GetRank() ].Immunity ) then
+						if ( !ply:IsValid() or evolve.ranks[ args[2] ].Immunity < evolve.ranks[ ply:EV_GetRank() ].Immunity ) then
 							if ( pl.Ply ) then
 								if ( ply:EV_BetterThan( pl.Ply ) ) then
 									pl.Ply:EV_SetRank( args[2] )
