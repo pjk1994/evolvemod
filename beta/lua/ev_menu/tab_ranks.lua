@@ -10,6 +10,9 @@ TAB.Author = "Overv"
 TAB.Width = 260
 TAB.Privileges = { "Rank menu" }
 
+// This determines if the second privilege list column toggles all privileges on or off
+TAB.AllToggle = true
+
 function TAB:Initialize( pnl )
 	// Create the rank list
 	self.RankList = vgui.Create( "DComboBox", pnl )
@@ -18,6 +21,8 @@ function TAB:Initialize( pnl )
 	self.RankList:SetMultiple( false )
 	self.RankList.Think = function()
 		if ( self.LastRank != self.RankList:GetSelectedItems()[1].Rank ) then self.LastRank = self.RankList:GetSelectedItems()[1].Rank else return end
+		
+		self.AllToggle = true
 		
 		self.Immunity:SetVisible( self.LastRank != "owner" )
 		self.Usergroup:SetVisible( self.LastRank != "owner" )
@@ -51,6 +56,8 @@ function TAB:Initialize( pnl )
 	self.PrivFilter:AddChoice( "Tools" )
 	self.PrivFilter:ChooseOptionID( 1 )
 	self.PrivFilter.OnSelect = function( id, value, data )
+		self.AllToggle = true
+		
 		self.PrivFilter.Selected = data
 		self:UpdatePrivileges()
 	end
@@ -61,7 +68,19 @@ function TAB:Initialize( pnl )
 	self.PrivList:SetSize( self.Width, pnl:GetParent():GetTall() - 267 - 20 - 5 )
 	local col = self.PrivList:AddColumn( "Privilege" )
 	col:SetFixedWidth( self.Width * 0.8 )
-	self.PrivList:AddColumn( "" )
+	
+	// Make the privilege enabled column toggle all on/all off
+	col = self.PrivList:AddColumn( "" )
+	col.DoClick = function()
+		local filter
+		if ( self.PrivFilter.Selected == "Weapons" ) then filter = "@"
+		elseif ( self.PrivFilter.Selected == "Entities" ) then filter = ":"
+		elseif ( self.PrivFilter.Selected == "Tools" ) then filter = "#"
+		end
+		
+		RunConsoleCommand( "ev_setrank", self.RankList:GetSelectedItems()[1].Rank, self.AllToggle and 1 or 0, filter )
+		self.AllToggle = !self.AllToggle
+	end
 	
 	self.PropertyContainer = vgui.Create( "DPanelList", pnl )
 	self.PropertyContainer:SetPos( 0, 130 )
@@ -242,6 +261,7 @@ function TAB:UpdatePrivileges()
 			else
 				line = self.PrivList:AddLine( privilege, "" )
 			end
+			line.Privilege = privilege
 			
 			line.State = vgui.Create( "DImage", line )
 			line.State:SetImage( "gui/silkicons/check_on_s" )
@@ -258,7 +278,7 @@ function TAB:UpdatePrivileges()
 			line.LastPress = os.clock()
 			
 			line.OnMousePressed = function()
-				if ( line.LastPress + 0.5 > os.clock() ) then
+				if ( line.LastPress + 0.3 > os.clock() and LocalPlayer():EV_HasPrivilege( "Rank modification" ) ) then
 					if ( line.State:IsVisible() ) then
 						RunConsoleCommand( "ev_setrank", line.LastRank, privilege, 0 )
 					else
@@ -333,7 +353,7 @@ end
 function TAB:EV_RankPrivilegeChange( rank, privilege, enabled )
 	if ( rank == self.RankList:GetSelectedItems()[1].Rank ) then
 		for _, line in pairs( self.PrivList:GetLines() ) do
-			if ( line:GetColumnText( 1 ) == privilege ) then
+			if ( line.Privilege == privilege ) then
 				line.State:SetVisible( enabled )
 				break
 			end

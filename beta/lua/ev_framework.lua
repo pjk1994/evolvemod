@@ -749,6 +749,32 @@ usermessage.Hook( "EV_RankPrivilege", function( um )
 	hook.Call( "EV_RankPrivilegeChange", nil, rank, priv, enabled )
 end )
 
+usermessage.Hook( "EV_RankPrivilegeAll", function( um )
+	local rank = um:ReadString()
+	local enabled = um:ReadBool()
+	local filter = um:ReadString()
+	
+	if ( enabled ) then
+		for _, priv in ipairs( evolve.privileges ) do
+			if ( ( ( #filter == 0 and !string.match( priv, "[@:#]" ) ) or string.Left( priv, 1 ) == filter ) and !table.HasValue( evolve.ranks[rank].Privileges, priv ) ) then				
+				hook.Call( "EV_RankPrivilegeChange", nil, rank, priv, true )
+				table.insert( evolve.ranks[ rank ].Privileges, priv )
+			end
+		end
+	else
+		local i = 1
+		
+		while ( i <= #evolve.ranks[rank].Privileges ) do
+			if ( ( #filter == 0 and !string.match( evolve.ranks[rank].Privileges[i], "[@:#]" ) ) or string.Left( evolve.ranks[rank].Privileges[i], 1 ) == filter ) then
+				hook.Call( "EV_RankPrivilegeChange", nil, rank, evolve.ranks[rank].Privileges[i], false )
+				table.remove( evolve.ranks[rank].Privileges, i )
+			else
+				i = i + 1
+			end
+		end
+	end
+end )
+
 /*-------------------------------------------------------------------------------------------------------------------------
 	Rank modification
 -------------------------------------------------------------------------------------------------------------------------*/
@@ -772,7 +798,7 @@ if ( SERVER ) then
 	
 	concommand.Add( "ev_setrank", function( ply, com, args )
 		if ( ply:EV_HasPrivilege( "Rank modification" ) ) then
-			if ( #args == 3 and tonumber( args[3] ) and evolve.ranks[ args[1] ] and table.HasValue( evolve.privileges, args[2] ) and args[1] != "owner" ) then
+			if ( #args == 3 and args[1] != "owner" and evolve.ranks[ args[1] ] and table.HasValue( evolve.privileges, args[2] ) and tonumber( args[3] ) ) then
 				local rank = args[1]
 				local privilege = args[2]
 				
@@ -792,6 +818,34 @@ if ( SERVER ) then
 					umsg.String( rank )
 					umsg.Short( evolve:KeyByValue( evolve.privileges, privilege ) )
 					umsg.Bool( tonumber( args[3] ) == 1 )
+				umsg.End()
+			elseif ( #args >= 2 and evolve.ranks[ args[1] ] and tonumber( args[2] ) and ( !args[3] or #args[3] == 1 ) ) then
+				local rank = args[1]
+				
+				if ( tonumber( args[2] ) == 1 ) then					
+					for _, priv in ipairs( evolve.privileges ) do
+						if ( ( ( !args[3] and !string.match( priv, "[@:#]" ) ) or string.Left( priv, 1 ) == args[3] ) and !table.HasValue( evolve.ranks[ rank ].Privileges, priv ) ) then
+							table.insert( evolve.ranks[ rank ].Privileges, priv )
+						end
+					end
+				else
+					local i = 1
+					
+					while ( i <= #evolve.ranks[rank].Privileges ) do
+						if ( ( !args[3] and !string.match( evolve.ranks[rank].Privileges[i], "[@:#]" ) ) or string.Left( evolve.ranks[rank].Privileges[i], 1 ) == args[3] ) then
+							table.remove( evolve.ranks[rank].Privileges, i )
+						else
+							i = i + 1
+						end
+					end
+				end
+				
+				evolve:SaveRanks()
+				
+				umsg.Start( "EV_RankPrivilegeAll" )
+					umsg.String( rank )
+					umsg.Bool( tonumber( args[2] ) == 1 )
+					umsg.String( args[3] or "" )
 				umsg.End()
 			end
 		end
