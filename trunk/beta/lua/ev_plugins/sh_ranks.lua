@@ -8,7 +8,7 @@ PLUGIN.Description = "Promote and demote people."
 PLUGIN.Author = "Overv"
 PLUGIN.ChatCommand = "rank"
 PLUGIN.Usage = "<player> [rank]"
-PLUGIN.Privileges = { "Ranking" }
+PLUGIN.Privileges = { "Ranking", "Rank modification" }
 
 function PLUGIN:Call( ply, args )
 	if ( #args <= 1 or ply:EV_HasPrivilege( "Ranking" ) ) then
