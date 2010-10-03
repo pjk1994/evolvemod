@@ -48,9 +48,17 @@ function PLUGIN:Call( ply, _, argstr )
 		if ( self.Question ) then
 			evolve:Notify( ply, evolve.colors.red, "You can't start a new vote until the current one has finished!" )
 			return
+		elseif ( #player.GetAll() < 2 ) then
+			evolve:Notify( ply, evolve.colors.red, "There aren't enough players to start a vote!" )
+			return
 		end
 		
-		local args = self:GetArguments( argstr )
+		local args
+		if ( argstr ) then
+			args = self:GetArguments( argstr )
+		else
+			args = _
+		end
 		
 		if ( #args == 0 ) then
 			evolve:Notify( ply, evolve.colors.red, "You haven't specified a question and options!" )
