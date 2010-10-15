@@ -37,7 +37,7 @@ if ( SERVER ) then
 	timer.Simple( 1, function()
 		PLUGIN.GetCount = _R.Player.GetCount
 		function _R.Player:GetCount( limit, minus )
-			if ( self.EV_NoLimits ) then
+			if ( self.EV_NoLimits or self:EV_HasPrivilege( "No limits" ) ) then
 				return -1
 			else
 				return PLUGIN.GetCount( self, limit, minus )

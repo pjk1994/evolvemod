@@ -17,7 +17,9 @@ function PLUGIN:Call( ply, args )
 		
 		if ( #args < 2 ) then
 			evolve:Notify( ply, evolve.colors.red, "No weapon specified!" )
-		else			
+		elseif ( string.Left( args[2], 7 ) != "weapon_" and !table.HasValue( evolve.privileges, "@" .. args[2] ) ) then
+			evolve:Notify( ply, evolve.colors.red, "The specified item isn't a weapon!" )
+		else
 			if ( #players > 0 ) then
 				for _, pl in ipairs( players ) do
 					pl:Give( wep )
