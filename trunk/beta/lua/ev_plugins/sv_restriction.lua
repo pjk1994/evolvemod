@@ -39,7 +39,7 @@ function PLUGIN:PlayerSpawn( ply )
 end
 
 function PLUGIN:PlayerCanPickupWeapon( ply, wep )
-	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, "@" .. wep:GetClass() ) and !ply:EV_HasPrivilege( "@" .. wep:GetClass() ) and CurTime() < ply.EV_PickupTimeout ) then
+	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, "@" .. wep:GetClass() ) and !ply:EV_HasPrivilege( "@" .. wep:GetClass() ) and ( !ply.EV_PickupTimeout or CurTime() < ply.EV_PickupTimeout ) ) then
 		return false
 	end
 end
