@@ -665,7 +665,7 @@ function evolve:TransferRank( ply, rank )
 		
 		umsg.Start( "EV_RankPrivileges", ply )
 			umsg.String( rank )
-			umsg.Short( count )
+			umsg.Short( count + 1 )
 			
 			for ii = i, i + count do
 				umsg.Short( evolve:KeyByValue( evolve.privileges, data.Privileges[ii], ipairs ) )
