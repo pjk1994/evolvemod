@@ -67,13 +67,13 @@ function PLUGIN:Call( ply, args )
 	end
 end
 
-function PLUGIN:PlayerAuthed( ply, steamid, uniqueid )	
-	if ( !sourcebans and evolve:IsBanned( uniqueid ) ) then
-		local timeLeft = ply:GetProperty( "BanEnd" ) - os.time()
-		print( "banid " .. timeLeft / 60 .. " " .. steamid )
-		game.ConsoleCommand( "banid " .. timeLeft / 60 .. " " .. steamid .. "\n" )
-		
-		ply:Kick( "Banned" )
+if ( SERVER ) then
+	function PLUGIN:InitPostEntity()
+		for uid, data in pairs( evolve.PlayerInfo ) do
+			if ( evolve:IsBanned( uid ) ) then
+				game.ConsoleCommand( "banid " .. ( data.BanEnd - os.time() ) / 60 .. " " .. data.SteamID .. "\n" )
+			end
+		end
 	end
 end
 
