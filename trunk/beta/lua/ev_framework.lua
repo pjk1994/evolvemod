@@ -999,7 +999,7 @@ if ( SERVER ) then
 	function evolve:IsBanned( uid )
 		local banEnd = evolve:GetProperty( uid, "BanEnd" )
 		
-		if ( banEnd and os.time() > banEnd ) then
+		if ( banEnd and banEnd > 0 and os.time() > banEnd ) then
 			evolve:UnBan( uid )
 			return false
 		end
