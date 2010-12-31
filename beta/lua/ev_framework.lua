@@ -991,7 +991,7 @@ if ( SERVER ) then
 			
 			sourcebans.UnbanPlayerBySteamID( evolve:GetProperty( uid, "SteamID" ), "No reason specified.", admin )
 		else
-			game.ConsoleCommand( "removeip \"" .. evolve:GetProperty( uid, "IPAddress" ) or "" .. "\"\n" )
+			game.ConsoleCommand( "removeip \"" .. ( evolve:GetProperty( uid, "IPAddress" ) or "" ) .. "\"\n" )
 			game.ConsoleCommand( "removeid " .. evolve:GetProperty( uid, "SteamID" ) .. "\n" )
 		end
 	end

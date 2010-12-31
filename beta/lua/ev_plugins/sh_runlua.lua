@@ -41,7 +41,12 @@ function PLUGIN:Call( ply, args )
 			THIS = ply:GetEyeTrace().Entity
 			PLAYER = function( nick ) return evolve:FindPlayer( nick )[1] end
 			
-			local f = CompileString( code, "" )
+			local f, a, b = CompileString( code, "" )
+			if ( !f ) then
+				evolve:Notify( ply, evolve.colors.red, "Syntax error! Check your script!" ) 
+				return
+			end
+			
 			local status, err = pcall( f )
 			
 			if ( status ) then
