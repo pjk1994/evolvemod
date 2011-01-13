@@ -8,12 +8,12 @@
 require("mysqloo");
 -- These are put here to lower the amount of upvalues and so they're grouped together
 -- They provide something like the documentation the SM ones do. 
-CreateConVar("sb_version", "1.2", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY, "The current version of the SourceBans.lua module");
+CreateConVar("sb_version", "1.41", FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY, "The current version of the SourceBans.lua module");
 -- This creates a fake concommand that doesn't exist but makes the engine think it does. Useful.
 AddConsoleCommand("sb_reload", "Doesn't do anything - Legacy from the SourceMod version.");
 
-local error, ErrorNoHalt, GetConVarNumber, GetConVarString, Msg, pairs, print, ServerLog, tonumber, unpack =
-      error, ErrorNoHalt, GetConVarNumber, GetConVarString, Msg, pairs, print, ServerLog, tonumber, unpack ;
+local error, ErrorNoHalt, GetConVarNumber, GetConVarString, Msg, pairs, print, ServerLog, tonumber, tostring, unpack =
+      error, ErrorNoHalt, GetConVarNumber, GetConVarString, Msg, pairs, print, ServerLog, tonumber, tostring, unpack ;
 
 local concommand, game, hook, math, os, player, string, table, timer, mysqloo =
       concommand, game, hook, math, os, player, string, table, timer, mysqloo ;
@@ -21,7 +21,7 @@ local concommand, game, hook, math, os, player, string, table, timer, mysqloo =
 ---
 -- Sourcebans.lua provides an interface to SourceBans through GLua, so that SourceMod is not required.
 -- It also attempts to duplicate the effects that would be had by running SourceBans, such as the concommand and convars it creates.
--- @release version 1.2 Extra Exports version
+-- @release version 1.41 Now with better integration support (and more oddity fixes)!
 module("sourcebans");
 --[[
 
@@ -43,6 +43,7 @@ local config = {
 	website  = "";
 	portnumb = 3306;
 	serverid = -1;
+	dogroups = false;
 };
 --[[ Automatic IP Locator ]]--
 local serverport = GetConVarNumber("hostport");
@@ -118,9 +119,11 @@ local function notifymessage(...)
 	ServerLog(words);
 	Msg(words);
 end
+local function banid(id)
+	game.ConsoleCommand("banid 5 " .. id .. "\n");
+end
 local function kickid(id)
 	game.ConsoleCommand("kickid " .. id .. " You are BANNED from this server!\n");
-	game.ConsoleCommand("banid 5 " .. id .. "\n");
 end
 local function cleanIP(ip)
 	return string.match(ip, "(%d+%.%d+%.%d+%.%d+)");
@@ -169,7 +172,7 @@ function checkBan(ply, steamID, ip, name)
 end
 
 function checkBanBySteamID(steamID, callback)
-	local query = database:query(queries["Check for Bans By SteamID"]:format(config.dbprefix, steamID));
+	local query = database:query(queries["Check for Bans by SteamID"]:format(config.dbprefix, steamID));
 		query.steamID	= steamID;
 		query.callback  = callback;
 		query.onSuccess	= checkSIDOnSuccess;
@@ -208,7 +211,6 @@ function doBan(steamID, ip, name, length, reason, admin, callback)
 	local time = os.time();
 	local adminID, adminIP = getAdminDetails(admin);
 	name = name or "";
-	callback = callback or blankCallback;
 	local query = database:query(queries["Ban Player"]:format(config.dbprefix, ip, steamID, database:escape(name), time, time + length, length, database:escape(reason), adminID, adminIP, config.serverid));
 	query.onSuccess = banOnSuccess;
 	query.onFailure = banOnFailure;
@@ -217,12 +219,14 @@ function doBan(steamID, ip, name, length, reason, admin, callback)
 	query:start();
 	if (steamID ~= "") then
 		kickid(steamID);
+		banid(steamID);
 	end
 end
 -- Data --
 function banCheckerOnData(self, data)
 	notifymessage(self.name, " has been identified as ", data.name, ", who is banned. Kicking ... ");
 	kickid(self.steamID);
+	banid(self.steamID);
 	local query = database:query(queries["Log Join Attempt"]:format(config.dbprefix, config.serverid, os.time(), self.name, data.bid));
 	query.onFailure = joinAttemptLoggerOnFailure;
 	query.name = self.name;
@@ -230,9 +234,10 @@ function banCheckerOnData(self, data)
 end
 
 function adminLoaderOnData(self, data)
+	data.srv_group = data.srv_group or "NO GROUP ASSIGNED";
 	local group = adminGroups[data.srv_group];
 	if (group) then
-		data.srv_flags = data.srv_flags .. group.flags;
+		data.srv_flags = (data.srv_flags or "") .. (group.flags or "");
 		if (data.immunity < group.immunity) then
 			data.immunity = group.immunity;
 		end
@@ -242,7 +247,7 @@ function adminLoaderOnData(self, data)
 	end
 	admins[data.authid] = data;
 	adminsByID[data.aid] = data;
-	notifymessage("Loaded admin ", data.user, " with group ", data.srv_group, ".");
+	notifymessage("Loaded admin ", data.user, " with group ", tostring(data.srv_group), ".");
 end
 
 -- Success --
@@ -283,7 +288,6 @@ function databaseOnConnected(self)
 		query.onData	= banCheckerOnData;
 		query.onFailure	= banCheckerOnFailure;
 		query:start();
-		activequeries[steamID] = query;
 	end
 	self.pending = {};
 end
@@ -386,9 +390,11 @@ do
 		end
 		local info = admins[ply:SteamID()];
 		if (info) then
-			ply:SetUserGroup(string.lower(info.srv_group))
+			if (config.dogroups) then
+				ply:SetUserGroup(string.lower(info.srv_group))
+			end
 			ply.sourcebansinfo = info;
-			notifymessage(ply:Name(), " has joined, and they are a ", info.srv_group, "!");
+			notifymessage(ply:Name(), " has joined, and they are a ", tostring(info.srv_group), "!");
 		end
 	end
 
@@ -417,12 +423,15 @@ end
 -- @param admin (Optional) The admin who did the ban. Leave nil for CONSOLE.
 -- @param callback (Optional) A function to call with the results of the ban. Passed true if it worked, false and a message if it didn't.
 function BanPlayer(ply, time, reason, admin, callback)
+	callback = callback or blankCallback;
 	if (not checkConnection()) then
 		return callback(false, "No Database Connection");
 	elseif (not ply:IsValid()) then
 		error("Expected player, got NULL!", 2);
 	end
-	doBan(ply:SteamID(), getIP(ply), ply:Name(), time, reason, admin, callback);
+	local sid = ply:SteamID();
+	doBan(sid, getIP(ply), ply:Name(), time, reason, admin, callback);
+	kickid(sid);
 end
 
 ---
@@ -434,6 +443,7 @@ end
 -- @param name (Optional) The name to give the ban if no active player matches the SteamID.
 -- @param callback (Optional) A function to call with the results of the ban. Passed true if it worked, false and a message if it didn't.
 function BanPlayerBySteamID(steamID, time, reason, admin, name, callback)
+	callback = callback or blankCallback;
 	if (not checkConnection()) then
 		return callback(false, "No Database Connection");
 	end
@@ -454,6 +464,7 @@ end
 -- @param name (Optional) The name to give the ban if no active player matches the IP.
 -- @param callback (Optional) A function to call with the results of the ban. Passed true if it worked, false and a message if it didn't.
 function BanPlayerByIP(ip, time, reason, admin, name, callback)
+	callback = callback or blankCallback;
 	if (not checkConnection()) then
 		return callback(false, "No Database Connection");
 	end
@@ -474,6 +485,7 @@ end
 -- @param admin (Optional) The admin who did the ban. Leave nil for CONSOLE.
 -- @param callback (Optional) A function to call with the results of the ban. Passed true if it worked, false and a message if it didn't.
 function BanPlayer(ply, time, reason, admin, callback)
+	callback = callback or blankCallback;
 	if (not checkConnection()) then
 		return callback(false, "No Database Connection");
 	elseif (not ply:IsValid()) then
@@ -492,6 +504,7 @@ end
 -- @param name (Optional) The name to give the ban
 -- @param callback (Optional) A function to call with the results of the ban. Passed true if it worked, false and a message if it didn't.
 function BanPlayerBySteamIDAndIP(steamID, ip, time, reason, admin, name, callback)
+	callback = callback or blankCallback;
 	if (not checkConnection()) then
 		return callback(false, "No Database Connection");
 	end
@@ -546,6 +559,8 @@ end
 function GetAllActiveBans(callback)
 	if (not callback) then
 		error("Function expected, got nothing!", 2);
+	elseif (not checkConnection()) then
+		return callback(false, "No Database Connection");
 	end
 	local query = database:query(queries["Get All Active Bans"]:format(config.dbprefix));
 	query.onSuccess = activeBansOnSuccess;
@@ -559,7 +574,7 @@ end
 -- NOTE: These settings do *NOT* persist. You will need to set them all each time.
 -- @param key The settings key to set
 -- @param value The value to set the key to.
--- @usage Acceptable keys: hostname, username, password, database, dbprefix, portnumb and serverid.
+-- @usage Acceptable keys: hostname, username, password, database, dbprefix, portnumb, serverid and dogroups.
 function SetConfig(key, value)
 	if (config[key] == nil) then
 		error("Invalid key provided. Please check your information.",2);
@@ -606,9 +621,30 @@ function CheckForBan(steamID, callback)
 	checkBanBySteamID(steamID, callback);
 end
 
+---
+-- Gets all the admins active on this server
+-- @returns A table.
+function GetAdmins()
+	local ret = {}
+	for id,data in pairs(admins) do
+		ret[id] = {
+			Name = data.user;
+			SteamID = id;
+			UserGroup = data.srv_group;
+			AdminID = data.aid;
+			Flags = data.srv_flags;
+			ZFlagged = data.zflag;
+			Immunity = data.immunity;
+		}
+	end
+	return ret;
+end
+
 
 
 --[[ ConCommands ]]--
+
+
 -- Borrowed from my gamemode
 local function playerGet(id)
 	local res, len, name, num, pname, lon;
@@ -637,8 +673,9 @@ end
 local function complain(ply, msg)
 	if (not (ply and ply:IsValid())) then
 		print(msg);
+		print("Consol",msg);
 	else
-		ply:PrintMessage(HUD_PRINTCONSOLE, msg);
+		ply:PrintMessage(2--[[HUD_PRINTCONSOLE]], msg);
 	end
 	return false;
 end
@@ -674,7 +711,7 @@ local function complainer(ply, pl, time, reason, usage)
 		return complain(ply, "Invalid time!" .. usage);
 	elseif (reason == "") then
 		return complain(ply, "Invalid reason!" .. usage);
-	elseif (time == 0 and not authorised(ply, "e")) then
+	elseif (time == 0 and not authorised(ply, FLAG_PERMA)) then
 		return complain(ply, "You are not authorised to permaban!");
 	end
 	return true;
@@ -689,10 +726,10 @@ end, nil, "Reload the admin list from the SQL");
 local usage = "\n - Usage: sm_ban <#userid|name> <minutes|0> <reason>";
 concommand.Add("sm_ban", function(ply, _, args)
 	if (#args < 3) then
-		complain(ply, usage:sub(4));
+		return complain(ply, usage:sub(4));
 	elseif (not checkConnection()) then
 		return complain(ply, "The database is not active at the moment. Your command could not be completed.");
-	elseif (not authorised(ply, "d")) then
+	elseif (not authorised(ply, FLAG_BAN)) then
 		return complain(ply, "You do not have access to this command!");
 	end
 	local pl, time, reason = table.remove(args,1), tonumber(table.remove(args,1)), table.concat(args, " "):Trim();
@@ -700,17 +737,26 @@ concommand.Add("sm_ban", function(ply, _, args)
 	if (not complainer(ply, pl, time, reason, usage)) then
 		return;
 	end
-	BanPlayer(pl, time * 60, reason, ply);
+	local name = pl:Name();
+	local function callback(res, err)
+		if (res) then
+			complain(ply, "sm_ban: " .. name .. " has been banned successfully.")
+		else
+			complain(ply, "sm_ban: " .. name .. " has not been banned. " .. err);
+		end
+	end
+	BanPlayer(pl, time * 60, reason, ply, callback);
+	complain(ply, "sm_ban: Your ban request has been sent to the database.");
 end, nil, "Bans a player" .. usage);
 
 -- Author's note: Why would you want to only ban someone by only their IP when you have their SteamID? This is a stupid concommand. Hopefully no one will use it.
 local usage = "\n - Usage: sm_banip <ip|#userid|name> <minutes|0> <reason>";
 concommand.Add("sm_banip", function(ply, _, args)
 	if (#args < 3) then
-		complain(ply, usage:sub(4));
+		return complain(ply, usage:sub(4));
 	elseif (not checkConnection()) then
 		return complain(ply, "The database is not active at the moment. Your command could not be completed.");
-	elseif (not authorised(ply, "d")) then
+	elseif (not authorised(ply, FLAG_BAN)) then
 		return complain(ply, "You do not have access to this command!");
 	end
 	local id, time, reason = table.remove(args,1), tonumber(table.remove(args,1)), table.concat(args, " "):Trim();
@@ -734,18 +780,26 @@ concommand.Add("sm_banip", function(ply, _, args)
 		return;
 	end
 	local name = pl:Name();
-	game.ConsoleCommand("kickid " .. pl:SteamID() .. " You are BANNED from this server!\n");
+	kickid(pl:SteamID());
 	game.ConsoleCommand("addip 5 " .. id .. "\n");
-	doBan('', id, name, time * 60, reason, ply)
+	local function callback(res, err)
+		if (res) then
+			complain(ply, "sm_banip: " .. name .. " has been IP banned successfully.")
+		else
+			complain(ply, "sm_banip: " .. name .. " has not been IP banned. " .. err);
+		end
+	end
+	doBan('', id, name, time * 60, reason, ply, callback)
+	complain(ply, "sm_banip: Your ban request has been sent to the database.");
 end, nil, "Bans a player by only their IP" .. usage);
 
 local usage = "\n - Usage: sm_addban <minutes|0> <steamid> <reason>";
 concommand.Add("sm_addban", function(ply, _, args)
 	if (#args < 3) then
-		complain(ply, usage:sub(4));
+		return complain(ply, usage:sub(4));
 	elseif (not checkConnection()) then
 		return complain(ply, "The database is not active at the moment. Your command could not be completed.");
-	elseif (not authorised(ply, "m")) then
+	elseif (not authorised(ply, FLAG_ADDBAN)) then
 		return complain(ply, "You do not have access to this command!");
 	end
 	local time, id, reason = tonumber(table.remove(args,1)), getSteamID(args), table.concat(args, " "):Trim();
@@ -755,19 +809,27 @@ concommand.Add("sm_addban", function(ply, _, args)
 		return complain(ply, "Invalid time!" .. usage);
 	elseif (reason == "") then
 		return complain(ply, "Invalid reason!" .. usage);
-	elseif (time == 0 and not authorised(ply, "e")) then
+	elseif (time == 0 and not authorised(ply, FLAG_PERMA)) then
 		return complain(ply, "You are not authorised to permaban!");
 	end
-	BanPlayerBySteamID(id, time * 60, reason, ply);
+	local function callback(res, err)
+		if (res) then
+			complain(ply, "sm_addban: " .. id .. " has been banned successfully.")
+		else
+			complain(ply, "sm_addban: " .. id .. " has not been banned. " .. err);
+		end
+	end
+	BanPlayerBySteamID(id, time * 60, reason, ply, '', callback);
+	complain(ply, "sm_addban: Your ban request has been sent to the database.");
 end, nil, "Bans a player by their SteamID" .. usage);
 
 local usage = "\n - Usage: sm_unban <steamid|ip> <reason>";
 concommand.Add("sm_unban", function(ply, _, args)
 	if (#args < 2) then
-		complain(ply, usage:sub(4));
+		return complain(ply, usage:sub(4));
 	elseif (not checkConnection()) then
 		return complain(ply, "The database is not active at the moment. Your command could not be completed.");
-	elseif (not authorised(ply, "e")) then
+	elseif (not authorised(ply, FLAG_UNBAN)) then
 		return complain(ply, "You do not have access to this command!");
 	end
 	local id, reason, func;
@@ -786,4 +848,5 @@ concommand.Add("sm_unban", function(ply, _, args)
 		return complain(ply, "Invalid reason!" .. usage);
 	end
 	func(id, reason, ply);
+	complain(ply, "Your unban request has been sent to the database.");
 end, nil, "Unbans a player" .. usage);
