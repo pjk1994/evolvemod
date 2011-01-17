@@ -542,6 +542,11 @@ function _R.Player:EV_GetRank()
 	end
 end
 
+function _R.Player:IsUserGroup( group )
+	if ( !self:IsValid() ) then return false end
+	return self:GetNWString( "UserGroup" ) == group or self:EV_GetRank() == group
+end
+
 function evolve:RankGroup( ply, rank )
 	ply:SetUserGroup( evolve.ranks[ rank ].UserGroup )
 end
