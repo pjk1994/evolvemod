@@ -23,7 +23,7 @@ d[i*tn+j] = min(d[(i-1)*tn+j]+1, d[i*tn+j-1]+1, d[(i-1)*tn+j-1]+(si == byte(t,j)
 end
 
 function PLUGIN:GetCommand( msg )
-	return string.match( msg, "%w+" )
+	return ( string.match( msg, "%w+" ) or "" ):lower()
 end
 
 function PLUGIN:GetArguments( msg )
@@ -45,46 +45,46 @@ function PLUGIN:PlayerSay( ply, msg )
 		local args = self:GetArguments( msg )
 		local closest = { dist = 99, plugin = "" }
 		
-		if ( command ) then
+		if ( #command > 0 ) then
 			evolve:Log( evolve:PlayerLogStr( ply ) .. " ran command '" .. command .. "' with arguments '" .. table.concat( args, " " ) .. "' via chat." )
-		end
-		
-		for _, plugin in ipairs( evolve.plugins ) do
-			if ( plugin.ChatCommand == string.lower( command or "" ) ) then
-				evolve.SilentNotify = string.Left( msg, 1 ) == "@"			
-					res, ret = pcall( plugin.Call, plugin, ply, args, string.sub( msg, #command + 3 ) )
-				evolve.SilentNotify = false				
-				
-				if ( !res ) then
-					evolve:Notify( evolve.colors.red, "Plugin '" .. plugin.Title .. "' failed with error:" )
-					evolve:Notify( evolve.colors.red, ret )
+			
+			for _, plugin in ipairs( evolve.plugins ) do
+				if ( plugin.ChatCommand == command or ( type( plugin.ChatCommand ) == "table" and table.HasValue( plugin.ChatCommand, command ) ) ) then
+					evolve.SilentNotify = string.Left( msg, 1 ) == "@"			
+						res, ret = pcall( plugin.Call, plugin, ply, args, string.sub( msg, #command + 3 ), command )
+					evolve.SilentNotify = false				
+					
+					if ( !res ) then
+						evolve:Notify( evolve.colors.red, "Plugin '" .. plugin.Title .. "' failed with error:" )
+						evolve:Notify( evolve.colors.red, ret )
+					end
+					
+					return ""
+				elseif ( plugin.ChatCommand ) then					
+					local dist = self:Levenshtein( command, type( plugin.ChatCommand ) == "table" and plugin.ChatCommand[1] or plugin.ChatCommand )
+					if ( dist < closest.dist ) then
+						closest.dist = dist
+						closest.plugin = plugin
+					end
 				end
-				
+			end
+			
+			if ( ply.EV_Gagged ) then
 				return ""
-			elseif ( plugin.ChatCommand ) then
-				local dist = self:Levenshtein( string.lower( command or "" ), plugin.ChatCommand )
-				if ( dist < closest.dist ) then
-					closest.dist = dist
-					closest.plugin = plugin
+			else
+				if ( closest.dist <= 0.25 * #closest.plugin.ChatCommand ) then
+					res, ret = pcall( closest.plugin.Call, closest.plugin, ply, args )
+					
+					if ( !res ) then
+						evolve:Notify( evolve.colors.red, "Plugin '" .. closest.plugin.Title .. "' failed with error:" )
+						evolve:Notify( evolve.colors.red, ret )
+					end
+					
+					return ""
 				end
 			end
 		end
-		
-		if ( ply.EV_Gagged ) then
-			return ""
-		else
-			if ( closest.dist <= 0.25 * #closest.plugin.ChatCommand ) then
-				res, ret = pcall( closest.plugin.Call, closest.plugin, ply, args )
-				
-				if ( !res ) then
-					evolve:Notify( evolve.colors.red, "Plugin '" .. closest.plugin.Title .. "' failed with error:" )
-					evolve:Notify( evolve.colors.red, ret )
-				end
-				
-				return ""
-			end
 		end
-	end
 end
 
 evolve:RegisterPlugin( PLUGIN )

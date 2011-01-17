@@ -50,6 +50,14 @@ function TAB:Initialize( pnl )
 	end
 end
 
+local function lineRightClick( line )
+	local menu = DermaMenu()
+	menu:AddOption( "Copy SteamID", function()
+		SetClipboardText( line:GetValue( 2 ) )
+	end )
+	menu:Open()
+end
+
 function TAB:EV_BanAdded( id )
 	local entry = evolve.bans[id]
 	
@@ -63,7 +71,8 @@ function TAB:EV_BanAdded( id )
 		end
 	end
 	
-	self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, evolve:FormatTime( entry.End - os.time() ), entry.Admin )
+	local line = self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, evolve:FormatTime( entry.End - os.time() ), entry.Admin )
+	line.OnRightClick = lineRightClick
 end
 
 function TAB:EV_BanRemoved( id )
@@ -79,7 +88,8 @@ function TAB:Update()
 	self.BanList:Clear()
 	for _, entry in pairs( evolve.bans ) do
 		if ( entry.End - os.time() > 0 or entry.End == 0 ) then
-			self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, evolve:FormatTime( entry.End - os.time() ), entry.Admin )
+			local line = self.BanList:AddLine( entry.Nick, entry.SteamID, entry.Reason, evolve:FormatTime( entry.End - os.time() ), entry.Admin )
+			line.OnRightClick = lineRightClick
 		end
 	end
 	self.BanList:SelectFirstItem()
