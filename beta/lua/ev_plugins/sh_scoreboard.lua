@@ -62,12 +62,14 @@ function PLUGIN:QuickTextSize( font, text )
 end
 
 function PLUGIN:FormatTime( raw )
-	if ( raw >= 3600 ) then
-		if ( math.floor( raw / 3600 ) == 1 ) then return "1 hour" else return math.floor( raw / 3600 ) .. " hours" end
-	elseif ( raw >= 60 ) then
-		if ( math.floor( raw / 60 ) == 1 ) then return "1 minute" else return math.floor( raw / 60 ) .. " minutes" end
+	if ( raw < 60 ) then
+		return math.floor( raw ) .. " secs"
+	elseif ( raw < 3600 ) then
+		if ( raw < 120 ) then return "1 min" else return math.floor( raw / 60 ) .. " mins" end
+	elseif ( raw < 3600*24 ) then
+		if ( raw < 7200 ) then return "1 hour" else return math.floor( raw / 3600 ) .. " hours" end
 	else
-		if ( raw == 1 ) then return "1 second" else return raw .. " seconds" end
+		if ( raw < 3600*48 ) then return "1 day" else return math.floor( raw / 3600 / 24 ) .. " days" end
 	end
 end
 
@@ -116,17 +118,19 @@ function PLUGIN:DrawUsergroup( playerinfo, usergroup, title, icon, y )
 	draw.SimpleText( title, "DefaultBold", self.X + 40, y + 4, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 	
 	self:DrawTexturedRect( self.TexPing, self.X + self.Width - 50, y + 4, 14, 14 )
-	self:DrawTexturedRect( self.TexDeaths, self.X + self.Width - 101, y + 4, 14, 14 )
-	self:DrawTexturedRect( self.TexFrags, self.X + self.Width - 141,  y + 4, 14, 14 )
+	self:DrawTexturedRect( self.TexDeaths, self.X + self.Width - 150.5, y + 4, 14, 14 )
+	self:DrawTexturedRect( self.TexFrags, self.X + self.Width - 190.5,  y + 4, 14, 14 )
+	self:DrawTexturedRect( self.TexPlaytime, self.X + self.Width - 100,  y + 4, 14, 14 )
 	
 	y = y + 26
 	
 	for _, pl in ipairs( playerinfo ) do
 		if ( pl.Usergroup == usergroup ) then
 			draw.SimpleText( pl.Nick, "ScoreboardText", self.X + 40, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-			draw.SimpleText( pl.Frags, "ScoreboardText", self.X + self.Width - 137, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-			draw.SimpleText( pl.Deaths, "ScoreboardText", self.X + self.Width - 97, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			draw.SimpleText( pl.Frags, "ScoreboardText", self.X + self.Width - 187, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			draw.SimpleText( pl.Deaths, "ScoreboardText", self.X + self.Width - 147, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 			draw.SimpleText( pl.Ping, "ScoreboardText", self.X + self.Width - 50, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			draw.SimpleText( self:FormatTime( pl.PlayTime ), "ScoreboardText", self.X + self.Width - 92, y, Color( 39, 39, 39, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 			
 			y = y + 20
 		end
@@ -138,7 +142,7 @@ end
 function PLUGIN:DrawPlayers()
 	local playerInfo = {}
 	for _, v in pairs( player.GetAll() ) do
-		table.insert( playerInfo, { Nick = v:Nick(), Usergroup = v:EV_GetRank(), Frags = v:Frags(), Deaths = v:Deaths(), JoinTime = v.EV_JoinTime, Ping = v:Ping() } )
+		table.insert( playerInfo, { Nick = v:Nick(), Usergroup = v:EV_GetRank(), Frags = v:Frags(), Deaths = v:Deaths(), Ping = v:Ping(), PlayTime = evolve:Time() - v:GetNWInt( "EV_JoinTime" ) + v:GetNWInt( "EV_PlayTime" ) } )
 	end
 	table.SortByMember( playerInfo, "Frags" )
 	

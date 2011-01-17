@@ -87,6 +87,17 @@ function PANEL:AddPlayer( ply )
 		draw.SimpleText( ply:Nick() or "", "Default", 28, 5, Color( 0, 0, 0, 255 ) )
 	end
 	
+	item.OnMousePressedOld = item.OnMousePressed
+	item.OnMousePressed = function( self, button )
+		if ( button == MOUSE_RIGHT ) then
+			local menu = DermaMenu()
+			menu:AddOption( "Copy SteamID", function() SetClipboardText( ply:SteamID() ) end )
+			menu:Open()
+		else
+			return item.OnMousePressedOld( self, button )
+		end
+	end
+	
 	return item
 end
 

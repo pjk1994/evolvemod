@@ -25,6 +25,7 @@ evolve.category.actions = 2
 evolve.category.punishment = 3
 evolve.category.teleportation = 4
 evolve.plugins = {}
+evolve.version = 176
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Messages and notifications
@@ -525,6 +526,7 @@ function _R.Player:EV_SetRank( rank )
 end
 
 function _R.Player:EV_GetRank()
+	if ( !self:IsValid() ) then return false end
 	if ( SERVER and self:IsListenServerHost() ) then return "owner" end
 	
 	local rank
@@ -602,8 +604,28 @@ hook.Add( "PlayerSpawn", "EV_RankHook", function( ply )
 			evolve:Rank( ply )
 		end )
 		ply.EV_Ranked = true
+		
+		ply:SetNWInt( "EV_JoinTime", os.time() )
+		ply:SetNWInt( "EV_PlayTime", ply:GetProperty( "PlayTime" ) or 0 )
+		SendUserMessage( "EV_TimeSync", ply, os.time() )
 	end
 end )
+
+/*-------------------------------------------------------------------------------------------------------------------------
+	Time synchronisation
+-------------------------------------------------------------------------------------------------------------------------*/
+
+usermessage.Hook( "EV_TimeSync", function( um )
+	evolve.timeoffset = um:ReadLong() - os.time()
+end )
+
+function evolve:Time()
+	if ( CLIENT ) then
+		return os.time() + ( evolve.timeoffset or 0 )
+	else
+		return os.time()
+	end
+end
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Rank management

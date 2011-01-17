@@ -66,14 +66,27 @@ function PLUGIN:PlayerSpawn( ply )
 	if ( ply.EV_IntroductionPending ) then
 		self:ShowPlayerInfo( ply )
 		ply.EV_IntroductionPending = false
+		
+		ply.EV_LastPlaytimeSave = os.clock()
 	end
 end
 
 function PLUGIN:PlayerDisconnected( ply )
 	ply:SetProperty( "LastJoin", os.time() )
-	ply:SetProperty( "PlayTime", ply:GetProperty( "PlayTime" ) + ply:TimeConnected() )
+	ply:SetProperty( "PlayTime", ply:GetProperty( "PlayTime" ) + os.clock() - ply.EV_LastPlaytimeSave )
 	
 	evolve:CommitProperties()
 end
+
+timer.Create( "EV_PlayTimeSave", 60, 0, function()
+	for _, ply in ipairs( player.GetAll() ) do
+		ply:SetProperty( "LastJoin", os.time() )
+		ply:SetProperty( "PlayTime", ply:GetProperty( "PlayTime" ) + os.clock() - ply.EV_LastPlaytimeSave )
+		
+		ply.EV_LastPlaytimeSave = os.clock()
+	end
+	
+	evolve:CommitProperties()
+end )
 
 evolve:RegisterPlugin( PLUGIN )

@@ -35,5 +35,6 @@ function PLUGIN:CCommand( ply, com, cargs )
 	evolve:Message( "Unknown command '" .. command .. "'" )
 end
 concommand.Add( "ev", function( ply, com, args ) PLUGIN:CCommand( ply, com, args ) end )
+concommand.Add( "evs", function( ply, com, args ) evolve.SilentNotify = true PLUGIN:CCommand( ply, com, args ) evolve.SilentNotify = false end )
 
 evolve:RegisterPlugin( PLUGIN )
