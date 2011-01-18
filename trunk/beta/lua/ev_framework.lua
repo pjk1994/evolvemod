@@ -25,7 +25,7 @@ evolve.category.actions = 2
 evolve.category.punishment = 3
 evolve.category.teleportation = 4
 evolve.plugins = {}
-evolve.version = 176
+evolve.version = 177
 
 /*-------------------------------------------------------------------------------------------------------------------------
 	Messages and notifications
@@ -145,7 +145,7 @@ end
 
 local pluginFile
 
-function evolve:LoadPlugins()
+function evolve:LoadPlugins()	
 	evolve.plugins = {}
 	
 	local plugins = file.FindInLua( "ev_plugins/*.lua" )
@@ -166,7 +166,7 @@ function evolve:RegisterPlugin( plugin )
 	if ( string.Left( pluginFile, string.find( pluginFile, "_" ) - 1 ) != "cl" or CLIENT ) then
 		table.insert( evolve.plugins, plugin )
 		plugin.File = pluginFile
-		if ( plugin.Privileges ) then table.Add( evolve.privileges, plugin.Privileges ) table.sort( evolve.privileges ) end
+		if ( plugin.Privileges and SERVER ) then table.Add( evolve.privileges, plugin.Privileges ) table.sort( evolve.privileges ) end
 	else
 		table.insert( evolve.plugins, { Title = plugin.Title, File = pluginFile } )
 	end
