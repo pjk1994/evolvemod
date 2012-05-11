@@ -50,7 +50,7 @@ else
 	PLUGIN.iconAFK = surface.GetTextureID( "gui/silkicons/arrow_refresh" )
 
 	function PLUGIN:HUDPaint()
-		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) or ( GAMEMODE.Name != "Sandbox" and GAMEMODE.BaseClass.Name != "Sandbox" ) ) then return end
+		if ( !evolve.installed or !LocalPlayer():EV_HasPrivilege( "Player names" ) or ( GAMEMODE.IsSandboxDerived ) ) then return end
 		
 		for _, pl in ipairs( player.GetAll() ) do
 			if ( pl != LocalPlayer() and pl:Health() > 0 ) then
