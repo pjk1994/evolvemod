@@ -8,7 +8,7 @@ PLUGIN.Description = "Restricts weapons."
 PLUGIN.Author = "Overv"
 
 function PLUGIN:PlayerSpawnSWEP( ply, name, tbl )
-	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, "@" .. name ) and !ply:EV_HasPrivilege( "@" .. name ) ) then
+	if ( GAMEMODE.IsSandboxDerived and table.HasValue( evolve.privileges, "@" .. name ) and !ply:EV_HasPrivilege( "@" .. name ) ) then
 		evolve:Notify( ply, evolve.colors.red, "You are not allowed to spawn this weapon!" )
 		return false
 	end
@@ -20,14 +20,14 @@ function PLUGIN:PlayerGiveSWEP( ply, name, tbl )
 end
 
 function PLUGIN:PlayerSpawnSENT( ply, class )
-	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, ":" .. class ) and !ply:EV_HasPrivilege( ":" .. class ) ) then
+	if ( GAMEMODE.IsSandboxDerived and table.HasValue( evolve.privileges, ":" .. class ) and !ply:EV_HasPrivilege( ":" .. class ) ) then
 		evolve:Notify( ply, evolve.colors.red, "You are not allowed to spawn this entity!" )
 		return false
 	end
 end
 
 function PLUGIN:CanTool( ply, tr, class )
-	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, "#" .. class ) and !ply:EV_HasPrivilege( "#" .. class ) ) then
+	if ( GAMEMODE.IsSandboxDerived and table.HasValue( evolve.privileges, "#" .. class ) and !ply:EV_HasPrivilege( "#" .. class ) ) then
 		evolve:Notify( ply, evolve.colors.red, "You are not allowed to use this tool!" )
 		return false
 	end
@@ -39,7 +39,7 @@ function PLUGIN:PlayerSpawn( ply )
 end
 
 function PLUGIN:PlayerCanPickupWeapon( ply, wep )
-	if ( GAMEMODE.Name == "Sandbox" and table.HasValue( evolve.privileges, "@" .. wep:GetClass() ) and !ply:EV_HasPrivilege( "@" .. wep:GetClass() ) and ( !ply.EV_PickupTimeout or CurTime() < ply.EV_PickupTimeout ) ) then
+	if ( GAMEMODE.IsSandboxDerived and table.HasValue( evolve.privileges, "@" .. wep:GetClass() ) and !ply:EV_HasPrivilege( "@" .. wep:GetClass() ) and ( !ply.EV_PickupTimeout or CurTime() < ply.EV_PickupTimeout ) ) then
 		return false
 	end
 end
@@ -82,7 +82,7 @@ function PLUGIN:Initialize()
 	// Tools
 	local tools = {}
 	
-	if ( GAMEMODE.Name == "Sandbox" ) then
+	if ( GAMEMODE.IsSandboxDerived ) then
 		for _, val in ipairs( file.FindInLua( "weapons/gmod_tool/stools/*.lua" )  ) do
 			local _, __, class = string.find( val, "([%w_]*)\.lua" )
 			table.insert( tools, "#" .. class )
